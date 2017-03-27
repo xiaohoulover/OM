@@ -1,8 +1,8 @@
 package com.xinda.cm.car.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.xinda.om.sys.contant.BaseConstants;
-import com.xinda.om.system.dto.BaseDto;
+import com.xinda.system.sys.contant.BaseConstants;
+import com.xinda.system.sys.dto.BaseDto;
 
 import java.util.Date;
 

@@ -2,8 +2,8 @@ package com.xinda.cm.car.controller;
 
 import com.xinda.cm.car.dto.CarInfoDto;
 import com.xinda.cm.car.service.ICarService;
-import com.xinda.om.sys.controller.BaseController;
-import com.xinda.om.system.dto.ResponseJsonData;
+import com.xinda.system.sys.controller.BaseController;
+import com.xinda.system.sys.dto.ResponseJsonData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;

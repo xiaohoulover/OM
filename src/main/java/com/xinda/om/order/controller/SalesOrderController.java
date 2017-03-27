@@ -2,10 +2,10 @@ package com.xinda.om.order.controller;
 
 import com.xinda.om.order.dto.SalesOrder;
 import com.xinda.om.order.service.ISalesOrderService;
-import com.xinda.om.sys.contant.BaseConstants;
-import com.xinda.om.sys.controller.BaseController;
-import com.xinda.om.sys.exception.OrderException;
-import com.xinda.om.system.dto.ResponseJsonData;
+import com.xinda.system.sys.contant.BaseConstants;
+import com.xinda.system.sys.controller.BaseController;
+import com.xinda.system.sys.dto.ResponseJsonData;
+import com.xinda.system.sys.exception.OrderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

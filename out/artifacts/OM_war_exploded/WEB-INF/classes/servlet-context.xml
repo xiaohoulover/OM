@@ -16,7 +16,7 @@
 	<mvc:resources mapping="/lib/**" location="/lib/" />
 	<mvc:resources mapping="/resources/**" location="/resources/" />
 
-	<bean id="customerObjectMapper" class="com.xinda.om.sys.converter.CustomerObjectMapper" ></bean>
+	<bean id="customerObjectMapper" class="com.xinda.system.sys.converter.CustomerObjectMapper" ></bean>
     
     <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
         <property name="targetObject" ref="customerObjectMapper" />
@@ -100,7 +100,7 @@
 			<mvc:exclude-mapping path="/lib/**" />
 			<mvc:exclude-mapping path="/login" />
 			<mvc:exclude-mapping path="/login.html" />
-			<bean class="com.xinda.om.sys.interceptor.HtmlInterceptor" />
+			<bean class="com.xinda.system.sys.interceptor.HtmlInterceptor" />
 		</mvc:interceptor>
 	</mvc:interceptors>
 

@@ -1,8 +1,6 @@
 package com.xinda.cm.customer.dto;
 
-import com.xinda.om.system.dto.BaseDto;
-
-import java.util.Date;
+import com.xinda.system.sys.dto.BaseDto;
 
 /**
  * 客户信息Dto.

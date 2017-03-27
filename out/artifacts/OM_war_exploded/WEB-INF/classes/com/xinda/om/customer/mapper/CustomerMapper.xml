@@ -152,7 +152,7 @@
         #{counterLocation,jdbcType=VARCHAR},
       </if>
       <if test="remark != null" >
-        REPLACE(#{remark,jdbcType=VARCHAR}, '\n', CHAR(10)CHAR(13)),
+        REPLACE(#{remark,jdbcType=VARCHAR}, '\n', CHAR(13)),
       </if>
       CURRENT_TIMESTAMP,
       CURRENT_TIMESTAMP,
@@ -202,7 +202,7 @@
         COUNTER_LOCATION = #{counterLocation,jdbcType=VARCHAR},
       </if>
       <if test="remark != null" >
-        REMARK = REPLACE(#{remark,jdbcType=VARCHAR}, '\n', CHAR(10)CHAR(13)),
+        REMARK = REPLACE(#{remark,jdbcType=VARCHAR}, '\n', CHAR(13)),
       </if>
         LAST_UPDATE_DATE = CURRENT_TIMESTAMP,
         OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1
@@ -224,7 +224,7 @@
     LOADING_LOCATION = #{loadingLocation,jdbcType=VARCHAR},
     DISCHARGE_LOCATION = #{dischargeLocation,jdbcType=VARCHAR},
     COUNTER_LOCATION = #{counterLocation,jdbcType=VARCHAR},
-    REMARK = #{remark,jdbcType=VARCHAR},
+    REMARK = REPLACE(#{remark,jdbcType=VARCHAR}, '\n', CHAR(13)),
     LAST_UPDATE_DATE = CURRENT_TIMESTAMP,
     OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1
     where CUSTOMER_ID = #{customerId,jdbcType=DECIMAL}

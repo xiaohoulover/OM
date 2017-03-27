@@ -2,12 +2,12 @@ package com.xinda.cm.customer.controller;
 
 import com.xinda.cm.customer.dto.Customer;
 import com.xinda.cm.customer.service.ICustomerService;
-import com.xinda.om.sys.contant.BaseConstants;
-import com.xinda.om.system.dto.ResponseJsonData;
+import com.xinda.system.sys.contant.BaseConstants;
+import com.xinda.system.sys.dto.ResponseJsonData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import com.xinda.om.sys.controller.BaseController;
+import com.xinda.system.sys.controller.BaseController;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

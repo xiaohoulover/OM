@@ -2,10 +2,10 @@ package com.xinda.fm.file.controller;
 
 import com.xinda.fm.file.dto.FileManagerDto;
 import com.xinda.fm.file.service.IFileManagerService;
-import com.xinda.om.sys.contant.BaseConstants;
-import com.xinda.om.sys.controller.BaseController;
-import com.xinda.om.sys.exception.FileException;
-import com.xinda.om.system.dto.ResponseJsonData;
+import com.xinda.system.sys.contant.BaseConstants;
+import com.xinda.system.sys.controller.BaseController;
+import com.xinda.system.sys.dto.ResponseJsonData;
+import com.xinda.system.sys.exception.FileException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,9 +33,9 @@ public class FileOperateController extends BaseController {
     /**
      * 文件上传.
      *
-     * @param request  上下文请求参数
-     * @param response 上下文应答参数
-     * @param salesOrderId  订单id
+     * @param request      上下文请求参数
+     * @param response     上下文应答参数
+     * @param salesOrderId 订单id
      * @return
      * @throws IOException
      * @throws FileException

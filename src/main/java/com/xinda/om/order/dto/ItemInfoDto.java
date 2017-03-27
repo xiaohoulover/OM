@@ -1,6 +1,6 @@
 package com.xinda.om.order.dto;
 
-import com.xinda.om.system.dto.BaseDto;
+import com.xinda.system.sys.dto.BaseDto;
 
 /**
  * 运输商品信息DTO.

@@ -5,7 +5,7 @@ import com.xinda.cm.car.dto.CarProjectDto;
 import com.xinda.cm.car.mapper.CarInfoMapper;
 import com.xinda.cm.car.mapper.CarProjectMapper;
 import com.xinda.cm.car.service.ICarService;
-import com.xinda.om.sys.contant.BaseConstants;
+import com.xinda.system.sys.contant.BaseConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

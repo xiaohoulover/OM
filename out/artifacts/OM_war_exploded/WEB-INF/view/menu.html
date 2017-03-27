@@ -1,4 +1,4 @@
-<#include "head.html">
+<#include "head.html" />
 <style>
 	#header {
 	    background-color:#515656;
@@ -13,6 +13,14 @@
 	    text-align:center;
 	    padding:5px;
 	}
+
+    .l-topmenu-welcome {
+        position: absolute;
+        height: 24px;
+        line-height: 24px;
+        right: 30px;
+        top: 10px;
+    }
 </style>
 
 <script type="text/javascript">
@@ -75,11 +83,11 @@
             text : '用户管理',
             isexpand : true,
             children : [{
-                url : '${base.contextPath}/sys/sys_user_query.html',
+                url : '${base.contextPath}/user/sys_user_query.html',
                 text : '用户查询',
                 code : 'USER_QUERY'
             },{
-                url : '${base.contextPath}/sys/sys_user_create.html',
+                url : '${base.contextPath}/user/sys_user_create.html',
                 text : '新建用户',
                 code : 'USER_CREATE'
             }]
@@ -259,13 +267,19 @@
 </script>
 <body>
 
-	<!-- <div id="header">
+	<div id="header">
 		<h1>广州欣达运输-订单管理系统</h1>
-	</div> -->
-	<div id="layout1" style="width:99.2%; margin:0 auto; margin-top:4px; ">
+        <div class="l-topmenu-welcome">
+            <!--<label style="font-size: 15px">Logout</label>-->
+            <form id="logoutForm" action = "${base.contextPath}/logout" method="get" >
+                <button id="logout">退 出</button>
+            </form>
+        </div>
+    </div>
+    <div id="layout1" style="width:99.2%; margin:0 auto; margin-top:4px; ">
         <div position="left"  title="主要菜单" id="accordion1">
 	        <div title="功能列表" class="l-scroll">
-                 <ul id="tree1" style="margin-top:3px;">
+                 <ul id="tree1" style="margin-top:3px;" />
             </div>
         </div>
         <div position="center" id="framecenter">

@@ -1,8 +1,7 @@
 package com.xinda.cm.car.dto;
 
-import com.xinda.om.system.dto.BaseDto;
+import com.xinda.system.sys.dto.BaseDto;
 
-import java.util.Date;
 import java.util.List;
 
 /**

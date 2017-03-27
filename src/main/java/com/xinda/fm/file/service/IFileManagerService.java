@@ -1,7 +1,7 @@
 package com.xinda.fm.file.service;
 
 import com.xinda.fm.file.dto.FileManagerDto;
-import com.xinda.om.sys.exception.FileException;
+import com.xinda.system.sys.exception.FileException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
