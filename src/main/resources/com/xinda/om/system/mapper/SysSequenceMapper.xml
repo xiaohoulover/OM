@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xinda.om.system.mapper.SysSequenceMapper">
+  <resultMap id="BaseResultMap" type="com.xinda.om.system.dto.SysSequence">
+    <id column="sequence_Id" jdbcType="DECIMAL" property="sequenceId" />
+    <result column="SEQ_TYPE" jdbcType="VARCHAR" property="seqType" />
+    <result column="INIT_SEQ_VALUE" jdbcType="DECIMAL" property="initSeqValue" />
+    <result column="STEP_LENGTH" jdbcType="DECIMAL" property="stepLength" />
+    <result column="SEQ_LENGTH" jdbcType="DECIMAL" property="seqLength" />
+    <result column="NEXT_SEQ_VALUE" jdbcType="DECIMAL" property="nextSeqValue" />
+    <result column="PRE_SEQ_CODE" jdbcType="VARCHAR" property="preSeqCode" />
+    <result column="PK1VALUE" jdbcType="DECIMAL" property="pk1Value" />
+    <result column="PK2VALUE" jdbcType="DECIMAL" property="pk2Value" />
+    <result column="PK3VALUE" jdbcType="DECIMAL" property="pk3Value" />
+    <result column="CREATION_DATE" jdbcType="TIMESTAMP" property="creationDate" />
+    <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    SEQUENCE_ID, SEQ_TYPE, INIT_SEQ_VALUE, STEP_LENGTH, SEQ_LENGTH, NEXT_SEQ_VALUE, PRE_SEQ_CODE, pk1Value, 
+    pk2Value, pk3Value, CREATION_DATE, LAST_UPDATE_DATE
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_sequence
+    where sequence_Id = #{sequenceId,jdbcType=DECIMAL}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from sys_sequence
+    where sequence_Id = #{sequenceId,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="com.xinda.om.system.dto.SysSequence">
+    <selectKey resultType="int" keyProperty="sequenceId" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into sys_sequence (SEQUENCE_ID, seq_Type, INIT_SEQ_VALUE, 
+      STEP_LENGTH, SEQ_LENGTH, NEXT_SEQ_VALUE, PRE_SEQ_CODE, 
+      pk1Value, pk2Value, pk3Value, 
+      CREATION_DATE, LAST_UPDATE_DATE)
+    values (#{sequenceId,jdbcType=DECIMAL}, #{seqType,jdbcType=VARCHAR}, #{initSeqValue,jdbcType=DECIMAL}, 
+      #{stepLength,jdbcType=DECIMAL}, #{seqLength,jdbcType=DECIMAL}, #{nextSeqValue,jdbcType=DECIMAL}, #{preSeqCode,jdbcType=VARCHAR}, 
+      #{pk1Value,jdbcType=DECIMAL}, #{pk2Value,jdbcType=DECIMAL}, #{pk3Value,jdbcType=DECIMAL}, 
+      CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+  </insert>
+  <insert id="insertSelective" parameterType="com.xinda.om.system.dto.SysSequence">
+    <selectKey resultType="int" keyProperty="sequenceId" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into sys_sequence
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="sequenceId != null">
+        sequence_Id,
+      </if>
+      <if test="seqType != null">
+        seq_Type,
+      </if>
+      <if test="initSeqValue != null">
+        INIT_SEQ_VALUE,
+      </if>
+      <if test="stepLength != null">
+        STEP_LENGTH,
+      </if>
+      <if test="seqLength != null">
+        SEQ_LENGTH,
+      </if>
+      <if test="nextSeqValue != null">
+        NEXT_SEQ_VALUE,
+      </if>
+      <if test="preSeqCode != null">
+        PRE_SEQ_CODE,
+      </if>
+      <if test="pk1Value != null">
+        pk1Value,
+      </if>
+      <if test="pk2Value != null">
+        pk2Value,
+      </if>
+      <if test="pk3Value != null">
+        pk3Value,
+      </if>
+        CREATION_DATE,
+        LAST_UPDATE_DATE,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="sequenceId != null">
+        #{sequenceId,jdbcType=DECIMAL},
+      </if>
+      <if test="seqType != null">
+        #{seqType,jdbcType=VARCHAR},
+      </if>
+      <if test="initSeqValue != null">
+        #{initSeqValue,jdbcType=DECIMAL},
+      </if>
+      <if test="stepLength != null">
+        #{stepLength,jdbcType=DECIMAL},
+      </if>
+      <if test="seqLength != null">
+        #{seqLength,jdbcType=DECIMAL},
+      </if>
+      <if test="nextSeqValue != null">
+        #{nextSeqValue,jdbcType=DECIMAL},
+      </if>
+      <if test="preSeqCode != null">
+        #{preSeqCode,jdbcType=VARCHAR},
+      </if>
+      <if test="pk1Value != null">
+        #{pk1Value,jdbcType=DECIMAL},
+      </if>
+      <if test="pk2Value != null">
+        #{pk2Value,jdbcType=DECIMAL},
+      </if>
+      <if test="pk3Value != null">
+        #{pk3Value,jdbcType=DECIMAL},
+      </if>
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP,
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xinda.om.system.dto.SysSequence">
+    update sys_sequence
+    <set>
+      <if test="seqType != null">
+        seq_Type = #{seqType,jdbcType=VARCHAR},
+      </if>
+      <if test="initSeqValue != null">
+        INIT_SEQ_VALUE = #{initSeqValue,jdbcType=DECIMAL},
+      </if>
+      <if test="stepLength != null">
+        STEP_LENGTH = #{stepLength,jdbcType=DECIMAL},
+      </if>
+      <if test="seqLength != null">
+        SEQ_LENGTH = #{seqLength,jdbcType=DECIMAL},
+      </if>
+      <if test="nextSeqValue != null">
+        NEXT_SEQ_VALUE = #{nextSeqValue,jdbcType=DECIMAL},
+      </if>
+      <if test="preSeqCode != null">
+        PRE_SEQ_CODE = #{preSeqCode,jdbcType=VARCHAR},
+      </if>
+      <if test="pk1Value != null">
+        pk1Value = #{pk1Value,jdbcType=DECIMAL},
+      </if>
+      <if test="pk2Value != null">
+        pk2Value = #{pk2Value,jdbcType=DECIMAL},
+      </if>
+      <if test="pk3Value != null">
+        pk3Value = #{pk3Value,jdbcType=DECIMAL},
+      </if>
+      <if test="creationDate != null">
+        CREATION_DATE = #{creationDate,jdbcType=TIMESTAMP},
+      </if>
+        LAST_UPDATE_DATE = CURRENT_TIMESTAMP
+    </set>
+    where sequence_Id = #{sequenceId,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xinda.om.system.dto.SysSequence">
+    update sys_sequence
+    set seq_Type = #{seqType,jdbcType=VARCHAR},
+      INIT_SEQ_VALUE = #{initSeqValue,jdbcType=DECIMAL},
+      STEP_LENGTH = #{stepLength,jdbcType=DECIMAL},
+      SEQ_LENGTH = #{seqLength,jdbcType=DECIMAL},
+      NEXT_SEQ_VALUE = #{nextSeqValue,jdbcType=DECIMAL},
+      PRE_SEQ_CODE = #{preSeqCode,jdbcType=VARCHAR},
+      pk1Value = #{pk1Value,jdbcType=DECIMAL},
+      pk2Value = #{pk2Value,jdbcType=DECIMAL},
+      pk3Value = #{pk3Value,jdbcType=DECIMAL},
+      CREATION_DATE = #{creationDate,jdbcType=TIMESTAMP},
+      LAST_UPDATE_DATE = CURRENT_TIMESTAMP
+    where sequence_Id = #{sequenceId,jdbcType=DECIMAL}
+  </update>
+  
+  <select id="selectOfLockForUpdate" parameterType="com.xinda.om.system.dto.SysSequence" resultMap="BaseResultMap" >
+  	select <include refid="Base_Column_List" />
+  	from sys_sequence
+  	<trim prefix="WHERE" prefixOverrides="AND|OR" >
+  	  <if test="seqType != null">
+      	and seq_Type = #{seqType,jdbcType=VARCHAR}
+      </if>
+      <if test="initSeqValue != null">
+        and INIT_SEQ_VALUE = #{initSeqValue,jdbcType=DECIMAL}
+      </if>
+      <if test="stepLength != null">
+        and STEP_LENGTH = #{stepLength,jdbcType=DECIMAL}
+      </if>
+      <if test="seqLength != null">
+        and SEQ_LENGTH = #{seqLength,jdbcType=DECIMAL}
+      </if>
+      <if test="nextSeqValue != null">
+        and NEXT_SEQ_VALUE = #{nextSeqValue,jdbcType=DECIMAL}
+      </if>
+      <if test="preSeqCode != null">
+        and PRE_SEQ_CODE = #{preSeqCode,jdbcType=VARCHAR}
+      </if>
+      <if test="pk1Value != null">
+        and pk1Value = #{pk1Value,jdbcType=DECIMAL}
+      </if>
+      <if test="pk2Value != null">
+        and pk2Value = #{pk2Value,jdbcType=DECIMAL}
+      </if>
+      <if test="pk3Value != null">
+        and pk3Value = #{pk3Value,jdbcType=DECIMAL}
+      </if>
+      for update
+  	</trim>
+  </select>
+  
+</mapper>

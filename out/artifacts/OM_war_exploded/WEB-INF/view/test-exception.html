@@ -1,0 +1,26 @@
+<#include 'head.html' />
+
+<!-- 
+测试将异常消息返回到前台，并获取
+ -->
+
+<script type="text/javascript">
+	
+	function textEx() {
+		$.ajax({
+			url : _basePath + "/test/testEx",
+			type : 'POST',
+			dataType : 'json',
+			contentType : 'application/json',
+			success : function (resdata) {
+				console.info(resdata);
+			}
+		});
+	}
+
+</script>
+
+<body>
+	<a href="javascript:textEx();" >Test Exception</a>
+	<a href= "${base.contextPath}/test/testEx" >Not Ajax</a>
+</body>

@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xinda.om.order.mapper.SalesOrderMapper">
+    <resultMap id="BaseResultMap" type="com.xinda.om.order.dto.SalesOrder">
+        <id column="SALES_ORDER_ID" jdbcType="DECIMAL" property="salesOrderId"/>
+        <result column="ORDER_NUMBER" jdbcType="VARCHAR" property="orderNumber"/>
+        <result column="ORDER_STATUS" jdbcType="VARCHAR" property="orderStatus"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="SHIPPING_DATE" jdbcType="TIMESTAMP" property="shippingDate"/>
+        <result column="CREATION_DATE" jdbcType="TIMESTAMP" property="creationDate"/>
+        <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
+        <result column="CUSTOMER_ID" jdbcType="DECIMAL" property="customerId"/>
+
+        <!-- new add columns -->
+        <result column="ORDER_COUNT" property="orderCount" jdbcType="DECIMAL" />
+        <result column="SHIPPING_DATE_FROM" jdbcType="VARCHAR" property="shippingDateFrom" />
+        <result column="SHIPPING_DATE_TO" jdbcType="VARCHAR" property="shippingDateTo" />
+        <result column="WAYBILL_NO" jdbcType="VARCHAR" property="wayBillNo" />
+        <result column="TANK_NO" jdbcType="VARCHAR" property="tankNo" />
+        <result column="CAR_FRONT_NO" jdbcType="VARCHAR" property="carFrontNo" />
+        <result column="RECEIVER" jdbcType="VARCHAR" property="receiver" />
+        <result column="CUSTOMER_NAME" jdbcType="VARCHAR" property="customerName" />
+        <result column="TRANSACTION_NO" jdbcType="VARCHAR" property="transactionNo" />
+
+    </resultMap>
+    <sql id="Base_Column_List">
+        SALES_ORDER_ID, ORDER_NUMBER, ORDER_STATUS, CREATE_DATE, SHIPPING_DATE, CREATION_DATE,
+        LAST_UPDATE_DATE, CUSTOMER_ID
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from om_sales_order
+        where SALES_ORDER_ID = #{salesOrderId,jdbcType=DECIMAL}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from om_sales_order
+        where SALES_ORDER_ID = #{salesOrderId,jdbcType=DECIMAL}
+    </delete>
+    <insert id="insert" parameterType="com.xinda.om.order.dto.SalesOrder">
+        <selectKey resultType="int" keyProperty="salesOrderId">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into om_sales_order (SALES_ORDER_ID, ORDER_NUMBER, ORDER_STATUS,
+        CREATE_DATE, SHIPPING_DATE, CREATION_DATE,
+        LAST_UPDATE_DATE, CUSTOMER_ID)
+        values (#{salesOrderId,jdbcType=DECIMAL}, #{orderNumber,jdbcType=VARCHAR}, #{orderStatus,jdbcType=VARCHAR},
+        #{createDate,jdbcType=TIMESTAMP}, #{shippingDate,jdbcType=TIMESTAMP}, CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP, #{customerId,jdbcType=DECIMAL})
+    </insert>
+    <insert id="insertSelective" parameterType="com.xinda.om.order.dto.SalesOrder">
+        <selectKey resultType="int" keyProperty="salesOrderId">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into om_sales_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="salesOrderId != null">
+                SALES_ORDER_ID,
+            </if>
+            <if test="orderNumber != null">
+                ORDER_NUMBER,
+            </if>
+            <if test="orderStatus != null">
+                ORDER_STATUS,
+            </if>
+            <if test="createDate != null">
+                CREATE_DATE,
+            </if>
+            <if test="shippingDate != null">
+                SHIPPING_DATE,
+            </if>
+            CREATION_DATE,
+            LAST_UPDATE_DATE,
+            <if test="customerId != null">
+                CUSTOMER_ID,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="salesOrderId != null">
+                #{salesOrderId,jdbcType=DECIMAL},
+            </if>
+            <if test="orderNumber != null">
+                #{orderNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="orderStatus != null">
+                #{orderStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="shippingDate != null">
+                #{shippingDate,jdbcType=TIMESTAMP},
+            </if>
+            CURRENT_TIMESTAMP,
+            CURRENT_TIMESTAMP,
+            <if test="customerId != null">
+                #{customerId,jdbcType=DECIMAL},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.xinda.om.order.dto.SalesOrder">
+        update om_sales_order
+        <set>
+            <if test="orderNumber != null">
+                ORDER_NUMBER = #{orderNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="orderStatus != null">
+                ORDER_STATUS = #{orderStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null">
+                CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="shippingDate != null">
+                SHIPPING_DATE = #{shippingDate,jdbcType=TIMESTAMP},
+            </if>
+            LAST_UPDATE_DATE = CURRENT_TIMESTAMP,
+            <if test="customerId != null">
+                CUSTOMER_ID = #{customerId,jdbcType=DECIMAL},
+            </if>
+        </set>
+        where SALES_ORDER_ID = #{salesOrderId,jdbcType=DECIMAL}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.xinda.om.order.dto.SalesOrder">
+        update om_sales_order
+        set ORDER_NUMBER = #{orderNumber,jdbcType=VARCHAR},
+        ORDER_STATUS = #{orderStatus,jdbcType=VARCHAR},
+        CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+        SHIPPING_DATE = #{shippingDate,jdbcType=TIMESTAMP},
+        LAST_UPDATE_DATE = CURRENT_TIMESTAMP,
+        CUSTOMER_ID = #{customerId,jdbcType=DECIMAL}
+        where SALES_ORDER_ID = #{salesOrderId,jdbcType=DECIMAL}
+    </update>
+
+    <select id="selectOrderNumFromHome" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT
+        IFNULL(OO.SHIPPING_DATE,DATE(
+        DATE_SUB(NOW(), INTERVAL 3 DAY)
+        )) SHIPPING_DATE,
+        COUNT(*) AS ORDER_COUNT
+        FROM
+        OM_SALES_ORDER OO
+        WHERE
+        OO.SHIPPING_DATE = DATE(
+        DATE_SUB(NOW(), INTERVAL 3 DAY)
+        )
+        AND OO.ORDER_STATUS = #{orderStatus, jdbcType=VARCHAR}
+        UNION
+        SELECT
+        IFNULL(OO.SHIPPING_DATE,DATE(
+        DATE_SUB(NOW(), INTERVAL 2 DAY)
+        )) SHIPPING_DATE,
+        COUNT(*) AS ORDER_COUNT
+        FROM
+        OM_SALES_ORDER OO
+        WHERE
+        OO.SHIPPING_DATE = DATE(
+        DATE_SUB(NOW(), INTERVAL 2 DAY)
+        )
+        AND OO.ORDER_STATUS = #{orderStatus, jdbcType=VARCHAR}
+        UNION
+        SELECT
+        IFNULL(OO.SHIPPING_DATE,DATE(
+        DATE_SUB(NOW(), INTERVAL 1 DAY)
+        )) SHIPPING_DATE,
+        COUNT(*) AS ORDER_COUNT
+        FROM
+        OM_SALES_ORDER OO
+        WHERE
+        OO.SHIPPING_DATE = DATE(
+        DATE_SUB(NOW(), INTERVAL 1 DAY)
+        )
+        AND OO.ORDER_STATUS = #{orderStatus, jdbcType=VARCHAR}
+        UNION
+        SELECT
+        IFNULL(OO.SHIPPING_DATE, DATE(NOW()))SHIPPING_DATE,
+        COUNT(*) AS ORDER_COUNT
+        FROM
+        OM_SALES_ORDER OO
+        WHERE
+        OO.SHIPPING_DATE = DATE(NOW())
+        AND OO.ORDER_STATUS = #{orderStatus, jdbcType=VARCHAR}
+        UNION
+        SELECT
+        IFNULL(OO.SHIPPING_DATE, DATE(
+        DATE_ADD(NOW(), INTERVAL 1 DAY)
+        )) SHIPPING_DATE,
+        COUNT(*) AS ORDER_COUNT
+        FROM
+        OM_SALES_ORDER OO
+        WHERE
+        OO.SHIPPING_DATE = DATE(
+        DATE_ADD(NOW(), INTERVAL 1 DAY)
+        )
+        AND OO.ORDER_STATUS = #{orderStatus, jdbcType=VARCHAR}
+        UNION
+        SELECT
+        IFNULL(OO.SHIPPING_DATE, DATE(
+        DATE_ADD(NOW(), INTERVAL 2 DAY)
+        )) SHIPPING_DATE,
+        COUNT(*) AS ORDER_COUNT
+        FROM
+        OM_SALES_ORDER OO
+        WHERE
+        OO.SHIPPING_DATE = DATE(
+        DATE_ADD(NOW(), INTERVAL 2 DAY)
+        )
+        AND OO.ORDER_STATUS = #{orderStatus, jdbcType=VARCHAR}
+        UNION
+        SELECT
+        IFNULL(OO.SHIPPING_DATE, DATE(
+        DATE_ADD(NOW(), INTERVAL 3 DAY)
+        )) SHIPPING_DATE,
+        COUNT(*) AS ORDER_COUNT
+        FROM
+        OM_SALES_ORDER OO
+        WHERE
+        OO.SHIPPING_DATE = DATE(
+        DATE_ADD(NOW(), INTERVAL 3 DAY)
+        )
+        AND OO.ORDER_STATUS = #{orderStatus, jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectOrdersByParms" resultMap="BaseResultMap" parameterType="com.xinda.om.order.dto.SalesOrder" >
+        SELECT
+            oo.SALES_ORDER_ID,
+            oo.ORDER_NUMBER,
+            cci.CUSTOMER_NAME,
+            iii.TANK_NO,
+            cci.RECEIVER,
+            oo.CREATE_DATE,
+            oo.SHIPPING_DATE,
+            oo.ORDER_STATUS
+        FROM om_sales_order oo
+          LEFT JOIN cm_customer_info cci ON oo.CUSTOMER_ID = cci.CUSTOMER_ID
+          LEFT JOIN im_item_info iii ON iii.SALES_ORDER_ID = oo.SALES_ORDER_ID
+          LEFT JOIN om_sales_line_car oslc ON oslc.SALES_ORDER_ID = oo.SALES_ORDER_ID
+        <trim prefix="where" prefixOverrides="AND|OR">
+            <if test="orderNumber != null">
+                AND oo.ORDER_NUMBER LIKE CONCAT('%', CONCAT(UPPER(#{orderNumber,jdbcType=VARCHAR}), '%'))
+            </if>
+            <if test="orderStatus != null">
+                AND oo.ORDER_STATUS = #{orderStatus,jdbcType=VARCHAR}
+            </if>
+            <if test="createDate != null">
+                AND oo.CREATE_DATE = #{createDate,jdbcType=TIMESTAMP}
+            </if>
+            <if test="shippingDateFrom != null">
+                AND oo.SHIPPING_DATE &gt;= #{shippingDateFrom,jdbcType=TIMESTAMP}
+            </if>
+            <if test="shippingDateTo != null">
+                AND oo.SHIPPING_DATE &lt;= #{shippingDateTo,jdbcType=TIMESTAMP}
+            </if>
+            <if test="customerId != null">
+                AND oo.CUSTOMER_ID = #{customerId,jdbcType=DECIMAL}
+            </if>
+            <if test="customerName != null">
+                AND cci.CUSTOMER_NAME LIKE CONCAT('%', CONCAT(UPPER(#{customerName,jdbcType=VARCHAR}), '%'))
+            </if>
+            <if test="receiver != null">
+                AND cci.RECEIVER LIKE CONCAT('%', CONCAT(UPPER(#{receiver,jdbcType=VARCHAR}), '%'))
+            </if>
+            <if test="transactionNo != null">
+                AND iii.TRANSACTION_NO LIKE CONCAT('%', CONCAT(UPPER(#{transactionNo,jdbcType=VARCHAR}), '%'))
+            </if>
+            <if test="tankNo != null">
+                AND iii.TANK_NO LIKE CONCAT('%', CONCAT(UPPER(#{tankNo,jdbcType=VARCHAR}), '%'))
+            </if>
+            <if test="wayBillNo != null">
+                AND iii.WAYBILL_NO LIKE CONCAT('%', CONCAT(UPPER(#{wayBillNo,jdbcType=VARCHAR}), '%'))
+            </if>
+            <if test="carFrontNo != null">
+                AND oslc.CAR_FRONT_NO LIKE CONCAT('%', CONCAT(UPPER(#{carFrontNo,jdbcType=VARCHAR}), '%'))
+            </if>
+        </trim>
+    </select>
+
+</mapper>

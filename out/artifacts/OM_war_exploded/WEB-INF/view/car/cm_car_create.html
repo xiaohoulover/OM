@@ -1,0 +1,172 @@
+<#include "../../head.html" />
+
+
+<script type="text/javascript" >
+
+    $(function () {
+        var carForm = window['carForm'] = $('#carForm').ligerForm({
+            inputWidth: 170,
+            labelWidth: 110,
+            space: 20,
+            fields: [{
+                name : 'carId',
+                type : 'hidden'
+            },{
+                display: "车辆编号",
+                name: "plateNo",
+                newline: true,
+                type: "text",
+                group : '车辆信息',
+                validate: {
+                    required: true
+                }
+            }, {
+                display: "类型",
+                name: "type",
+                newline: false,
+                type: "select",
+                options: {
+                    data: carTypeData,
+                    valueField: 'value',
+                    textField: 'text',
+                    onSelected : function (value, text) {
+                        if ("CP" == value) {//车板
+                            liger.get("fuelConsumptionRatio").setDisabled();
+                        } else {
+                            liger.get("fuelConsumptionRatio").setEnabled();
+                        }
+                    }
+                },
+                validate: {
+                    required: true
+                }
+            }, {
+                display: "油耗比",
+                name: "fuelConsumptionRatio",
+                newline: false,
+                type: "number",
+                validate: {
+                    required: true
+                }
+            }]
+        });
+
+        var carProjectGrid = window['carProjectGrid'] = $('#carProjectGrid').ligerGrid({
+            title: '车辆项目信息',
+            width: '99%',
+            height: '60%',
+            rownumbers: true,
+            usePager: false,
+            enabledEdit: true,
+            allowHideColumn: false,
+            checkbox: true,
+            frozen: false,
+            columns: [{
+                display: '项目',
+                name: 'projectName',
+                align: 'center',
+                width: 300,
+                editor: {
+                    type: 'text'
+                }
+            }, {
+                display: '有效期从',
+                name: 'validPeriodFrom',
+                align: 'center',
+                width: 150,
+                type : 'date',
+                editor: {
+                    format : 'yyyy-MM-dd',
+                    type: 'date'
+                }
+            }, {
+                display: '有效期至',
+                name: 'validPeriodTo',
+                align: 'center',
+                width: 150,
+                type : 'date',
+                format : 'yyyy-MM-dd',
+                editor: {
+                    format : 'yyyy-MM-dd',
+                    type: 'date'
+                }
+            }, {
+                display: '备注',
+                name: 'remark',
+                align: 'center',
+                editor: {
+                    type: 'text'
+                }
+            }, {
+                hide : true,
+                width : 1,
+                name : 'projectId'
+            }],
+            toolbar: {
+                items: [{
+                    id: 'cm_car_add',
+                    text: '新增',
+                    click: function () {
+                        carProjectGrid.addRow();
+                    },
+                    icon: 'add'
+                },
+                    {line: true},
+                    {
+                        id: 'cm_car_delete',
+                        text: '删除',
+                        click: function () {
+                            carProjectGrid.deleteSelectedRow();
+                        },
+                        icon: 'delete'
+                    }]
+            }
+        });
+
+        var saveBtn = $("#saveBtn").ligerButton({
+            text : '保存',
+            click : function() {
+                var reqData = carForm.getData();
+                reqData.carProjectDtoList = carProjectGrid.currentData.lines == undefined ? null : carProjectGrid.currentData.lines;
+                $.ajax({
+                    url : _basePath + '/car/saveCar',
+                    data : JSON2.stringify(reqData),
+                    type : 'POST',
+                    dataType : 'json',
+                    contentType : 'application/json',
+                    success : function(resData) {
+                        if (resData.success) {
+                            window.location = _basePath
+                                + "/car/cm_car_create.html?carId="+resData.objData.carId;
+                        }
+                    }
+                });
+                return true;
+            }
+        });
+
+        <#if RequestParameters.carId ? exists >
+            var parm = {'carId': ${RequestParameters.carId}};
+            $.getJSON(_basePath + '/car/getCarDetails', parm, function (resData) {
+                carForm.setData(resData);
+                var obj = {};
+                obj.lines = resData.carProjectDtoList;
+                carProjectGrid.loadData(obj);
+            })
+        </#if>
+
+    });
+
+</script>
+
+<body>
+
+    <div style="margin-left: 10px">
+        <form id="carForm" ></form>
+
+        <div id="carProjectGrid" ></div>
+
+        <div id="saveBtn"></div>
+    </div>
+
+</body>
