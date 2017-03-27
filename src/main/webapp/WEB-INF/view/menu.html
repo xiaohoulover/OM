@@ -1,4 +1,4 @@
-<#include "head.html">
+<#include "head.html" />
 <style>
 	#header {
 	    background-color:#515656;
@@ -71,7 +71,19 @@
 				 text : '文件上传',
 				 code : 'FILE_UPLOAD'
 			 }]
-		 }
+		 },{
+            text : '用户管理',
+            isexpand : true,
+            children : [{
+                url : '${base.contextPath}/sys/sys_user_query.html',
+                text : '用户查询',
+                code : 'USER_QUERY'
+            },{
+                url : '${base.contextPath}/sys/sys_user_create.html',
+                text : '新建用户',
+                code : 'USER_CREATE'
+            }]
+        }
 	];
 
     $(function ()
@@ -253,7 +265,7 @@
 	<div id="layout1" style="width:99.2%; margin:0 auto; margin-top:4px; ">
         <div position="left"  title="主要菜单" id="accordion1">
 	        <div title="功能列表" class="l-scroll">
-                 <ul id="tree1" style="margin-top:3px;">
+                 <ul id="tree1" style="margin-top:3px;" />
             </div>
         </div>
         <div position="center" id="framecenter">

@@ -71,7 +71,19 @@
 				 text : '文件上传',
 				 code : 'FILE_UPLOAD'
 			 }]
-		 }
+		 },{
+            text : '用户管理',
+            isexpand : true,
+            children : [{
+                url : '${base.contextPath}/sys/sys_user_query.html',
+                text : '用户查询',
+                code : 'USER_QUERY'
+            },{
+                url : '${base.contextPath}/sys/sys_user_create.html',
+                text : '新建用户',
+                code : 'USER_CREATE'
+            }]
+        }
 	];
 
     $(function ()
