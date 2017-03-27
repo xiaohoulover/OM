@@ -80,6 +80,13 @@ public class SalesOrderServiceImpl implements ISalesOrderService {
             order.setOrderNumber(createOrderNumber(order));
             salesOrderMapper.insertSelective(order);
         } else {// update
+            SalesOrder oldOrder = salesOrderMapper.selectByOrderIdForUpdate(order.getSalesOrderId());
+            if (null == oldOrder) {//订单已删除
+                throw new OrderException(OrderException.MSG_ERROR_OM_ORDER_INFO_HAD_DELETED);
+            }
+            if (!oldOrder.getObjectVersionNum().equals(order.getObjectVersionNum())) {//订单信息已更改
+                throw new OrderException(OrderException.MSG_ERROR_OM_ORDER_INFO_HAD_CHANGED);
+            }
             salesOrderMapper.updateByPrimaryKeySelective(order);
         }
         // 3.保存商品信息

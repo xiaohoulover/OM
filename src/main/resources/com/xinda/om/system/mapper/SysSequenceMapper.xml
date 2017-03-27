@@ -14,10 +14,11 @@
     <result column="PK3VALUE" jdbcType="DECIMAL" property="pk3Value" />
     <result column="CREATION_DATE" jdbcType="TIMESTAMP" property="creationDate" />
     <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate" />
+    <result column="OBJECT_VERSION_NUM" property="objectVersionNum" jdbcType="DECIMAL" />
   </resultMap>
   <sql id="Base_Column_List">
     SEQUENCE_ID, SEQ_TYPE, INIT_SEQ_VALUE, STEP_LENGTH, SEQ_LENGTH, NEXT_SEQ_VALUE, PRE_SEQ_CODE, pk1Value, 
-    pk2Value, pk3Value, CREATION_DATE, LAST_UPDATE_DATE
+    pk2Value, pk3Value, CREATION_DATE, LAST_UPDATE_DATE, OBJECT_VERSION_NUM
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -36,11 +37,11 @@
     insert into sys_sequence (SEQUENCE_ID, seq_Type, INIT_SEQ_VALUE, 
       STEP_LENGTH, SEQ_LENGTH, NEXT_SEQ_VALUE, PRE_SEQ_CODE, 
       pk1Value, pk2Value, pk3Value, 
-      CREATION_DATE, LAST_UPDATE_DATE)
+      CREATION_DATE, LAST_UPDATE_DATE, OBJECT_VERSION_NUM)
     values (#{sequenceId,jdbcType=DECIMAL}, #{seqType,jdbcType=VARCHAR}, #{initSeqValue,jdbcType=DECIMAL}, 
       #{stepLength,jdbcType=DECIMAL}, #{seqLength,jdbcType=DECIMAL}, #{nextSeqValue,jdbcType=DECIMAL}, #{preSeqCode,jdbcType=VARCHAR}, 
       #{pk1Value,jdbcType=DECIMAL}, #{pk2Value,jdbcType=DECIMAL}, #{pk3Value,jdbcType=DECIMAL}, 
-      CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+      CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1)
   </insert>
   <insert id="insertSelective" parameterType="com.xinda.om.system.dto.SysSequence">
     <selectKey resultType="int" keyProperty="sequenceId" >
@@ -80,6 +81,7 @@
       </if>
         CREATION_DATE,
         LAST_UPDATE_DATE,
+        OBJECT_VERSION_NUM,
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="sequenceId != null">
@@ -114,6 +116,7 @@
       </if>
         CURRENT_TIMESTAMP,
         CURRENT_TIMESTAMP,
+        1,
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.xinda.om.system.dto.SysSequence">
@@ -149,7 +152,8 @@
       <if test="creationDate != null">
         CREATION_DATE = #{creationDate,jdbcType=TIMESTAMP},
       </if>
-        LAST_UPDATE_DATE = CURRENT_TIMESTAMP
+        LAST_UPDATE_DATE = CURRENT_TIMESTAMP,
+        OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1
     </set>
     where sequence_Id = #{sequenceId,jdbcType=DECIMAL}
   </update>
@@ -165,7 +169,8 @@
       pk2Value = #{pk2Value,jdbcType=DECIMAL},
       pk3Value = #{pk3Value,jdbcType=DECIMAL},
       CREATION_DATE = #{creationDate,jdbcType=TIMESTAMP},
-      LAST_UPDATE_DATE = CURRENT_TIMESTAMP
+      LAST_UPDATE_DATE = CURRENT_TIMESTAMP,
+      OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1
     where sequence_Id = #{sequenceId,jdbcType=DECIMAL}
   </update>
   

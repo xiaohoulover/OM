@@ -19,11 +19,12 @@
     <result column="REMARK" property="remark" jdbcType="VARCHAR" />
     <result column="CREATION_DATE" property="creationDate" jdbcType="TIMESTAMP" />
     <result column="LAST_UPDATE_DATE" property="lastUpdateDate" jdbcType="TIMESTAMP" />
+    <result column="OBJECT_VERSION_NUM" property="objectVersionNum" jdbcType="DECIMAL" />
   </resultMap>
   <sql id="Base_Column_List" >
     CUSTOMER_ID, CUSTOMER_NAME, BUSINESS_TYPE, BUSINESS_PRICE, MANAGER_NAME, MANAGER_PHONE,
     RECEIVER, RECEIVING_CONTACT, CONTACT_PHONE, RECEIPT_LOCATION, BILL_BOARD_LOCATION,
-    LOADING_LOCATION, DISCHARGE_LOCATION, COUNTER_LOCATION, REMARK, CREATION_DATE, LAST_UPDATE_DATE
+    LOADING_LOCATION, DISCHARGE_LOCATION, COUNTER_LOCATION, REMARK, CREATION_DATE, LAST_UPDATE_DATE, OBJECT_VERSION_NUM
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select
@@ -44,13 +45,13 @@
     RECEIVER, RECEIVING_CONTACT, CONTACT_PHONE,
     RECEIPT_LOCATION, BILL_BOARD_LOCATION, LOADING_LOCATION,
     DISCHARGE_LOCATION, COUNTER_LOCATION, REMARK,
-    CREATION_DATE, LAST_UPDATE_DATE)
+    CREATION_DATE, LAST_UPDATE_DATE, OBJECT_VERSION_NUM)
     values (#{customerId,jdbcType=DECIMAL}, #{customerName,jdbcType=VARCHAR}, #{businessType,jdbcType=VARCHAR},
     #{businessPrice,jdbcType=DECIMAL}, #{managerName,jdbcType=VARCHAR}, #{managerPhone,jdbcType=VARCHAR},
     #{receiver,jdbcType=VARCHAR}, #{receivingContact,jdbcType=VARCHAR}, #{contactPhone,jdbcType=VARCHAR},
     #{receiptLocation,jdbcType=VARCHAR}, #{billBoardLocation,jdbcType=VARCHAR}, #{loadingLocation,jdbcType=VARCHAR},
     #{dischargeLocation,jdbcType=VARCHAR}, #{counterLocation,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},
-    CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+    CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1)
   </insert>
   <insert id="insertSelective" parameterType="com.xinda.cm.customer.dto.Customer" >
     <selectKey resultType="int" keyProperty="customerId" >
@@ -105,6 +106,7 @@
       </if>
         CREATION_DATE,
         LAST_UPDATE_DATE,
+        OBJECT_VERSION_NUM,
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="customerId != null" >
@@ -154,6 +156,7 @@
       </if>
       CURRENT_TIMESTAMP,
       CURRENT_TIMESTAMP,
+      1,
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.xinda.cm.customer.dto.Customer" >
@@ -201,7 +204,8 @@
       <if test="remark != null" >
         REMARK = REPLACE(#{remark,jdbcType=VARCHAR}, '\n', CHAR(10)CHAR(13)),
       </if>
-        LAST_UPDATE_DATE = CURRENT_TIMESTAMP
+        LAST_UPDATE_DATE = CURRENT_TIMESTAMP,
+        OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1
     </set>
     where CUSTOMER_ID = #{customerId,jdbcType=DECIMAL}
   </update>
@@ -221,7 +225,8 @@
     DISCHARGE_LOCATION = #{dischargeLocation,jdbcType=VARCHAR},
     COUNTER_LOCATION = #{counterLocation,jdbcType=VARCHAR},
     REMARK = #{remark,jdbcType=VARCHAR},
-    LAST_UPDATE_DATE = CURRENT_TIMESTAMP
+    LAST_UPDATE_DATE = CURRENT_TIMESTAMP,
+    OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1
     where CUSTOMER_ID = #{customerId,jdbcType=DECIMAL}
   </update>
 
