@@ -81,8 +81,8 @@ function init_order_btn() {
     editBtn = $("#editBtn").ligerButton({
         text: '修改',
         click: function () {
-            // TODO 修改订单
-            liger.get("orderStatus").setValue('SAVE');
+            // 修改订单
+            editBtn.setDisabled();
             save_or_submit(false);
         }
     });
@@ -91,6 +91,7 @@ function init_order_btn() {
         text: '保存',
         click: function () {
             // 保存订单
+            saveBtn.setDisabled();
             save_or_submit(false);
         }
     });

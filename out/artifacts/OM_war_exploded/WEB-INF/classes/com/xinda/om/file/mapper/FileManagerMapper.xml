@@ -10,12 +10,13 @@
     <result column="FILE_LENGTH" property="fileLength" jdbcType="DECIMAL" />
     <result column="CREATION_DATE" property="creationDate" jdbcType="TIMESTAMP" />
     <result column="LAST_UPDATE_DATE" property="lastUpdateDate" jdbcType="TIMESTAMP" />
+    <result column="OBJECT_VERSION_NUM" property="objectVersionNum" jdbcType="DECIMAL" />
     
     <result column="ORDER_NUMBER" property="orderNumber" jdbcType="VARCHAR" />
     
   </resultMap>
   <sql id="Base_Column_List" >
-    FILE_ID, FILE_NAME, FILE_PATH, SALES_ORDER_ID, FILE_TYPE, FILE_LENGTH, CREATION_DATE, LAST_UPDATE_DATE
+    FILE_ID, FILE_NAME, FILE_PATH, SALES_ORDER_ID, FILE_TYPE, FILE_LENGTH, CREATION_DATE, LAST_UPDATE_DATE, OBJECT_VERSION_NUM
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -31,10 +32,11 @@
     <selectKey resultType="int" keyProperty="fileId" >
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into fm_file_info (FILE_ID, FILE_NAME, FILE_PATH, SALES_ORDER_ID, FILE_TYPE, FILE_LENGTH, CREATION_DATE, LAST_UPDATE_DATE
-      )
+    insert into fm_file_info (FILE_ID, FILE_NAME, FILE_PATH, SALES_ORDER_ID, FILE_TYPE, FILE_LENGTH,
+      CREATION_DATE, LAST_UPDATE_DATE, OBJECT_VERSION_NUM)
     values (#{fileId,jdbcType=DECIMAL}, #{fileName,jdbcType=VARCHAR}, #{filePath,jdbcType=VARCHAR}, #{salesOrderId,jdbcType=DECIMAL},
     	#{fileType,jdbcType=VARCHAR}, #{fileLength,jdbcType=DECIMAL}, #{creationDate,jdbcType=TIMESTAMP}, #{lastUpdateDate,jdbcType=TIMESTAMP},
+        1
       )
   </insert>
   <insert id="insertSelective" parameterType="com.xinda.fm.file.dto.FileManagerDto" >
@@ -63,6 +65,7 @@
       </if>
         CREATION_DATE,
         LAST_UPDATE_DATE,
+        OBJECT_VERSION_NUM,
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="fileId != null" >
@@ -85,6 +88,7 @@
       </if>
       	CURRENT_TIMESTAMP,
         CURRENT_TIMESTAMP,
+        1,
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.xinda.fm.file.dto.FileManagerDto" >
@@ -108,7 +112,8 @@
       <if test="creationDate != null" >
       	CREATION_DATE = #{creationDate,jdbcType=TIMESTAMP},
       </if>
-        LAST_UPDATE_DATE = CURRENT_TIMESTAMP
+        LAST_UPDATE_DATE = CURRENT_TIMESTAMP,
+        OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1
     </set>
     where FILE_ID = #{fileId,jdbcType=DECIMAL}
   </update>
@@ -119,7 +124,8 @@
       SALES_ORDER_ID = #{salesOrderId,jdbcType=DECIMAL},
       FILE_TYPE = #{fileType,jdbcType=VARCHAR},
       FILE_LENGTH = #{fileLength,jdbcType=DECIMAL},
-      LAST_UPDATE_DATE = CURRENT_TIMESTAMP
+      LAST_UPDATE_DATE = CURRENT_TIMESTAMP,
+      OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1
     where FILE_ID = #{fileId,jdbcType=DECIMAL}
   </update>
   

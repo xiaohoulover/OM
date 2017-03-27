@@ -53,6 +53,11 @@ public class BaseDto implements Serializable {
     @JsonIgnore
     private Date lastUpdateDate;
 
+    /**
+     * 行记录号.
+     */
+    private Integer objectVersionNum;
+
     public String get__id() {
         return __id;
     }
@@ -109,4 +114,11 @@ public class BaseDto implements Serializable {
         this.lastUpdateDate = lastUpdateDate;
     }
 
+    public Integer getObjectVersionNum() {
+        return objectVersionNum;
+    }
+
+    public void setObjectVersionNum(Integer objectVersionNum) {
+        this.objectVersionNum = objectVersionNum;
+    }
 }

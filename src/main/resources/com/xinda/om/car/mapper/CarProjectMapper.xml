@@ -10,10 +10,11 @@
         <result column="REMARK" property="remark" jdbcType="VARCHAR" />
         <result column="CREATION_DATE" property="creationDate" jdbcType="TIMESTAMP" />
         <result column="LAST_UPDATE_DATE" property="lastUpdateDate" jdbcType="TIMESTAMP" />
+        <result column="OBJECT_VERSION_NUM" property="objectVersionNum" jdbcType="DECIMAL" />
     </resultMap>
     <sql id="Base_Column_List" >
         PROJECT_ID, CAR_ID, PROJECT_NAME, VALID_PERIOD_FROM, VALID_PERIOD_TO, REMARK, CREATION_DATE,
-        LAST_UPDATE_DATE
+        LAST_UPDATE_DATE, OBJECT_VERSION_NUM
     </sql>
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
         select
@@ -31,10 +32,10 @@
         </selectKey>
         insert into cm_car_project (PROJECT_ID, CAR_ID, PROJECT_NAME,
         VALID_PERIOD_FROM, VALID_PERIOD_TO, REMARK,
-        CREATION_DATE, LAST_UPDATE_DATE)
+        CREATION_DATE, LAST_UPDATE_DATE, OBJECT_VERSION_NUM)
         values (#{projectId,jdbcType=DECIMAL}, #{carId,jdbcType=DECIMAL}, #{projectName,jdbcType=VARCHAR},
         #{validPeriodFrom,jdbcType=TIMESTAMP}, #{validPeriodTo,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR},
-        CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1)
     </insert>
     <insert id="insertSelective" parameterType="com.xinda.cm.car.dto.CarProjectDto" >
         <selectKey resultType="int" keyProperty="projectId" >
@@ -62,6 +63,7 @@
             </if>
                 CREATION_DATE,
                 LAST_UPDATE_DATE,
+                OBJECT_VERSION_NUM,
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="projectId != null" >
@@ -84,6 +86,7 @@
             </if>
             CURRENT_TIMESTAMP,
             CURRENT_TIMESTAMP,
+            1,
         </trim>
     </insert>
     <update id="updateByPrimaryKeySelective" parameterType="com.xinda.cm.car.dto.CarProjectDto" >
@@ -104,7 +107,8 @@
             <if test="remark != null" >
                 REMARK = #{remark,jdbcType=VARCHAR},
             </if>
-                LAST_UPDATE_DATE = CURRENT_TIMESTAMP
+                LAST_UPDATE_DATE = CURRENT_TIMESTAMP,
+                OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1
         </set>
         where PROJECT_ID = #{projectId,jdbcType=DECIMAL}
     </update>
@@ -115,7 +119,8 @@
       VALID_PERIOD_FROM = #{validPeriodFrom,jdbcType=TIMESTAMP},
       VALID_PERIOD_TO = #{validPeriodTo,jdbcType=TIMESTAMP},
       REMARK = #{remark,jdbcType=VARCHAR},
-      LAST_UPDATE_DATE = CURRENT_TIMESTAMP
+      LAST_UPDATE_DATE = CURRENT_TIMESTAMP,
+      OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1
     where PROJECT_ID = #{projectId,jdbcType=DECIMAL}
   </update>
 

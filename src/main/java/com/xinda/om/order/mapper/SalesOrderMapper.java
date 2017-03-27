@@ -54,4 +54,12 @@ public interface SalesOrderMapper {
      */
     List<SalesOrder> getExportExcelOrderData();
 
+    /**
+     * 查询并锁一行数据.
+     *
+     * @param salesOrderId 订单头Id
+     * @return
+     */
+    SalesOrder selectByOrderIdForUpdate(Integer salesOrderId);
+
 }

@@ -9,9 +9,10 @@
     <result column="SALES_ORDER_ID" property="salesOrderId" jdbcType="DECIMAL" />
     <result column="CREATION_DATE" property="creationDate" jdbcType="TIMESTAMP" />
     <result column="LAST_UPDATE_DATE" property="lastUpdateDate" jdbcType="TIMESTAMP" />
+    <result column="OBJECT_VERSION_NUM" property="objectVersionNum" jdbcType="DECIMAL" />
   </resultMap>
   <sql id="Base_Column_List" >
-    DISBURSEMENT_ID, TYPE, AMOUNT, REMARK, SALES_ORDER_ID, CREATION_DATE, LAST_UPDATE_DATE
+    DISBURSEMENT_ID, TYPE, AMOUNT, REMARK, SALES_ORDER_ID, CREATION_DATE, LAST_UPDATE_DATE, OBJECT_VERSION_NUM
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select
@@ -29,10 +30,10 @@
     </selectKey>
     insert into om_sales_disbursement (DISBURSEMENT_ID, TYPE, AMOUNT,
     REMARK, SALES_ORDER_ID, CREATION_DATE,
-    LAST_UPDATE_DATE)
+    LAST_UPDATE_DATE, OBJECT_VERSION_NUM)
     values (#{disbursementId,jdbcType=DECIMAL}, #{type,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL},
     #{remark,jdbcType=VARCHAR}, #{salesOrderId,jdbcType=DECIMAL}, CURRENT_TIMESTAMP,
-    CURRENT_TIMESTAMP)
+    CURRENT_TIMESTAMP, 1)
   </insert>
   <insert id="insertSelective" parameterType="com.xinda.om.order.dto.DisbursementDto" >
     <selectKey resultType="int" keyProperty="disbursementId" >
@@ -57,6 +58,7 @@
       </if>
         CREATION_DATE,
         LAST_UPDATE_DATE,
+        OBJECT_VERSION_NUM,
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="disbursementId != null" >
@@ -76,6 +78,7 @@
       </if>
       CURRENT_TIMESTAMP,
       CURRENT_TIMESTAMP,
+      1,
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.xinda.om.order.dto.DisbursementDto" >
@@ -94,6 +97,7 @@
         SALES_ORDER_ID = #{salesOrderId,jdbcType=DECIMAL},
       </if>
         LAST_UPDATE_DATE = CURRENT_TIMESTAMP,
+        OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1
     </set>
     where DISBURSEMENT_ID = #{disbursementId,jdbcType=DECIMAL}
   </update>
@@ -103,7 +107,8 @@
     AMOUNT = #{amount,jdbcType=DECIMAL},
     REMARK = #{remark,jdbcType=VARCHAR},
     SALES_ORDER_ID = #{salesOrderId,jdbcType=DECIMAL},
-    LAST_UPDATE_DATE = CURRENT_TIMESTAMP
+    LAST_UPDATE_DATE = CURRENT_TIMESTAMP,
+    OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1
     where DISBURSEMENT_ID = #{disbursementId,jdbcType=DECIMAL}
   </update>
 

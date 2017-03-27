@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 public class SalesOrderController extends BaseController {
 
     private Logger logger = LoggerFactory.getLogger(SalesOrderController.class);
+
     @Autowired
     private ISalesOrderService salesOrderService;
 
@@ -49,8 +50,10 @@ public class SalesOrderController extends BaseController {
      */
     @RequestMapping("/om/saveOrder")
     @ResponseBody
-    public ResponseJsonData saveOrSubmitOrder(HttpServletRequest request, HttpServletResponse response,
-                                              @RequestBody SalesOrder order, boolean isSubmit) throws Exception {
+    public ResponseJsonData saveOrSubmitOrder(HttpServletRequest request,
+                                              HttpServletResponse response,
+                                              @RequestBody SalesOrder order,
+                                              boolean isSubmit) throws OrderException {
         return new ResponseJsonData(salesOrderService.saveSalesOrder(order, isSubmit));
     }
 
@@ -65,17 +68,16 @@ public class SalesOrderController extends BaseController {
     @RequestMapping("/om/selectOrdersByParms")
     @ResponseBody
     public ResponseJsonData selectOrdersByParms(@RequestParam(defaultValue = BaseConstants.DEFAULT_PAGE_NUM) int page,
-                                                @RequestParam(defaultValue = BaseConstants.DEFAULT_PAGE_SIZE) int pagesize, SalesOrder order) throws Exception {
+                                                @RequestParam(defaultValue = BaseConstants.DEFAULT_PAGE_SIZE) int pagesize,
+                                                SalesOrder order) throws Exception {
         return new ResponseJsonData(salesOrderService.selectOrdersByParms(page, pagesize, order));
     }
 
     /**
      * 获取订单详情.
      *
-     * @param orderId
-     *            订单Id
+     * @param orderId 订单Id
      * @return
-     *
      */
     @RequestMapping("/om/getOrderDetails")
     @ResponseBody

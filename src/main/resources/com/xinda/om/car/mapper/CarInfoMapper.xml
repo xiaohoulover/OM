@@ -8,9 +8,10 @@
         <result column="FUEL_CONSUMPTION_RATIO" property="fuelConsumptionRatio" jdbcType="DECIMAL" />
         <result column="CREATION_DATE" property="creationDate" jdbcType="TIMESTAMP" />
         <result column="LAST_UPDATE_DATE" property="lastUpdateDate" jdbcType="TIMESTAMP" />
+        <result column="OBJECT_VERSION_NUM" property="objectVersionNum" jdbcType="DECIMAL" />
     </resultMap>
     <sql id="Base_Column_List" >
-        CAR_ID, PLATE_NO, TYPE, FUEL_CONSUMPTION_RATIO, CREATION_DATE, LAST_UPDATE_DATE
+        CAR_ID, PLATE_NO, TYPE, FUEL_CONSUMPTION_RATIO, CREATION_DATE, LAST_UPDATE_DATE, OBJECT_VERSION_NUM
     </sql>
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
         select
@@ -27,10 +28,10 @@
             SELECT LAST_INSERT_ID()
         </selectKey>
         insert into cm_car_info (CAR_ID, PLATE_NO, TYPE,
-        FUEL_CONSUMPTION_RATIO, CREATION_DATE, LAST_UPDATE_DATE
+        FUEL_CONSUMPTION_RATIO, CREATION_DATE, LAST_UPDATE_DATE, OBJECT_VERSION_NUM
         )
         values (#{carId,jdbcType=DECIMAL}, #{plateNo,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},
-        #{fuelConsumptionRatio,jdbcType=DECIMAL}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+        #{fuelConsumptionRatio,jdbcType=DECIMAL}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1
         )
     </insert>
     <insert id="insertSelective" parameterType="com.xinda.cm.car.dto.CarInfoDto" >
@@ -53,6 +54,7 @@
             </if>
                 CREATION_DATE,
                 LAST_UPDATE_DATE,
+                OBJECT_VERSION_NUM,
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="carId != null" >
@@ -69,6 +71,7 @@
             </if>
             CURRENT_TIMESTAMP,
             CURRENT_TIMESTAMP,
+            1,
         </trim>
     </insert>
     <update id="updateByPrimaryKeySelective" parameterType="com.xinda.cm.car.dto.CarInfoDto" >
@@ -83,7 +86,8 @@
             <if test="fuelConsumptionRatio != null" >
                 FUEL_CONSUMPTION_RATIO = #{fuelConsumptionRatio,jdbcType=DECIMAL},
             </if>
-                LAST_UPDATE_DATE = CURRENT_TIMESTAMP
+                LAST_UPDATE_DATE = CURRENT_TIMESTAMP,
+                OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1
         </set>
         where CAR_ID = #{carId,jdbcType=DECIMAL}
     </update>
@@ -92,7 +96,8 @@
         set PLATE_NO = #{plateNo,jdbcType=VARCHAR},
         TYPE = #{type,jdbcType=VARCHAR},
         FUEL_CONSUMPTION_RATIO = #{fuelConsumptionRatio,jdbcType=DECIMAL},
-        LAST_UPDATE_DATE = CURRENT_TIMESTAMP
+        LAST_UPDATE_DATE = CURRENT_TIMESTAMP,
+        OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1
         where CAR_ID = #{carId,jdbcType=DECIMAL}
     </update>
 

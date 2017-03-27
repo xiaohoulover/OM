@@ -10,6 +10,7 @@
         <result column="CREATION_DATE" jdbcType="TIMESTAMP" property="creationDate"/>
         <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
         <result column="CUSTOMER_ID" jdbcType="DECIMAL" property="customerId"/>
+        <result column="OBJECT_VERSION_NUM" property="objectVersionNum" jdbcType="DECIMAL" />
 
         <!-- new add columns -->
         <result column="ORDER_COUNT" property="orderCount" jdbcType="DECIMAL" />
@@ -25,7 +26,7 @@
     </resultMap>
     <sql id="Base_Column_List">
         SALES_ORDER_ID, ORDER_NUMBER, ORDER_STATUS, CREATE_DATE, SHIPPING_DATE, CREATION_DATE,
-        LAST_UPDATE_DATE, CUSTOMER_ID
+        LAST_UPDATE_DATE, CUSTOMER_ID, OBJECT_VERSION_NUM
     </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
@@ -43,10 +44,10 @@
         </selectKey>
         insert into om_sales_order (SALES_ORDER_ID, ORDER_NUMBER, ORDER_STATUS,
         CREATE_DATE, SHIPPING_DATE, CREATION_DATE,
-        LAST_UPDATE_DATE, CUSTOMER_ID)
+        LAST_UPDATE_DATE, CUSTOMER_ID, OBJECT_VERSION_NUM)
         values (#{salesOrderId,jdbcType=DECIMAL}, #{orderNumber,jdbcType=VARCHAR}, #{orderStatus,jdbcType=VARCHAR},
         #{createDate,jdbcType=TIMESTAMP}, #{shippingDate,jdbcType=TIMESTAMP}, CURRENT_TIMESTAMP,
-        CURRENT_TIMESTAMP, #{customerId,jdbcType=DECIMAL})
+        CURRENT_TIMESTAMP, #{customerId,jdbcType=DECIMAL}, 1)
     </insert>
     <insert id="insertSelective" parameterType="com.xinda.om.order.dto.SalesOrder">
         <selectKey resultType="int" keyProperty="salesOrderId">
@@ -74,6 +75,7 @@
             <if test="customerId != null">
                 CUSTOMER_ID,
             </if>
+            OBJECT_VERSION_NUM,
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="salesOrderId != null">
@@ -96,6 +98,7 @@
             <if test="customerId != null">
                 #{customerId,jdbcType=DECIMAL},
             </if>
+            1,
         </trim>
     </insert>
     <update id="updateByPrimaryKeySelective" parameterType="com.xinda.om.order.dto.SalesOrder">
@@ -117,6 +120,7 @@
             <if test="customerId != null">
                 CUSTOMER_ID = #{customerId,jdbcType=DECIMAL},
             </if>
+            OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1
         </set>
         where SALES_ORDER_ID = #{salesOrderId,jdbcType=DECIMAL}
     </update>
@@ -127,7 +131,8 @@
         CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
         SHIPPING_DATE = #{shippingDate,jdbcType=TIMESTAMP},
         LAST_UPDATE_DATE = CURRENT_TIMESTAMP,
-        CUSTOMER_ID = #{customerId,jdbcType=DECIMAL}
+        CUSTOMER_ID = #{customerId,jdbcType=DECIMAL},
+        OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1
         where SALES_ORDER_ID = #{salesOrderId,jdbcType=DECIMAL}
     </update>
 
@@ -272,6 +277,13 @@
                 AND oslc.CAR_FRONT_NO LIKE CONCAT('%', CONCAT(UPPER(#{carFrontNo,jdbcType=VARCHAR}), '%'))
             </if>
         </trim>
+    </select>
+
+    <select id="selectByOrderIdForUpdate" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+          FROM om_sales_order
+         WHERE SALES_ORDER_ID = #{salesOrderId, jdbcType=DECIMAL}
+        FOR UPDATE
     </select>
 
 </mapper>
