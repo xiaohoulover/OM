@@ -22,7 +22,9 @@ public class SysException extends BaseException {
 
     public static final String MSG_ERROR_SYS_USER_NAME_ERROR = "用户名或密码错误!";
 
-    public static final String MSG_ERROR_SYS_USER_NAME_INVALID = "用户已失效";
+    public static final String MSG_ERROR_SYS_USER_NAME_INVALID = "用户已失效!";
+
+    public static final String MSG_ERROR_SYS_VERIFICATION_CODE_ERROR = "验证码输入错误!";
 
     /**
      * 构造方法.用户代码中声明抛出异常信息.

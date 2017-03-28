@@ -100,6 +100,7 @@
 			<mvc:exclude-mapping path="/lib/**" />
 			<mvc:exclude-mapping path="/login" />
 			<mvc:exclude-mapping path="/login.html" />
+			<mvc:exclude-mapping path="/verificationCode" />
 			<bean class="com.xinda.system.sys.interceptor.HtmlInterceptor" />
 		</mvc:interceptor>
 	</mvc:interceptors>

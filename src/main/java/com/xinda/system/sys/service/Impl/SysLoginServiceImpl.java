@@ -2,6 +2,7 @@ package com.xinda.system.sys.service.Impl;
 
 import com.xinda.system.sys.exception.BaseException;
 import com.xinda.system.sys.service.ISysLoginService;
+import com.xinda.system.sys.service.IVerificationCodeService;
 import com.xinda.um.user.dto.SysUser;
 import com.xinda.um.user.service.ISysUserService;
 import org.slf4j.Logger;
@@ -29,6 +30,8 @@ public class SysLoginServiceImpl implements ISysLoginService {
 
     @Autowired
     private ISysUserService sysUserService;
+    @Autowired
+    private IVerificationCodeService verificationCodeService;
 
     @Override
     public ModelAndView doLogin(SysUser sysUser, HttpServletRequest request, HttpServletResponse response) {
@@ -36,7 +39,9 @@ public class SysLoginServiceImpl implements ISysLoginService {
         view.setViewName("/login");
         // 记录用户输入的用户名，登录失败刷新页面时，不需要重新输入
         try {
-            // 登录校验
+            //验证码校验
+            verificationCodeService.valiLoginVerificationCode(request);
+            // 用户名及密码校验
             sysUser = sysUserService.validateLoginInfo(sysUser);
             // 日志
             logger.info("User:[{}] Login ...[{}]",
@@ -62,6 +67,6 @@ public class SysLoginServiceImpl implements ISysLoginService {
         if (session != null) {
             session.invalidate();
         }
-        return new ModelAndView("redirect:/" + "login");
+        return new ModelAndView("redirect:" + "/login");
     }
 }

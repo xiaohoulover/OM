@@ -88,9 +88,41 @@ public class BaseConstants {
      */
     public static final int OM_SEQ_LENGTH = 3;
 
+    //File
     /**
      * 文件保存目录.
      */
     public static final String FILE_SAVE_DIR = "D:/ZiLiao/";
+
+    //System
+    /**
+     * 验证码存储时Key值.
+     */
+    public static final String VERIFICATION_KEY = "verification_key";
+    /**
+     * 验证码图片宽度.
+     */
+    public static final int VERIFICATION_CODE_WIDTH = 120;
+    /**
+     * 验证码图片高度.
+     */
+    public static final int VERIFICATION_CODE_HEIGHT = 36;
+    /**
+     * 验证码图片中字数.
+     */
+    public static final int VERIFICATION_CODE_COUNT = 4;
+    /**
+     * 验证码图片中字体大小.
+     */
+    public static final int VERIFICATION_CODE_FONT_HEIGHT = 28;
+    /**
+     * 图片上干扰线数.
+     */
+    public static final int INTERFERE_LINE_COUNT = 20;
+    /**
+     * 验证码产生随机数范围.
+     */
+    public static final char[] VERIFICATION_CODE_ARRAY = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P',
+            'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '2', '3', '4', '5', '6', '7', '8', '9'};
 
 }

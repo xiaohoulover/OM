@@ -46,7 +46,7 @@ public class HtmlInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object arg2) throws Exception {
         logger.info("Request Uri : [{}]", request.getRequestURI());
         HttpSession session = request.getSession(false);
-        if (session == null) {
+        if (session == null || null == session.getAttribute("userId")) {
             String contextPath = request.getContextPath();
             String path = request.getRequestURI().substring(contextPath.length());
             if ("".equals(path) || "/".equals(path)) {

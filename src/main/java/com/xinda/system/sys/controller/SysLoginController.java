@@ -2,7 +2,9 @@ package com.xinda.system.sys.controller;
 
 import com.xinda.system.sys.contant.BaseConstants;
 import com.xinda.system.sys.service.ISysLoginService;
+import com.xinda.system.sys.service.IVerificationCodeService;
 import com.xinda.um.user.dto.SysUser;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -29,6 +34,8 @@ public class SysLoginController extends BaseController {
 
     @Autowired
     private ISysLoginService sysLoginService;
+    @Autowired
+    private IVerificationCodeService verificationCodeService;
 
     /**
      * 登陆.
@@ -72,16 +79,17 @@ public class SysLoginController extends BaseController {
     }
 
     /**
-     * 生成验证码.
+     * 生成验证码图片.
      *
      * @param request
      * @param response
      */
-    @RequestMapping(value = "/verifiCode", method = RequestMethod.GET)
-    public void code(HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(value = "/verificationCode", method = RequestMethod.GET)
+    public void code(HttpServletRequest request, HttpServletResponse response) throws IOException {
         //todo 获取验证码
-        logger.info("Create verifiCode ...");
-
+        logger.info("Create verificationCode ...");
+        //生成验证码图片
+        verificationCodeService.generateVerificationCode(request, response);
     }
 
 }
