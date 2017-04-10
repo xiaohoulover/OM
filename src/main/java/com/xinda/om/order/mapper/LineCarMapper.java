@@ -30,4 +30,11 @@ public interface LineCarMapper {
      * @return
      */
     List<LineCarDto> selectLineCarsByParms(LineCarDto lineCarDto);
+
+    /**
+     * 根据订单Id删除订单车辆信息.
+     *
+     * @param orderId
+     */
+    void deleteByOrderId(Integer orderId);
 }

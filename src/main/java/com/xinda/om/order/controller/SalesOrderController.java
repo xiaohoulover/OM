@@ -18,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * 订单管理Controller.
@@ -58,7 +59,7 @@ public class SalesOrderController extends BaseController {
     }
 
     /**
-     * 根据参数条件查询订单信息.
+     * 查询页-根据参数条件查询订单信息(带分页).
      *
      * @param page     页码
      * @param pagesize 每页显示条数
@@ -69,7 +70,7 @@ public class SalesOrderController extends BaseController {
     @ResponseBody
     public ResponseJsonData selectOrdersByParms(@RequestParam(defaultValue = BaseConstants.DEFAULT_PAGE_NUM) int page,
                                                 @RequestParam(defaultValue = BaseConstants.DEFAULT_PAGE_SIZE) int pagesize,
-                                                SalesOrder order) throws Exception {
+                                                SalesOrder order) throws OrderException {
         return new ResponseJsonData(salesOrderService.selectOrdersByParms(page, pagesize, order));
     }
 
@@ -83,6 +84,33 @@ public class SalesOrderController extends BaseController {
     @ResponseBody
     public SalesOrder getOrderDetails(Integer orderId) throws OrderException {
         return salesOrderService.selectOrderDetails(orderId);
+    }
+
+    /**
+     * 删除订单.
+     *
+     * @param request
+     * @param response
+     * @param orders
+     */
+    @RequestMapping("/om/deleteOrder")
+    @ResponseBody
+    public ResponseJsonData deleteOrder(HttpServletRequest request, HttpServletResponse response,
+                                        @RequestBody List<SalesOrder> orders) throws Exception {
+        salesOrderService.deleteOrders(orders);
+        return new ResponseJsonData(true);
+    }
+
+    /**
+     * 根据参数条件查询订单信息.
+     *
+     * @param order 订单对象
+     * @return
+     */
+    @RequestMapping("/om/queryOrdersByParms")
+    @ResponseBody
+    public List<SalesOrder> queryOrdersByParms(SalesOrder order) throws OrderException {
+        return salesOrderService.queryOrdersByParms(order);
     }
 
 }

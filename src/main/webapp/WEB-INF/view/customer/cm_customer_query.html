@@ -11,10 +11,17 @@
                 inputWidth: 150,
                 labelWidth: 100,
                 fields: [{
-                    display: "客户名称 ",
+                    display: "客户名称",
                     name: "customerName",
                     newline: false,
-                    type: "text"
+                    type: "text",
+                    group : '查询条件'
+                }, {
+                    display: "业务类型",
+                    name: "businessType",
+                    newline: false,
+                    type: "text",
+                    group : '查询条件'
                 }],
                 buttons: [{
                     text: '查询',
@@ -88,8 +95,8 @@
     </script>
 
     <body>
-    <div>
+    <div style="margin-top: 10px">
         <form id="queryForm"></form>
-        <div id="queryGrid" style="margin-top: 10px"></div>
+        <div id="queryGrid"></div>
     </div>
     </body>

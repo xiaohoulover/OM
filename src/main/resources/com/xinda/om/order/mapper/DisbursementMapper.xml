@@ -134,4 +134,9 @@
     </trim>
   </select>
 
+  <delete id="deleteByOrderId" parameterType="java.lang.Integer">
+    DELETE FROM om_sales_disbursement
+    WHERE SALES_ORDER_ID = #{salesOrderId,jdbcType=DECIMAL}
+  </delete>
+
 </mapper>

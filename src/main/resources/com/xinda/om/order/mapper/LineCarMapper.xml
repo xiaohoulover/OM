@@ -223,4 +223,9 @@
     </trim>
   </select>
 
+  <delete id="deleteByOrderId" parameterType="java.lang.Integer">
+    DELETE FROM om_sales_line_car
+    WHERE SALES_ORDER_ID = #{salesOrderId,jdbcType=DECIMAL}
+  </delete>
+
 </mapper>

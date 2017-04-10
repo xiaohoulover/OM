@@ -50,8 +50,8 @@ public class SysLoginServiceImpl implements ISysLoginService {
             //保存session
             HttpSession session = request.getSession(true);
             session.setAttribute("userId", sysUser.getUserId());
+            session.setAttribute("userType", sysUser.getUserType());
             session.setAttribute("userName", sysUser.getUserName());
-
             view.setViewName("redirect:/");
         } catch (BaseException e) {
             view.addObject("_UserName", sysUser.getUserName());

@@ -1,17 +1,20 @@
 <#include "head.html" />
 <style>
 	#header {
-	    background-color:#515656;
+	    background-color:#778899;
+        height: 50px;
 	    color:white;
 	    text-align:center;
 	    padding:5px;
 	}
 	#footer {
-	    background-color:#515656;
+	    background-color:#778899;
 	    color:white;
 	    clear:both;
 	    text-align:center;
-	    padding:5px;
+        height:40px;
+        line-height:32px;
+	    /*padding:5px;*/
 	}
 
     .l-topmenu-welcome {
@@ -72,23 +75,27 @@
 			 isexpand : true,
 			 children : [{
 				 url : '${base.contextPath}/file/fm_file_query.html',
-				 text : '文件查询',
+				 text : '查询及下载',
 				 code : 'FILE_QUERY'
-			 },{
+			 }/*,{
 				 url : '${base.contextPath}/file/fm_file_upload.html',
 				 text : '文件上传',
 				 code : 'FILE_UPLOAD'
-			 }]
+			 }*/]
 		 },{
             text : '用户管理',
             isexpand : true,
-            children : [{
+            children : [
+            <#if Session.userType == '0'>
+            {
                 url : '${base.contextPath}/user/sys_user_query.html',
-                text : '用户查询',
+                text : '创建及查询',
                 code : 'USER_QUERY'
-            },{
+            },
+            </#if>
+            {
                 url : '${base.contextPath}/user/sys_user_create.html',
-                text : '新建用户',
+                text : '更改密码',
                 code : 'USER_CREATE'
             }]
         }
@@ -265,16 +272,10 @@
         }
     }
 </script>
-<body>
+<body style="padding:0px;background:#EAEEF5; overflow: hidden;">
 
 	<div id="header">
-		<h1>广州欣达运输-订单管理系统</h1>
-        <div class="l-topmenu-welcome">
-            <!--<label style="font-size: 15px">Logout</label>-->
-            <form id="logoutForm" action = "${base.contextPath}/logout" method="get" >
-                <button id="logout">退 出</button>
-            </form>
-        </div>
+		<h1 style="margin-top: 10px !important;">广州欣达运输-订单管理系统</h1>
     </div>
     <div id="layout1" style="width:99.2%; margin:0 auto; margin-top:4px; ">
         <div position="left"  title="主要菜单" id="accordion1">
@@ -289,6 +290,11 @@
         </div>
     </div>
     <div id="footer">
-		Copyright XinDa 2017.02.25.
-	</div>
+            Copyright XinDa 2017.02.25.
+        <div style="display:block; float:right; margin-right:20px;">
+            <form id="logoutForm" action = "${base.contextPath}/logout" method="get" >
+                <button style="margin-top: 10px !important;" id="logout">退 出</button>
+            </form>
+        </div>
+    </div>
 </body>

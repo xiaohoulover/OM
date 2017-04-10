@@ -24,18 +24,11 @@ public interface CustomerMapper {
     int updateByPrimaryKey(Customer record);
 
     /**
-     * 查询所有的客户信息.
-     *
-     * @return
-     */
-    List<Customer> queryAllCustomers();
-
-    /**
      * 根据参数条件查询客户信息.
      *
-     * @param customer 客户对象参数
+     * @param customer
      * @return
      */
-    List<Customer> selectCustomerByParms(Customer customer);
+    List<Customer> queryCustomersByParams(Customer customer);
 
 }

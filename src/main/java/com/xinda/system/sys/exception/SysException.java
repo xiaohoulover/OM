@@ -18,9 +18,13 @@ public class SysException extends BaseException {
      */
     private static final String DEFAULT_CODE = "SYS";
 
+    public static final String MSG_ERROR_SYS_USER_NOT_EXISTS = "用户不存在!";
+
     public static final String MSG_ERROR_SYS_USER_NAME_NOT_NULL = "用户名或密码不能为空!";
 
-    public static final String MSG_ERROR_SYS_USER_NAME_ERROR = "用户名或密码错误!";
+    public static final String MSG_ERROR_SYS_USER_NAME_ERROR = "用户名输入错误!";
+
+    public static final String MSG_ERROR_SYS_USER_PASSWORD_ERROR = "密码输入错误!";
 
     public static final String MSG_ERROR_SYS_USER_NAME_INVALID = "用户已失效!";
 

@@ -156,4 +156,10 @@
        		AND UPPER(o.ORDER_NUMBER) LIKE concat('%', concat(UPPER(#{orderNumber,jdbcType=VARCHAR}), '%'))
      	</if>
   </select>
+
+  <delete id="deleteByOrderId" parameterType="java.lang.Integer">
+    DELETE FROM fm_file_info
+    WHERE SALES_ORDER_ID = #{salesOrderId,jdbcType=DECIMAL}
+  </delete>
+
 </mapper>

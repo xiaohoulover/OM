@@ -30,7 +30,7 @@ public interface ISalesOrderService {
     public List<SalesOrder> selectOrderNumFromHome();
 
     /**
-     * 根据参数查询订单信息.
+     * 查询页-根据参数查询订单详细信息(带分页).
      *
      * @param pageNum  页数
      * @param pageSize 显示条数.
@@ -40,11 +40,28 @@ public interface ISalesOrderService {
     public List<SalesOrder> selectOrdersByParms(int pageNum, int pageSize, SalesOrder order) throws OrderException;
 
     /**
+     * 根据参数查询订单信息.
+     *
+     * @param order
+     * @return
+     * @throws OrderException
+     */
+    public List<SalesOrder> queryOrdersByParms(SalesOrder order) throws OrderException;
+
+    /**
      * 获取订单详情
      *
      * @param orderId 订单Id
      * @return
      */
     public SalesOrder selectOrderDetails(Integer orderId) throws OrderException;
+
+    /**
+     * 删除订单信息.
+     *
+     * @param orders
+     * @throws OrderException
+     */
+    public void deleteOrders(List<SalesOrder> orders) throws OrderException;
 
 }

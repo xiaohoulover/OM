@@ -2011,7 +2011,8 @@
             }
         }
     });
-})(jQuery);﻿/**
+})(jQuery);
+/**
 * jQuery ligerUI 1.3.3
 * 
 * http://ligerui.com
@@ -4301,7 +4302,10 @@
                     }
                     if (p.url)
                     {
-                        g.setParm('key', currentKey);
+                        // Coundy 2017-04-08 BEGIN
+                        //g.setParm('key', currentKey);
+                        g.setParm(p.textField, currentKey);
+                        //Coundy 2017-04-08 END
                         g.setUrl(p.url, function ()
                         {
                             g._selectBoxShow();
@@ -4311,7 +4315,11 @@
                         g.grid.setParm('key', currentKey);
                         g.grid.reload();
                     }
-                 
+                    //Coundy 2017-04-08 BEGIN
+                    else {
+                        g._selectBoxShow();
+                    }
+                    //Coundy 2017-04-08 END
                     this._acto = null;
                 }, 300);
             });

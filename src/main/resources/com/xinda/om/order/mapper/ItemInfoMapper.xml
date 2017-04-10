@@ -263,9 +263,14 @@
         AND REMARK = #{remark,jdbcType=VARCHAR}
       </if>
       <if test="salesOrderId != null" >
-        SALES_ORDER_ID = #{salesOrderId,jdbcType=DECIMAL}
+        AND SALES_ORDER_ID = #{salesOrderId,jdbcType=DECIMAL}
       </if>
     </trim>
   </select>
+
+  <delete id="deleteByOrderId" parameterType="java.lang.Integer">
+    DELETE FROM im_item_info
+    WHERE SALES_ORDER_ID = #{salesOrderId,jdbcType=DECIMAL}
+  </delete>
 
 </mapper>

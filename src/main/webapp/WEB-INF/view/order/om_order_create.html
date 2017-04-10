@@ -22,6 +22,8 @@
 <script type="text/javascript">
 
     $(function () {
+
+        var customerTypeData;
         //初始化Form表单
         var orderForm = window['orderForm'] = $("#orderForm").ligerForm({
             inputWidth: 200,
@@ -51,6 +53,9 @@
                     valueField: 'value',
                     textField: 'text',
                     value: 'NEW'
+                },
+                validate: {
+                    required: true
                 }
             }, {
                 display: "创建日期",
@@ -85,46 +90,88 @@
             fields: [{
                 display: "客户名称",
                 name: "customerId",
-                textValue: "customerName",
                 newline: true,
                 type: "combobox",
+                options : {
+                    valueField : 'customerId',
+                    textField : 'customerName',
+                    url : _basePath + "/customer/queryAllCustomers",
+                    isMultiSelect : false,
+                    isShowCheckBox : false,
+                    highLight : true,
+                    autocomplete : true,
+                    keySupport : true,
+                    autocompleAllowEmpty : true,
+                    onSelected : function (value, text) {
+                        if (value) {
+                            liger.get("customerTypeId").setValue();
+                            liger.get("businessPrice").setValue('');
+                            liger.get("managerName").setValue('');
+                            liger.get("managerPhone").setValue('');
+                            liger.get("receiver").setValue('');
+                            liger.get("receiptLocation").setValue('');
+                            liger.get("receivingContact").setValue('');
+                            liger.get("contactPhone").setValue('');
+                            liger.get("billBoardLocation").setValue('');
+                            liger.get("loadingLocation").setValue('');
+                            liger.get("dischargeLocation").setValue('');
+                            liger.get("counterLocation").setValue('');
+                            $("#remark").val('');
+
+                            var parm = {'customerId': value};
+                            $.getJSON(_basePath + "/customer/getCustomerDetails", parm, function (resdata) {
+                                customerTypeData = resdata.customerTypeList;
+                                liger.get('customerTypeId').setData(resdata.customerTypeList);
+                            });
+                        }
+                    }
+                },
                 group: '客户信息',
                 validate: {
                     required: true
-                },
-                options :{
-                    width: 250,
-                    slide: false,
-                    selectBoxWidth: 500,
-                    selectBoxHeight: 240,
-                    valueField: 'customerId',
-                    textField: 'customerName',
-                    keySupport: true,
-                    delayLoadGrid : false,
-                    grid: {
-                        columns: [
-                            { display: '客户名称', name: 'customerName' },
-                            { display: '业务类型', name: 'businessType' },
-                            { display: '经办人姓名', name: 'managerName' },
-                            { display: '收货方', name: 'receiver' }
-                        ],
-                        switchPageSizeApplyComboBox: false,
-                        url: _basePath + '/customer/queryAllCustomers',
-                        pageSize: 10,
-                        checkbox: false,
-                        rownumbers : false,
-                        onSelectRow : function (rowdata, rowid, rowobj) {
-                            // 更细其他字段值
-                            customerForm.setData(rowdata);
-                        }
-                    }
                 }
             }, {
                 display: "业务类型",
-                name: "businessType",
+                name: "customerTypeId",
                 newline: false,
-                type: "text",
-                readonly : true
+                type: "combobox",
+                options : {
+                    data : null,
+                    valueField : 'typeId',
+                    textField : 'businessType',
+                    isMultiSelect : false,
+                    isShowCheckBox : false,
+                    highLight : true,
+                    autocomplete : true,
+                    keySupport : true,
+                    autocompleAllowEmpty : true,
+                    onSelected : function (value, text) {
+                        if (value && customerTypeData) {
+                            for (var i=0; i<customerTypeData.length; i++) {
+                                if (value == customerTypeData[i].typeId) {
+                                    customerForm.setData({
+                                        "businessPrice" : customerTypeData[i].businessPrice,
+                                        "managerName" : customerTypeData[i].managerName,
+                                        "managerPhone" : customerTypeData[i].managerPhone,
+                                        "receiver" : customerTypeData[i].receiver,
+                                        "receiptLocation" : customerTypeData[i].receiptLocation,
+                                        "receivingContact" : customerTypeData[i].receivingContact,
+                                        "contactPhone" : customerTypeData[i].contactPhone,
+                                        "billBoardLocation" : customerTypeData[i].billBoardLocation,
+                                        "loadingLocation" : customerTypeData[i].loadingLocation,
+                                        "dischargeLocation" : customerTypeData[i].dischargeLocation,
+                                        "counterLocation" : customerTypeData[i].counterLocation,
+                                        "remark" : customerTypeData[i].remark
+                                    });
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                },
+                validate: {
+                    required: true
+                }
             }, {
                 display: "业务价格(元)",
                 name: "businessPrice",
@@ -196,7 +243,6 @@
                 name: "remark",
                 newline: true,
                 width: 1280,
-                heigth: 300,
                 type: "textarea"
             }]
         });
@@ -207,7 +253,6 @@
             rownumbers: true,
             usePager: false,
             enabledEdit: true,
-            allowHideColumn: false,
             checkbox: true,
             frozen: false,
             columns: [{
@@ -347,7 +392,8 @@
                         return true;
                     }
                     var poundsWorse = (Number(e.record.receiptWeight)-Number(e.record.shipWeight)) * 1000;
-                    var differenceRate = (Number(e.record.receiptWeight)-Number(e.record.shipWeight)) / 1000;
+                    //var differenceRate = (Number(e.record.receiptWeight)-Number(e.record.shipWeight)) / Number(e.record.receiptWeight) * 1000;
+                    var differenceRate = Number(poundsWorse) / Number(e.record.receiptWeight);
                     //磅差=（签收重量-出货重量）*1000
                     itemGrid.updateCell('poundsWorse', BaseCommonUI.roundPrecision(poundsWorse, 2), e.record);
                     //差异率=（签收重量-出货重量）/签收重量*1000
@@ -592,9 +638,9 @@
 
         <#if RequestParameters.salesOrderId ? exists >
             var parm = {'orderId': ${RequestParameters.salesOrderId}};
-        init_order_page(parm);
+            init_order_page(parm);
         <#else>
-        init_order_page(null);
+            init_order_page(null);
         </#if>
     });
 </script>

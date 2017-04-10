@@ -23,86 +23,154 @@
                     validate: {
                         required: true
                     }
-                }, {
-                    display: "业务类型",
-                    name: "businessType",
-                    newline: false,
-                    type: "text",
-                    validate: {
-                        required: true
-                    }
-                }, {
-                    display: "业务价格(元)",
-                    name: "businessPrice",
-                    newline: false,
-                    type: "number",
-                    validate: {
-                        required: true
-                    }
-                }, {
-                    display: "经办人姓名 ",
-                    name: "managerName",
-                    newline: true,
-                    type: "text"
-                }, {
-                    display: "经办人电话 ",
-                    name: "managerPhone",
-                    newline: false,
-                    type: "text"
-                }, {
-                    display: "收货方",
-                    name: "receiver",
-                    newline: true,
-                    type: "text"
-                }, {
-                    display: "收货地址",
-                    name: "receiptLocation",
-                    newline: false,
-                    type: "text"
-                }, {
-                    display: "收货联系人",
-                    name: "receivingContact",
-                    newline: false,
-                    type: "text"
-                }, {
-                    display: "联系人电话",
-                    name: "contactPhone",
-                    newline: false,
-                    type: "text"
-                }, {
-                    display: "提柜地址",
-                    name: "billBoardLocation",
-                    newline: true,
-                    type: "text"
-                }, {
-                    display: "装货地址",
-                    name: "loadingLocation",
-                    newline: false,
-                    type: "text"
-                }, {
-                    display: "卸货地址",
-                    name: "dischargeLocation",
-                    newline: false,
-                    type: "text"
-                }, {
-                    display: "还柜地址",
-                    name: "counterLocation",
-                    newline: false,
-                    type: "text"
-                }, {
-                    display: "注意事项",
-                    name: "remark",
-                    newline: true,
-                    width: 1280,
-                    heigth: 300,
-                    type: "textarea"
                 }]
             });
+
+            var customerGrid = window['customerGrid'] = $("#customerGrid").ligerGrid({
+					title: '业务类型',
+					width: '99%',
+					height : '75%',
+					rownumbers: false,
+					usePager: false,
+					enabledEdit: true,
+					checkbox: true,
+                	columns: [ {
+                        display: "业务类型",
+                        name: "businessType",
+						width : 130,
+                        validate: {
+                            required: true
+                        },
+                        editor : {
+                            type: "text"
+                        }
+                    }, {
+                        display: "业务价格(元)",
+                        name: "businessPrice",
+                        width : 70,
+                        validate: {
+                            required: true
+                        },
+                        editor : {
+                            type: "text"
+                        }
+                    }, {
+                        display: "经办人姓名 ",
+                        name: "managerName",
+                        width : 80,
+                        editor : {
+                            type: "text"
+                        }
+                    }, {
+                        display: "经办人电话 ",
+                        name: "managerPhone",
+                        width : 110,
+                        editor : {
+                            type: "text"
+                        }
+                    }, {
+                        display: "收货方",
+                        name: "receiver",
+                        width : 130,
+                        editor : {
+                            type: "text"
+                        }
+                    }, {
+                        display: "收货地址",
+                        name: "receiptLocation",
+                        width : 250,
+                        editor : {
+                            type: "text"
+                        }
+                    }, {
+                        display: "收货联系人",
+                        name: "receivingContact",
+                        width : 80,
+                        editor : {
+                            type: "text"
+                        }
+                    }, {
+                        display: "联系人电话",
+                        name: "contactPhone",
+                        width : 110,
+                        editor : {
+                            type: "text"
+                        }
+                    }, {
+                        display: "提柜地址",
+                        name: "billBoardLocation",
+                        width : 130,
+                        editor : {
+                            type: "text"
+                        }
+                    }, {
+                        display: "装货地址",
+                        name: "loadingLocation",
+                        width : 130,
+                        editor : {
+                            type: "text"
+                        }
+                    }, {
+                        display: "卸货地址",
+                        name: "dischargeLocation",
+                        width : 130,
+                        editor : {
+                            type: "text"
+                        }
+                    }, {
+                        display: "还柜地址",
+                        name: "counterLocation",
+                        width : 130,
+                        editor : {
+                            type: "text"
+                        }
+                    }, {
+                        display: "注意事项",
+                        name: "remark",
+                        width : 60,
+						editor : {
+                            type: "text"
+						}
+                    }],
+					onBeforeEdit : function (e) {
+						if ("remark" == e.column.columnname) {
+                            $.ligerDialog.prompt('注意事项', e.value, true, function (yes, value)
+                            {
+                                if (yes)
+                                    customerGrid.updateCell("remark", value, e.record);
+                            });
+                            return false;
+						}
+                    },
+					toolbar: {
+						items: [{
+							id: 'cm_customer_add',
+							text: '新增',
+							click: function () {
+                                customerGrid.addRow();
+							},
+							icon: 'add'
+						},
+							{line: true},
+							{
+								id: 'cm_customer_delete',
+								text: '删除',
+								click: function () {
+                                    customerGrid.deleteSelectedRow();
+								},
+								icon: 'delete'
+							}]
+					}
+				});
+
 			<!-- 初始化buttons -->
             init_btns();
 
             <#if RequestParameters.customerId ? exists >
-                var parm = {'customerId': ${RequestParameters.customerId}};
+				liger.get("customerName").set({
+					'readonly': true
+				});
+            	var parm = {'customerId': ${RequestParameters.customerId}};
             	load_data(parm);
             </#if>
         });
@@ -110,11 +178,13 @@
 
 	<body>
 		<div style="margin-left: 10px">
-			<!-- 客户表单Form -->
+			<!-- 客户名称表单Form -->
 			<form id="customerForm"></form>
+			<!--  客户类型Grid -->
+			<div id="customerGrid"></div>
 			<!-- buttons -->
 			<!-- 按钮 -->
-			<div id="buttons" class="buttons">
+			<div id="buttons" style="margin-top: 10px">
 				<div id="saveBtn"></div>
 			</div>
 		</div>

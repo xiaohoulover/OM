@@ -54,6 +54,10 @@ function init_order_btn() {
             // 删除订单
             $.ligerDialog.confirm("确认删除？", function (yes) {
                 if (yes) {
+                    var manager = $.ligerDialog.waitting('正在处理中,请稍候...');
+                    setTimeout(function () {
+                        manager.close();
+                    }, 1000);
                     var array = new Array();
                     array.push(get_request_data());
                     $.ajax({
@@ -65,8 +69,9 @@ function init_order_btn() {
                         success: function (resdata) {
                             if (resdata.success) {
                                 $.ligerDialog.success("删除成功！");
-                                window.location = _basePath
-                                    + "/om/om_order_create.html";
+                                window.top.f_removeTab("ORDER_DETAILS");
+                                window.top.f_addTab("ORDER_CREATE", '新建订单', _basePath
+                                    + "/order/om_order_create.html");
                             }
                         }
                     });
@@ -82,7 +87,6 @@ function init_order_btn() {
         text: '修改',
         click: function () {
             // 修改订单
-            editBtn.setDisabled();
             save_or_submit(false);
         }
     });
@@ -91,26 +95,52 @@ function init_order_btn() {
         text: '保存',
         click: function () {
             // 保存订单
-            saveBtn.setDisabled();
-            save_or_submit(false);
+            save_or_submit(true);
         }
     });
 
 }
 
 /**
+ * @param param 是否为空.
  * 初始化默认新增行.
  */
-function add_default_rows() {
-    // 运输商品
-    itemGrid.addRow();
-    // 车辆信息
-    carGrid.addRow();
+function add_default_rows(param) {
     // 代垫费用
-    for (var i = 0; i < disbursementData.length; i++) {
-        disbursementGrid.addRow({
-            type: disbursementData[i].value
-        });
+    if (param == null) {
+        // 运输商品
+        itemGrid.addRow();
+        // 车辆信息
+        carGrid.addRow();
+
+        for (var i = 0; i < disbursementData.length; i++) {
+            disbursementGrid.addRow({
+                type: disbursementData[i].value
+            });
+        }
+    } else {
+        if (param.length > 0) {
+            for (var i = 0; i < disbursementData.length; i++) {
+
+                for (var j = 0; j<param.length; j++) {
+                    if (disbursementData[i].value == param[j].type) {
+                        disbursementGrid.addRow({
+                            disbursementId : param[j].disbursementId,
+                            type: disbursementData[i].value,
+                            amount : param[j].amount,
+                            remark : param[j].remark,
+                            salesOrderId : param.salesOrderId
+                        });
+                        break;
+                    }
+                    if (j+1 == param.length) {
+                        disbursementGrid.addRow({
+                            type: disbursementData[i].value
+                        });
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -124,21 +154,43 @@ function init_order_page(parm) {
             customerForm.setData(data.customer);
             liger.get("customerId").setValue(data.customerId);
             liger.get("customerId").setText(data.customer.customerName);
+            liger.get("customerTypeId").setValue(data.customerTypeId);
+            liger.get("customerTypeId").setText(data.customer.customerType.businessType);
+
+            customerForm.setData({
+                "businessPrice": data.customer.customerType.businessPrice,
+                "managerName": data.customer.customerType.managerName,
+                "managerPhone": data.customer.customerType.managerPhone,
+                "receiver": data.customer.customerType.receiver,
+                "receiptLocation": data.customer.customerType.receiptLocation,
+                "receivingContact": data.customer.customerType.receivingContact,
+                "contactPhone": data.customer.customerType.contactPhone,
+                "billBoardLocation": data.customer.customerType.billBoardLocation,
+                "loadingLocation": data.customer.customerType.loadingLocation,
+                "dischargeLocation": data.customer.customerType.dischargeLocation,
+                "counterLocation": data.customer.customerType.counterLocation,
+                "remark": data.customer.customerType.remark
+            });
+
             var obj = {};
             obj.lines = data.itemInfoDtos;
             itemGrid.loadData(obj);
             obj.lines = data.lineCarDtos;
             carGrid.loadData(obj);
-            obj.lines = data.disbursementDtos;
-            disbursementGrid.loadData(obj);
+
+            add_default_rows(data.disbursementDtos);
+
             if ("COMP" == data.orderStatus) {
                 // order
+                liger.get("orderStatus").set({
+                    'readonly': true
+                });
                 liger.get("shippingDate").set({
                     'readonly': true
                 });
-                liger.get("receivingParty").setDisabled();
-                liger.get("receivingContact").setDisabled();
-                liger.get("contactPhone").setDisabled();
+                liger.get("customerId").set({
+                    'readonly': true
+                });
                 // car
                 $("[toolbarid='om_car_add']").hide();
                 $("[toolbarid='om_car_delete']").hide();
@@ -156,7 +208,7 @@ function init_order_page(parm) {
     } else {// 订单创建
         liger.get('createDate').setValue(new Date());
 
-        add_default_rows();
+        add_default_rows(null);
 
         fileUploadBtn.setDisabled(true);
         fileDownBtn.setDisabled(true);
@@ -189,6 +241,7 @@ function jump_order_detail(orderId) {
 function get_request_data() {
     var orderData = BaseCommonUI.dateFormat(orderForm, "@YYYY@-@MM@-@DD@");
     orderData.customerId = customerForm.getData().customerId;
+    orderData.customerTypeId = customerForm.getData().customerTypeId;
     orderData.lineCarDtos = carGrid.currentData.lines == undefined ? null
         : carGrid.currentData.lines;
     orderData.itemInfoDtos = itemGrid.currentData.lines == undefined ? null
@@ -207,18 +260,32 @@ function get_request_data() {
  */
 function f_validatorData(reqData) {
     // 发货日期
-    if (reqData.shippingDate == null) {
-        $.ligerDialog.error("实际发运日期未填写!");
+    if (!reqData.shippingDate) {
+        $.ligerDialog.warn("运输日期未填写!");
+        return false;
+    }
+    if (!reqData.orderStatus) {
+        $.ligerDialog.warn("订单状态未填写!");
+        return false;
+    }
+    if (!reqData.customerId) {
+        $.ligerDialog.warn("客户名称未填写!");
+        return false;
+    }
+    if (!reqData.customerTypeId) {
+        $.ligerDialog.warn("业务类型未填写!");
         return false;
     }
     // 商品行
     var itemData = reqData.itemInfoDtos;
     for (var i = 0; i < itemData.length; i++) {
-        if (!itemData[i].wayBillNo || !itemData[i].tankNo || !itemData[i].unNo
-            || !itemData[i].tankType || !itemData[i].itemName
-            || !itemData[i].hazardCategory) {
-            $.ligerDialog.error("运输商品信息存在字段未填写完全!");
-            return false;
+        if ("delete" != itemData[i].__status) {
+            if (!itemData[i].wayBillNo || !itemData[i].tankNo || !itemData[i].unNo
+                || !itemData[i].tankType || !itemData[i].itemName
+                || !itemData[i].hazardCategory) {
+                $.ligerDialog.warn("运输商品信息中存在字段未填写!");
+                return false;
+            }
         }
     }
     return true;
@@ -228,13 +295,20 @@ function f_validatorData(reqData) {
  * 保存或者提交请求.
  *
  * @param parm
- *            是否是提交
+ *            是否是保存
  */
 function save_or_submit(parm) {
     var reqDate = get_request_data();
     if (!f_validatorData(reqDate)) {
         return false;
     }
+    if (!parm) {
+        reqDate.orderStatus = 'FDBK';
+    }
+    var manager = $.ligerDialog.waitting('正在处理中,请稍候...');
+    setTimeout(function () {
+        manager.close();
+    }, 1000);
     $.ajax({
         url: _basePath + "/om/saveOrder?isSubmit=" + parm,
         type: 'POST',
@@ -243,8 +317,10 @@ function save_or_submit(parm) {
         data: JSON2.stringify(reqDate),
         success: function (resData) {
             if (resData.success) {
-                window.location = _basePath
-                    + "/order/om_order_create.html?salesOrderId="+resData.objData.salesOrderId;
+                window.top.f_removeTab("ORDER_CREATE");
+                window.top.f_removeTab("ORDER_DETAILS");
+                window.top.f_addTab("ORDER_DETAILS", '订单详情', _basePath
+                    + "/order/om_order_create.html?salesOrderId=" + resData.objData.salesOrderId);
             } else {
                 $.ligerDialog.error(resData.resMsg);
             }
@@ -264,6 +340,10 @@ function delete_order(gridName, urlParm) {
         return;
     $.ligerDialog.confirm(("确认删除？"), function (yes) {
         if (yes) {
+            var manager = $.ligerDialog.waitting('正在处理中,请稍候...');
+            setTimeout(function () {
+                manager.close();
+            }, 1000);
             $.ajax({
                 url: urlParm,
                 type: 'POST',

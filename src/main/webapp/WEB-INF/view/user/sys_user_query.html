@@ -3,7 +3,107 @@
 <script type="text/javascript">
 
 	$(function() {
+        var userQueryForm = window['userQueryForm'] = $("#userQueryForm").ligerForm({
+            inputWidth: 200,
+            labelWidth: 80,
+            fields : [{
+                display: '用户名',
+                name: 'userName',
+                newline: true,
+                type: "text",
+				group : '查询条件'
+            }],
+            buttons : [ {
+                text : '查询',
+                width : 60,
+                click : function() {
+                    BaseCommonUI.formToGridQuery(userQueryForm, userGrid);
+                }
+            }]
+        });
 
+        var userGrid = window['userGrid'] = $("#userGrid").ligerGrid({
+            title : '查询结果',
+            height : '99%',
+            usePager : true,
+            checkbox : true,
+            rownumbers : true,
+            enabledEdit : true,
+            url : '${base.contextPath}/user/querySysUserByParam',
+            columns : [{
+                display : '用户名',
+                name : 'userId',
+                textField : 'userName',
+                align : 'center'
+            }, {
+                display : '用户类型',
+                name : 'userType',
+                align : 'center',
+                editor: {
+                    type: 'select',
+                    data: userTypeData,
+                    valueField: 'value',
+                    textField: 'text'
+                },
+                render: BaseCommonUI.gridSelectRender
+            }, {
+                display : '是否失效',
+				name : 'status',
+				align : 'center',
+                editor: {
+                    type: 'select',
+                    data: yesOrNoData,
+                    valueField: 'value',
+                    textField: 'text'
+                },
+                render: BaseCommonUI.gridSelectRender
+			}],
+            toolbar : {
+                items : [{
+                    id : 'sys_user_add',
+                    text : '创建用户',
+                    click : function() {
+                        window.top.f_removeTab("USER_CREATE");
+                        window.parent.f_addTab("USER_CREATE", '创建用户',"${base.contextPath}/user/sys_user_create.html?flag=1");
+                    },
+                    icon : 'add'
+                },
+                    { line: true },
+                    {
+                        id : 'sys_user_delete',
+                        text : '删除',
+                        click : function() {
+                            //todo 删除用户
+							var deleteLines = userGrid.getSelectedRows();
+							if (deleteLines.length > 0) {
+                                $.ligerDialog.confirm(("确认删除？"), function (yes) {
+									if (yes) {
+                                        $.ajax({
+                                            url : _basePath + "/user/deleteSysUsers",
+                                            data : JSON2.stringify(deleteLines),
+                                            type : 'POST',
+                                            dataType : 'json',
+                                            contentType : 'application/json',
+                                            success : function (resData) {
+                                                if (resData.success) {
+                                                    $.ligerDialog.success("删除成功!");
+                                                } else {
+                                                    $.ligerDialog.success("删除失败!");
+                                                }
+                                                userGrid.reload();
+                                            },
+                                            error : function () {
+                                                $.ligerDialog.error("ERROR");
+                                            }
+                                        });
+									}
+                                });
+							}
+                        },
+                        icon : 'delete'
+                    }]
+            }
+		});
 	});
 
 	
@@ -11,6 +111,7 @@
 
 <body>
 	<div>
-		sys_user_query.html
+		<form id="userQueryForm" ></form>
+		<div id="userGrid" ></div>
 	</div>
 </body>

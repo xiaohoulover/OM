@@ -11,6 +11,7 @@
         <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
         <result column="CUSTOMER_ID" jdbcType="DECIMAL" property="customerId"/>
         <result column="OBJECT_VERSION_NUM" property="objectVersionNum" jdbcType="DECIMAL" />
+        <result column="CUSTOMER_TYPE_ID" jdbcType="DECIMAL" property="customerTypeId"/>
 
         <!-- new add columns -->
         <result column="ORDER_COUNT" property="orderCount" jdbcType="DECIMAL" />
@@ -23,10 +24,15 @@
         <result column="CUSTOMER_NAME" jdbcType="VARCHAR" property="customerName" />
         <result column="TRANSACTION_NO" jdbcType="VARCHAR" property="transactionNo" />
 
+        <result column="ORDER_STATUS_ACCE" jdbcType="VARCHAR" property="orderStatusAcce" />
+        <result column="ORDER_STATUS_SHIP" jdbcType="VARCHAR" property="orderStatusShip" />
+        <result column="ORDER_STATUS_FDBK" jdbcType="VARCHAR" property="orderStatusFdbk" />
+        <result column="ORDER_STATUS_COMP" jdbcType="VARCHAR" property="orderStatusComp" />
+
     </resultMap>
     <sql id="Base_Column_List">
         SALES_ORDER_ID, ORDER_NUMBER, ORDER_STATUS, CREATE_DATE, SHIPPING_DATE, CREATION_DATE,
-        LAST_UPDATE_DATE, CUSTOMER_ID, OBJECT_VERSION_NUM
+        LAST_UPDATE_DATE, CUSTOMER_ID, OBJECT_VERSION_NUM, CUSTOMER_TYPE_ID
     </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
@@ -44,10 +50,10 @@
         </selectKey>
         insert into om_sales_order (SALES_ORDER_ID, ORDER_NUMBER, ORDER_STATUS,
         CREATE_DATE, SHIPPING_DATE, CREATION_DATE,
-        LAST_UPDATE_DATE, CUSTOMER_ID, OBJECT_VERSION_NUM)
+        LAST_UPDATE_DATE, CUSTOMER_ID, OBJECT_VERSION_NUM, CUSTOMER_TYPE_ID)
         values (#{salesOrderId,jdbcType=DECIMAL}, #{orderNumber,jdbcType=VARCHAR}, #{orderStatus,jdbcType=VARCHAR},
         #{createDate,jdbcType=TIMESTAMP}, #{shippingDate,jdbcType=TIMESTAMP}, CURRENT_TIMESTAMP,
-        CURRENT_TIMESTAMP, #{customerId,jdbcType=DECIMAL}, 1)
+        CURRENT_TIMESTAMP, #{customerId,jdbcType=DECIMAL}, 1, #{customerTypeId, jdbcType=DECIMAL})
     </insert>
     <insert id="insertSelective" parameterType="com.xinda.om.order.dto.SalesOrder">
         <selectKey resultType="int" keyProperty="salesOrderId">
@@ -76,6 +82,9 @@
                 CUSTOMER_ID,
             </if>
             OBJECT_VERSION_NUM,
+            <if test="customerTypeId != null">
+                CUSTOMER_TYPE_ID,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="salesOrderId != null">
@@ -99,6 +108,9 @@
                 #{customerId,jdbcType=DECIMAL},
             </if>
             1,
+            <if test="customerTypeId != null">
+                #{customerTypeId,jdbcType=DECIMAL},
+            </if>
         </trim>
     </insert>
     <update id="updateByPrimaryKeySelective" parameterType="com.xinda.om.order.dto.SalesOrder">
@@ -120,7 +132,10 @@
             <if test="customerId != null">
                 CUSTOMER_ID = #{customerId,jdbcType=DECIMAL},
             </if>
-            OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1
+            OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1,
+            <if test="customerTypeId != null">
+                CUSTOMER_TYPE_ID = #{customerTypeId,jdbcType=DECIMAL}
+            </if>
         </set>
         where SALES_ORDER_ID = #{salesOrderId,jdbcType=DECIMAL}
     </update>
@@ -132,97 +147,21 @@
         SHIPPING_DATE = #{shippingDate,jdbcType=TIMESTAMP},
         LAST_UPDATE_DATE = CURRENT_TIMESTAMP,
         CUSTOMER_ID = #{customerId,jdbcType=DECIMAL},
-        OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1
+        OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1,
+        CUSTOMER_TYPE_ID = #{customerTypeId,jdbcType=DECIMAL}
         where SALES_ORDER_ID = #{salesOrderId,jdbcType=DECIMAL}
     </update>
 
     <select id="selectOrderNumFromHome" parameterType="java.lang.String" resultMap="BaseResultMap">
-        SELECT
-        IFNULL(OO.SHIPPING_DATE,DATE(
-        DATE_SUB(NOW(), INTERVAL 3 DAY)
-        )) SHIPPING_DATE,
-        COUNT(*) AS ORDER_COUNT
-        FROM
-        OM_SALES_ORDER OO
-        WHERE
-        OO.SHIPPING_DATE = DATE(
-        DATE_SUB(NOW(), INTERVAL 3 DAY)
-        )
-        AND OO.ORDER_STATUS = #{orderStatus, jdbcType=VARCHAR}
-        UNION
-        SELECT
-        IFNULL(OO.SHIPPING_DATE,DATE(
-        DATE_SUB(NOW(), INTERVAL 2 DAY)
-        )) SHIPPING_DATE,
-        COUNT(*) AS ORDER_COUNT
-        FROM
-        OM_SALES_ORDER OO
-        WHERE
-        OO.SHIPPING_DATE = DATE(
-        DATE_SUB(NOW(), INTERVAL 2 DAY)
-        )
-        AND OO.ORDER_STATUS = #{orderStatus, jdbcType=VARCHAR}
-        UNION
-        SELECT
-        IFNULL(OO.SHIPPING_DATE,DATE(
-        DATE_SUB(NOW(), INTERVAL 1 DAY)
-        )) SHIPPING_DATE,
-        COUNT(*) AS ORDER_COUNT
-        FROM
-        OM_SALES_ORDER OO
-        WHERE
-        OO.SHIPPING_DATE = DATE(
-        DATE_SUB(NOW(), INTERVAL 1 DAY)
-        )
-        AND OO.ORDER_STATUS = #{orderStatus, jdbcType=VARCHAR}
-        UNION
-        SELECT
-        IFNULL(OO.SHIPPING_DATE, DATE(NOW()))SHIPPING_DATE,
-        COUNT(*) AS ORDER_COUNT
-        FROM
-        OM_SALES_ORDER OO
-        WHERE
-        OO.SHIPPING_DATE = DATE(NOW())
-        AND OO.ORDER_STATUS = #{orderStatus, jdbcType=VARCHAR}
-        UNION
-        SELECT
-        IFNULL(OO.SHIPPING_DATE, DATE(
-        DATE_ADD(NOW(), INTERVAL 1 DAY)
-        )) SHIPPING_DATE,
-        COUNT(*) AS ORDER_COUNT
-        FROM
-        OM_SALES_ORDER OO
-        WHERE
-        OO.SHIPPING_DATE = DATE(
-        DATE_ADD(NOW(), INTERVAL 1 DAY)
-        )
-        AND OO.ORDER_STATUS = #{orderStatus, jdbcType=VARCHAR}
-        UNION
-        SELECT
-        IFNULL(OO.SHIPPING_DATE, DATE(
-        DATE_ADD(NOW(), INTERVAL 2 DAY)
-        )) SHIPPING_DATE,
-        COUNT(*) AS ORDER_COUNT
-        FROM
-        OM_SALES_ORDER OO
-        WHERE
-        OO.SHIPPING_DATE = DATE(
-        DATE_ADD(NOW(), INTERVAL 2 DAY)
-        )
-        AND OO.ORDER_STATUS = #{orderStatus, jdbcType=VARCHAR}
-        UNION
-        SELECT
-        IFNULL(OO.SHIPPING_DATE, DATE(
-        DATE_ADD(NOW(), INTERVAL 3 DAY)
-        )) SHIPPING_DATE,
-        COUNT(*) AS ORDER_COUNT
-        FROM
-        OM_SALES_ORDER OO
-        WHERE
-        OO.SHIPPING_DATE = DATE(
-        DATE_ADD(NOW(), INTERVAL 3 DAY)
-        )
-        AND OO.ORDER_STATUS = #{orderStatus, jdbcType=VARCHAR}
+        SELECT DISTINCT
+            OO.SHIPPING_DATE,
+            (SELECT COUNT(*) FROM OM_SALES_ORDER WHERE SHIPPING_DATE = OO.SHIPPING_DATE AND ORDER_STATUS = 'ACCE') ORDER_STATUS_ACCE,
+            (SELECT COUNT(*) FROM OM_SALES_ORDER WHERE SHIPPING_DATE = OO.SHIPPING_DATE AND ORDER_STATUS = 'SHIP') ORDER_STATUS_SHIP,
+            (SELECT COUNT(*) FROM OM_SALES_ORDER WHERE SHIPPING_DATE = OO.SHIPPING_DATE AND ORDER_STATUS = 'FDBK') ORDER_STATUS_FDBK,
+            (SELECT COUNT(*) FROM OM_SALES_ORDER WHERE SHIPPING_DATE = OO.SHIPPING_DATE AND ORDER_STATUS = 'COMP') ORDER_STATUS_COMP
+        FROM OM_SALES_ORDER OO
+        WHERE OO.SHIPPING_DATE &lt;= DATE(DATE_ADD(NOW(), INTERVAL 7 DAY))
+          AND OO.SHIPPING_DATE &gt;= DATE(DATE_SUB(NOW(), INTERVAL 7 DAY))
     </select>
 
     <select id="selectOrdersByParms" resultMap="BaseResultMap" parameterType="com.xinda.om.order.dto.SalesOrder" >
@@ -231,12 +170,13 @@
             oo.ORDER_NUMBER,
             cci.CUSTOMER_NAME,
             iii.TANK_NO,
-            cci.RECEIVER,
+            cct.RECEIVER,
             oo.CREATE_DATE,
             oo.SHIPPING_DATE,
             oo.ORDER_STATUS
         FROM om_sales_order oo
           LEFT JOIN cm_customer_info cci ON oo.CUSTOMER_ID = cci.CUSTOMER_ID
+          LEFT JOIN cm_customer_type cct ON oo.CUSTOMER_TYPE_ID = cct.TYPE_ID
           LEFT JOIN im_item_info iii ON iii.SALES_ORDER_ID = oo.SALES_ORDER_ID
           LEFT JOIN om_sales_line_car oslc ON oslc.SALES_ORDER_ID = oo.SALES_ORDER_ID
         <trim prefix="where" prefixOverrides="AND|OR">
@@ -262,7 +202,7 @@
                 AND cci.CUSTOMER_NAME LIKE CONCAT('%', CONCAT(UPPER(#{customerName,jdbcType=VARCHAR}), '%'))
             </if>
             <if test="receiver != null">
-                AND cci.RECEIVER LIKE CONCAT('%', CONCAT(UPPER(#{receiver,jdbcType=VARCHAR}), '%'))
+                AND cct.RECEIVER LIKE CONCAT('%', CONCAT(UPPER(#{receiver,jdbcType=VARCHAR}), '%'))
             </if>
             <if test="transactionNo != null">
                 AND iii.TRANSACTION_NO LIKE CONCAT('%', CONCAT(UPPER(#{transactionNo,jdbcType=VARCHAR}), '%'))
@@ -284,6 +224,34 @@
           FROM om_sales_order
          WHERE SALES_ORDER_ID = #{salesOrderId, jdbcType=DECIMAL}
         FOR UPDATE
+    </select>
+
+    <select id="queryOrderByParams" parameterType="com.xinda.om.order.dto.SalesOrder" resultMap="BaseResultMap" >
+      SELECT <include refid="Base_Column_List" />
+        FROM om_sales_order
+        <trim prefix="where" prefixOverrides="AND|OR">
+            <if test="salesOrderId != null" >
+                AND SALES_ORDER_ID = #{salesOrderId,jdbcType=DECIMAL}
+            </if>
+            <if test="orderNumber != null">
+                AND ORDER_NUMBER LIKE CONCAT('%', CONCAT(UPPER(#{orderNumber,jdbcType=VARCHAR}), '%'))
+            </if>
+            <if test="orderStatus != null">
+                AND ORDER_STATUS = #{orderStatus,jdbcType=VARCHAR}
+            </if>
+            <if test="createDate != null">
+                AND CREATE_DATE = #{createDate,jdbcType=TIMESTAMP}
+            </if>
+            <if test="shippingDate != null">
+                AND SHIPPING_DATE = #{shippingDate,jdbcType=TIMESTAMP}
+            </if>
+            <if test="customerId != null">
+                AND CUSTOMER_ID = #{customerId,jdbcType=DECIMAL}
+            </if>
+            <if test="customerTypeId != null">
+                AND CUSTOMER_TYPE_ID = #{customerTypeId,jdbcType=DECIMAL}
+            </if>
+        </trim>
     </select>
 
 </mapper>

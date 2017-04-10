@@ -1,5 +1,6 @@
 <#include "../../head.html" />
 
+<script src="${base.contextPath}/resources/js/car.js"  type="text/javascript" ></script>
 
 <script type="text/javascript" >
 
@@ -54,7 +55,7 @@
         var carProjectGrid = window['carProjectGrid'] = $('#carProjectGrid').ligerGrid({
             title: '车辆项目信息',
             width: '99%',
-            height: '60%',
+            height : '75%',
             rownumbers: true,
             usePager: false,
             enabledEdit: true,
@@ -123,27 +124,7 @@
             }
         });
 
-        var saveBtn = $("#saveBtn").ligerButton({
-            text : '保存',
-            click : function() {
-                var reqData = carForm.getData();
-                reqData.carProjectDtoList = carProjectGrid.currentData.lines == undefined ? null : carProjectGrid.currentData.lines;
-                $.ajax({
-                    url : _basePath + '/car/saveCar',
-                    data : JSON2.stringify(reqData),
-                    type : 'POST',
-                    dataType : 'json',
-                    contentType : 'application/json',
-                    success : function(resData) {
-                        if (resData.success) {
-                            window.location = _basePath
-                                + "/car/cm_car_create.html?carId="+resData.objData.carId;
-                        }
-                    }
-                });
-                return true;
-            }
-        });
+        init_btns();
 
         <#if RequestParameters.carId ? exists >
             var parm = {'carId': ${RequestParameters.carId}};
@@ -166,7 +147,7 @@
 
         <div id="carProjectGrid" ></div>
 
-        <div id="saveBtn"></div>
+        <div id="saveBtn" style="margin-top: 10px"></div>
     </div>
 
 </body>

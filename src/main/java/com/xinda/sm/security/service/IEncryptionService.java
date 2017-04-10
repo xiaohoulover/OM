@@ -7,6 +7,13 @@ package com.xinda.sm.security.service;
  *
  *         2017年3月8日
  */
-public class IEncryptionService {
+public interface IEncryptionService {
+
+    /**
+     * MD5加密处理.
+     * @param password 原始明文密码
+     * @return
+     */
+    public String encode(String password);
 
 }

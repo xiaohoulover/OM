@@ -31,7 +31,7 @@
                 v = n.text;
                 return false;
             }
-        })
+        });
         return v;
     };
 

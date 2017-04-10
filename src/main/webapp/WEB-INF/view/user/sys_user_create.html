@@ -3,60 +3,145 @@
     <style>
         .buttons {
             position: absolute;
-            right: 0;
+            left: 0;
             margin: 10px;
             height: 35px;
         }
         .buttons div {
             float: left;
-            margin-right: 5px;
+            margin-left: 5px;
         }
     </style>
 
-
     <script type="text/javascript">
 
+
+
         $(function () {
+            var userId = ${Session.userId};
+            jQuery.validator.addMethod("pwdEquals", function(value, element) {
+                var passwordAgain = $.ligerui.get('passwordAgain').getValue();
+                var newPassword = $.ligerui.get('password').getValue();
+                if (newPassword != passwordAgain) {
+                    return false;
+                }
+                return true;
+            }, '密码不一致错误');
+
             var userForm = window['userForm'] = $("#userForm").ligerForm({
                 inputWidth: 200,
                 labelWidth: 80,
-                space: 20,
-                validate: true,
                 fields : [{
+                    name : 'userId',
+                    type : 'hidden',
+                <#if RequestParameters.flag != 1>
+                    options:{
+                        value : '${Session.userId}'
+                    }
+                </#if>
+                }, {
+                    space: 20,
+                    validate: true,
                     display: '用户名',
+                    id : 'userName',
                     name: 'userName',
                     newline: true,
                     type: "text",
-                    group: '用户信息'
+                <#if RequestParameters.flag != 1>
+                    readonly : true,
+                    options : {
+                        value : '${Session.userName}'
+                    },
+                </#if>
+                    validate: {
+                        required: true
+                    }
                 }, {
+                    display : '用户类型',
+                    name : 'userType',
+                    type : 'combobox',
+                    newline : true,
+                    readonly : true,
+                    options : {
+                        data : userTypeData,
+                        valueField : 'value',
+                        textField : 'text',
+                        value : '${Session.userType}'
+                    }
+                },
+            <#if RequestParameters.flag != 1>
+                    {
                     display: '原密码',
+                    id : 'oldPassword',
                     name: 'oldPassword',
                     newline: true,
-                    type: "text"
-                }, {
+                    type: "password",
+                    validate: {
+                        required: true,
+                        minlength: 8
+                    }
+                },
+            </#if>
+                {
                     display: '新密码',
                     name: 'password',
                     newline: true,
-                    type: "text"
+                    type: "password",
+                    validate: {
+                        required: true,
+                        minlength: 8
+                    }
+                }, {
+                    display: '确认密码',
+                    name: 'passwordAgain',
+                    newline: true,
+                    type: "password",
+                    validate: {
+                        required: true,
+                        minlength: 8,
+                        pwdEquals: true
+                    }
                 }]
             });
+
+            var saveBtn = window['saveBtn'] = $("#saveBtn").ligerButton({
+                text: '保存',
+                click: function () {
+                    // 保存
+                    var  data = userForm.getData();
+
+                    if (data.userName && data.password && data.passwordAgain) {
+                        var manager = $.ligerDialog.waitting('正在处理中,请稍候...');
+                        setTimeout(function () {
+                            manager.close();
+                        }, 1000);
+                        $.ajax({
+                            url : _basePath + "/user/saveSysUser",
+                            data : JSON2.stringify(data),
+                            type : 'POST',
+                            dataType : 'json',
+                            contentType : 'application/json',
+                            success : function (resData) {
+                                if (resData.success) {
+                                    $.ligerDialog.success("保存成功!");
+                                } else {
+                                    $.ligerDialog.error("保存失败!");
+                                }
+                            }
+                        });
+                    } else {
+                        $.ligerDialog.error("值不能为空!");
+                    }
+                }
+            });
         });
-
-        var saveBtn = $("#saveBtn").ligerButton({
-            text: '保存',
-            click: function () {
-                //todo 保存
-
-            }
-        });
-
     </script>
 
     <body>
         <div style="margin-left: 10px">
             <div>
                 <div>
-                    <form id="userForm" ></form>
+                    <form id="userForm" autocomplete="off" ></form>
                 </div>
                 <!-- 按钮 -->
                 <div id="buttons" class="buttons">

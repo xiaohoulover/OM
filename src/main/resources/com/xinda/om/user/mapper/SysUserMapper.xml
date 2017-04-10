@@ -5,13 +5,14 @@
     <id column="USER_ID" property="userId" jdbcType="DECIMAL" />
     <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
     <result column="PASSWORD" property="password" jdbcType="VARCHAR" />
+    <result column="USER_TYPE" property="userType" jdbcType="VARCHAR" />
     <result column="STATUS" property="status" jdbcType="VARCHAR" />
     <result column="CREATION_DATE" property="creationDate" jdbcType="TIMESTAMP" />
     <result column="LAST_UPDATE_DATE" property="lastUpdateDate" jdbcType="TIMESTAMP" />
     <result column="OBJECT_VERSION_NUM" property="objectVersionNum" jdbcType="DECIMAL" />
   </resultMap>
   <sql id="Base_Column_List" >
-    USER_ID, USER_NAME, PASSWORD, CREATION_DATE, LAST_UPDATE_DATE, STATUS, OBJECT_VERSION_NUM
+    USER_ID, USER_NAME, PASSWORD, CREATION_DATE, LAST_UPDATE_DATE, STATUS, OBJECT_VERSION_NUM, USER_TYPE
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -28,10 +29,10 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into sys_user (USER_ID, USER_NAME, PASSWORD, 
-      CREATION_DATE, LAST_UPDATE_DATE, STATUS, OBJECT_VERSION_NUM
+      CREATION_DATE, LAST_UPDATE_DATE, STATUS, OBJECT_VERSION_NUM, USER_TYPE
       )
     values (#{userId,jdbcType=DECIMAL}, #{userName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
-      CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{status,jdbcType=VARCHAR}, 1
+      CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, #{status,jdbcType=VARCHAR}, 1, #{userType,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.xinda.um.user.dto.SysUser" >
@@ -54,6 +55,9 @@
       <if test="status != null" >
         STATUS,
       </if>
+      <if test="userType != null" >
+        USER_TYPE,
+      </if>
       OBJECT_VERSION_NUM,
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -72,6 +76,9 @@
         #{status,jdbcType=VARCHAR},
       </if>
         1,
+      <if test="userType != null" >
+        #{userType,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.xinda.um.user.dto.SysUser" >
@@ -88,7 +95,10 @@
       <if test="status != null" >
         STATUS = #{status,jdbcType=VARCHAR},
       </if>
-      OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1
+      OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1,
+      <if test="userType != null" >
+        USER_TYPE = #{userType,jdbcType=VARCHAR}
+      </if>
     </set>
     where USER_ID = #{userId,jdbcType=DECIMAL}
   </update>
@@ -99,11 +109,12 @@
       CREATION_DATE = CURRENT_TIMESTAMP,
       LAST_UPDATE_DATE = CURRENT_TIMESTAMP,
       STATUS = #{status,jdbcType=VARCHAR},
-      OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1
+      OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1,
+      USER_TYPE = #{userType,jdbcType=VARCHAR}
     where USER_ID = #{userId,jdbcType=DECIMAL}
   </update>
   
-  <select id="getSysUser" parameterType="com.xinda.um.user.dto.SysUser" resultMap="BaseResultMap" >
+  <select id="getSysUsers" parameterType="com.xinda.um.user.dto.SysUser" resultMap="BaseResultMap" >
   	select <include refid="Base_Column_List" />
   	from sys_user
   	<trim prefix="WHERE" prefixOverrides="AND|OR" >
@@ -111,15 +122,34 @@
         AND #{userId,jdbcType=DECIMAL}
       </if>
       <if test="userName != null and userName != ''" >
-        AND USER_NAME = #{userName,jdbcType=VARCHAR}
-      </if>
-      <if test="password != null and password != ''" >
-       AND PASSWORD = #{password,jdbcType=VARCHAR}
+        AND UPPER(USER_NAME) LIKE CONCAT('%', CONCAT(UPPER(#{userName,jdbcType=VARCHAR}), '%'))
       </if>
       <if test="status != null and status != ''" >
         AND STATUS = #{status,jdbcType=VARCHAR}
       </if>
+      <if test="userType != null" >
+        AND USER_TYPE = #{userType,jdbcType=VARCHAR}
+      </if>
     </trim>
   </select>
-  
+
+  <select id="querySysUserBySysUser" parameterType="com.xinda.um.user.dto.SysUser" resultMap="BaseResultMap" >
+    select <include refid="Base_Column_List" />
+    from sys_user
+    <trim prefix="WHERE" prefixOverrides="AND|OR" >
+      <if test="userId != null and userId != ''" >
+        AND #{userId,jdbcType=DECIMAL}
+      </if>
+      <if test="userName != null and userName != ''" >
+        AND USER_NAME = #{userName,jdbcType=VARCHAR}
+      </if>
+      <if test="status != null and status != ''" >
+        AND STATUS = #{status,jdbcType=VARCHAR}
+      </if>
+      <if test="userType != null" >
+        AND USER_TYPE = #{userType,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </select>
+
 </mapper>

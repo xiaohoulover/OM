@@ -1,26 +1,26 @@
 package com.xinda.cm.customer.service;
 
 import com.xinda.cm.customer.dto.Customer;
+import com.xinda.cm.customer.dto.CustomerType;
 
 import java.util.List;
+
 
 /**
  * 客户信息处理Service接口.
  *
- * @author coudy
- *         <p>
- *         2017年3月8日
+ * @Author Coundy.
+ * @Date 2017/4/6
  */
 public interface ICustomerService {
 
     /**
-     * 查询所有的客户信息.
+     * 查询客户信息.
      *
-     * @param page     页码
-     * @param pagesize 页显示条数
+     * @param customer
      * @return
      */
-    public List<Customer> queryAllCustomers(int page, int pagesize);
+    public List<Customer> queryCustomersByParams(Customer customer);
 
     /**
      * 保存客户信息.
@@ -41,18 +41,18 @@ public interface ICustomerService {
     /**
      * 根据参数条件查询客户信息.
      *
-     * @param page     页码
-     * @param pagesize 页显示条数
-     * @param customer 参数客户对象
+     * @param page         页码
+     * @param pagesize     页显示条数
+     * @param customerType 参数客户对象
      * @return
      */
-    public List<Customer> selectCustomerByParms(int page, int pagesize, Customer customer);
+    public List<CustomerType> selectCustomerByParms(int page, int pagesize, CustomerType customerType);
 
     /**
      * 删除客户信息.
      *
-     * @param customers 参数集合对象
+     * @param customerTypes 参数集合对象
      */
-    public void deleteCustomer(List<Customer> customers);
+    public void deleteCustomer(List<CustomerType> customerTypes);
 
 }

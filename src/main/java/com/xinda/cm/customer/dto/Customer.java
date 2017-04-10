@@ -2,6 +2,8 @@ package com.xinda.cm.customer.dto;
 
 import com.xinda.system.sys.dto.BaseDto;
 
+import java.util.List;
+
 /**
  * 客户信息Dto.
  *
@@ -18,6 +20,20 @@ public class Customer extends BaseDto {
      */
     private String customerName;
     /**
+     * 扩展属性1.
+     */
+    private String attibute1;
+    /**
+     * 扩展属性2.
+     */
+    private String attibute2;
+    /**
+     * 客户类型集合.
+     */
+    private List<CustomerType> customerTypeList;
+
+    //add property
+    /**
      * 业务类型.
      */
     private String businessType;
@@ -30,45 +46,11 @@ public class Customer extends BaseDto {
      */
     private String managerName;
     /**
-     * 经办人电话.
-     */
-    private String managerPhone;
-    /**
      * 收货方.
      */
     private String receiver;
-    /**
-     * 收获联系人.
-     */
-    private String receivingContact;
-    /**
-     * 联系电话.
-     */
-    private String contactPhone;
-    /**
-     * 收获地址.
-     */
-    private String receiptLocation;
-    /**
-     * 提柜地点.
-     */
-    private String billBoardLocation;
-    /**
-     * 装货地点..
-     */
-    private String loadingLocation;
-    /**
-     * 卸货地点.
-     */
-    private String dischargeLocation;
-    /**
-     * 还柜地点.
-     */
-    private String counterLocation;
-    /**
-     * 注意事项.
-     */
-    private String remark;
+
+    private CustomerType customerType;
 
     public Integer getCustomerId() {
         return customerId;
@@ -86,12 +68,36 @@ public class Customer extends BaseDto {
         this.customerName = customerName == null ? null : customerName.trim();
     }
 
+    public List<CustomerType> getCustomerTypeList() {
+        return customerTypeList;
+    }
+
+    public void setCustomerTypeList(List<CustomerType> customerTypeList) {
+        this.customerTypeList = customerTypeList;
+    }
+
+    public String getAttibute1() {
+        return attibute1;
+    }
+
+    public void setAttibute1(String attibute1) {
+        this.attibute1 = attibute1;
+    }
+
+    public String getAttibute2() {
+        return attibute2;
+    }
+
+    public void setAttibute2(String attibute2) {
+        this.attibute2 = attibute2;
+    }
+
     public String getBusinessType() {
         return businessType;
     }
 
     public void setBusinessType(String businessType) {
-        this.businessType = businessType == null ? null : businessType.trim();
+        this.businessType = businessType;
     }
 
     public Float getBusinessPrice() {
@@ -107,15 +113,7 @@ public class Customer extends BaseDto {
     }
 
     public void setManagerName(String managerName) {
-        this.managerName = managerName == null ? null : managerName.trim();
-    }
-
-    public String getManagerPhone() {
-        return managerPhone;
-    }
-
-    public void setManagerPhone(String managerPhone) {
-        this.managerPhone = managerPhone == null ? null : managerPhone.trim();
+        this.managerName = managerName;
     }
 
     public String getReceiver() {
@@ -123,71 +121,14 @@ public class Customer extends BaseDto {
     }
 
     public void setReceiver(String receiver) {
-        this.receiver = receiver == null ? null : receiver.trim();
+        this.receiver = receiver;
     }
 
-    public String getReceivingContact() {
-        return receivingContact;
+    public CustomerType getCustomerType() {
+        return customerType;
     }
 
-    public void setReceivingContact(String receivingContact) {
-        this.receivingContact = receivingContact == null ? null : receivingContact.trim();
+    public void setCustomerType(CustomerType customerType) {
+        this.customerType = customerType;
     }
-
-    public String getContactPhone() {
-        return contactPhone;
-    }
-
-    public void setContactPhone(String contactPhone) {
-        this.contactPhone = contactPhone == null ? null : contactPhone.trim();
-    }
-
-    public String getReceiptLocation() {
-        return receiptLocation;
-    }
-
-    public void setReceiptLocation(String receiptLocation) {
-        this.receiptLocation = receiptLocation == null ? null : receiptLocation.trim();
-    }
-
-    public String getBillBoardLocation() {
-        return billBoardLocation;
-    }
-
-    public void setBillBoardLocation(String billBoardLocation) {
-        this.billBoardLocation = billBoardLocation == null ? null : billBoardLocation.trim();
-    }
-
-    public String getLoadingLocation() {
-        return loadingLocation;
-    }
-
-    public void setLoadingLocation(String loadingLocation) {
-        this.loadingLocation = loadingLocation == null ? null : loadingLocation.trim();
-    }
-
-    public String getDischargeLocation() {
-        return dischargeLocation;
-    }
-
-    public void setDischargeLocation(String dischargeLocation) {
-        this.dischargeLocation = dischargeLocation == null ? null : dischargeLocation.trim();
-    }
-
-    public String getCounterLocation() {
-        return counterLocation;
-    }
-
-    public void setCounterLocation(String counterLocation) {
-        this.counterLocation = counterLocation == null ? null : counterLocation.trim();
-    }
-
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(String remark) {
-        this.remark = remark == null ? null : remark.trim();
-    }
-
 }

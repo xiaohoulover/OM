@@ -43,6 +43,10 @@ public class SalesOrder extends BaseDto {
      */
     private Integer customerId;
     /**
+     * 客户类型Id.
+     */
+    private Integer customerTypeId;
+    /**
      * 客户信息.
      */
     private Customer customer;
@@ -105,14 +109,17 @@ public class SalesOrder extends BaseDto {
      */
     private String receiver;
 
+    private String orderStatusAcce;
+    private String orderStatusShip;
+    private String orderStatusFdbk;
+    private String orderStatusComp;
+
     public SalesOrder() {
     }
 
-    public SalesOrder(Date shippingDate, Long saveNum, Long compNum) {
+    public SalesOrder(Date shippingDate) {
         super();
         this.shippingDate = shippingDate;
-        this.saveNum = saveNum;
-        this.compNum = compNum;
     }
 
     public Integer getSalesOrderId() {
@@ -161,6 +168,14 @@ public class SalesOrder extends BaseDto {
 
     public Integer getCustomerId() {
         return customerId;
+    }
+
+    public Integer getCustomerTypeId() {
+        return customerTypeId;
+    }
+
+    public void setCustomerTypeId(Integer customerTypeId) {
+        this.customerTypeId = customerTypeId;
     }
 
     public Customer getCustomer() {
@@ -281,6 +296,38 @@ public class SalesOrder extends BaseDto {
 
     public void setReceiver(String receiver) {
         this.receiver = receiver;
+    }
+
+    public String getOrderStatusAcce() {
+        return orderStatusAcce;
+    }
+
+    public void setOrderStatusAcce(String orderStatusAcce) {
+        this.orderStatusAcce = orderStatusAcce;
+    }
+
+    public String getOrderStatusShip() {
+        return orderStatusShip;
+    }
+
+    public void setOrderStatusShip(String orderStatusShip) {
+        this.orderStatusShip = orderStatusShip;
+    }
+
+    public String getOrderStatusFdbk() {
+        return orderStatusFdbk;
+    }
+
+    public void setOrderStatusFdbk(String orderStatusFdbk) {
+        this.orderStatusFdbk = orderStatusFdbk;
+    }
+
+    public String getOrderStatusComp() {
+        return orderStatusComp;
+    }
+
+    public void setOrderStatusComp(String orderStatusComp) {
+        this.orderStatusComp = orderStatusComp;
     }
 
     @Override

@@ -15,11 +15,15 @@
             		options : {
     					valueField : 'salesOrderId',
     					textField : 'orderNumber',
-    					url : _basePath + "/om/selectAllOrders",
+    					url : _basePath + "/om/queryOrdersByParms",
     					isMultiSelect : false,
     					isShowCheckBox : false,
-    					//autocomplete : true
-                    },
+                        autocomplete : true,
+                        keySupport : true,
+                        isMultiSelect : false,
+                        isShowCheckBox : false,
+                        autocompleAllowEmpty : true
+                    }
             	},{
             		display: "文件名",
             		name: "fileName",

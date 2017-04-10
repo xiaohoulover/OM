@@ -137,3 +137,25 @@ var disbursementData = [{
     value: 'OT',
     text: '其他...'
 }];
+
+/**
+ * 是否.
+ */
+var yesOrNoData = [{
+    value : 'Y',
+    text : '是'
+}, {
+    value : 'Y',
+    text : '否'
+}];
+
+/**
+ * 用户类型.
+ */
+var userTypeData = [{
+    value : 0,
+    text : '管理员'
+}, {
+    value : 1,
+    text : '普通用户'
+}];

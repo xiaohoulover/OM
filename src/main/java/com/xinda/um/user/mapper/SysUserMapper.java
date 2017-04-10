@@ -2,6 +2,8 @@ package com.xinda.um.user.mapper;
 
 import com.xinda.um.user.dto.SysUser;
 
+import java.util.List;
+
 /**
  * UserMapper映射接口.
  *
@@ -28,6 +30,14 @@ public interface SysUserMapper {
      * @param sysUser User参数对象
      * @return SysUser
      */
-    SysUser getSysUser(SysUser sysUser);
+    List<SysUser> getSysUsers(SysUser sysUser);
+
+    /**
+     * 查询用户信息.
+     *
+     * @param sysUser
+     * @return
+     */
+    SysUser querySysUserBySysUser(SysUser sysUser);
 
 }

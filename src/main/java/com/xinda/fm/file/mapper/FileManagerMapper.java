@@ -31,4 +31,11 @@ public interface FileManagerMapper {
      */
     List<FileManagerDto> queryFileOperateByParms(FileManagerDto fileManagerDto);
 
+    /**
+     * 根据订单Id删除订单文件信息.
+     *
+     * @param orderId
+     */
+    void deleteByOrderId(Integer orderId);
+
 }

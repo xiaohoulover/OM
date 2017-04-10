@@ -2,7 +2,10 @@ package com.xinda.om.order.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.xinda.cm.customer.dto.Customer;
+import com.xinda.cm.customer.dto.CustomerType;
 import com.xinda.cm.customer.mapper.CustomerMapper;
+import com.xinda.cm.customer.mapper.CustomerTypeMapper;
+import com.xinda.fm.file.mapper.FileManagerMapper;
 import com.xinda.om.order.dto.DisbursementDto;
 import com.xinda.om.order.dto.ItemInfoDto;
 import com.xinda.om.order.dto.LineCarDto;
@@ -26,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -47,11 +51,15 @@ public class SalesOrderServiceImpl implements ISalesOrderService {
     @Autowired
     private CustomerMapper customerMapper;
     @Autowired
+    private CustomerTypeMapper customerTypeMapper;
+    @Autowired
     private ItemInfoMapper itemInfoMapper;
     @Autowired
     private LineCarMapper lineCarMapper;
     @Autowired
     private DisbursementMapper disbursementMapper;
+    @Autowired
+    private FileManagerMapper fileManagerMapper;
 
     /**
      * 生成订单编号.
@@ -75,23 +83,38 @@ public class SalesOrderServiceImpl implements ISalesOrderService {
         logger.info("Starting save SalesOrder ...[{}]", order.toString());
         // 1.保存订单头信息和客户Id
         // 2.保存客户信息
-        logger.info(order.toString());
         if (null == order.getSalesOrderId()) {// insert
             order.setOrderNumber(createOrderNumber(order));
             salesOrderMapper.insertSelective(order);
         } else {// update
             SalesOrder oldOrder = salesOrderMapper.selectByOrderIdForUpdate(order.getSalesOrderId());
             if (null == oldOrder) {//订单已删除
+                if (logger.isInfoEnabled()) {
+                    logger.info("SalesOrder had deleted.[{}]", order.getOrderNumber());
+                }
                 throw new OrderException(OrderException.MSG_ERROR_OM_ORDER_INFO_HAD_DELETED);
             }
             if (!oldOrder.getObjectVersionNum().equals(order.getObjectVersionNum())) {//订单信息已更改
+                if (logger.isInfoEnabled()) {
+                    logger.info("SalesOrder information had edit.[{}]", order.getOrderNumber());
+                }
                 throw new OrderException(OrderException.MSG_ERROR_OM_ORDER_INFO_HAD_CHANGED);
+            }
+            if (!order.getShippingDate().equals(oldOrder.getShippingDate())) {
+                if (logger.isInfoEnabled()) {
+                    logger.info("SalesOrder shippingDate had changed.newDate:[{}],oldDate:[{}]", order.getShippingDate(), oldOrder.getShippingDate());
+                }
+                order.setOrderNumber(createOrderNumber(order));
             }
             salesOrderMapper.updateByPrimaryKeySelective(order);
         }
         // 3.保存商品信息
         if (order.getItemInfoDtos() != null) {
             for (ItemInfoDto item : order.getItemInfoDtos()) {
+                if (null == item.getItemId()
+                        && BaseConstants.BASE_DTO_DELETE.equals(item.get__status())) {
+                    continue;
+                }
                 item.setSalesOrderId(order.getSalesOrderId());
                 switch (item.get__status()) {
                     case BaseConstants.BASE_DTO_ADD:
@@ -114,6 +137,10 @@ public class SalesOrderServiceImpl implements ISalesOrderService {
         // 4.保存车辆信息
         if (order.getLineCarDtos() != null) {
             for (LineCarDto lineCarDto : order.getLineCarDtos()) {
+                if (null == lineCarDto.getLineCarId()
+                        && BaseConstants.BASE_DTO_DELETE.equals(lineCarDto.get__status())) {
+                    continue;
+                }
                 lineCarDto.setSalesOrderId(order.getSalesOrderId());
                 switch (lineCarDto.get__status()) {
                     case BaseConstants.BASE_DTO_ADD:
@@ -135,8 +162,10 @@ public class SalesOrderServiceImpl implements ISalesOrderService {
         // 5.保存代垫费用
         if (order.getDisbursementDtos() != null) {
             for (DisbursementDto disbursement : order.getDisbursementDtos()) {
-                if (null == disbursement.getDisbursementId() && BigDecimal.ZERO.compareTo(disbursement.getAmount()) < 0) {
-                    continue;
+                if (null == disbursement.getDisbursementId()) {
+                    if (null == disbursement.getAmount() || BigDecimal.ZERO.compareTo(disbursement.getAmount()) >= 0) {
+                        continue;
+                    }
                 }
                 if (null != disbursement.getDisbursementId()) {
                     if (null == disbursement.getAmount() || BigDecimal.ZERO.equals(disbursement.getAmount())) {
@@ -165,19 +194,21 @@ public class SalesOrderServiceImpl implements ISalesOrderService {
 
     @Override
     public List<SalesOrder> selectOrderNumFromHome() {
-        List<SalesOrder> orders = new ArrayList<SalesOrder>();
-        List<SalesOrder> saveList = salesOrderMapper.selectOrderNumFromHome(BaseConstants.ORDER_STATUS_SAVE);
-        List<SalesOrder> compList = salesOrderMapper.selectOrderNumFromHome(BaseConstants.ORDER_STATUS_COMP);
-        for (SalesOrder saveOrder : saveList) {
-            for (SalesOrder compOrder : compList) {
-                if (saveOrder.getShippingDate().equals(compOrder.getShippingDate())) {
-                    orders.add(new SalesOrder(saveOrder.getShippingDate(), saveOrder.getOrderCount(),
-                            compOrder.getOrderCount()));
+        List<SalesOrder> orders = salesOrderMapper.selectOrderNumFromHome();
+        List<SalesOrder> orderList = new ArrayList<SalesOrder>();
+        for (int i = 0; i < 15; i++) {
+            orderList.add(new SalesOrder(new Date()));
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        for (SalesOrder salesOrder : orderList) {
+            for (SalesOrder order : orders) {
+                if (sdf.format(order.getShippingDate()).equals(sdf.format(salesOrder.getShippingDate()))) {
+                    salesOrder = order;
                     break;
                 }
             }
         }
-        return orders;
+        return orderList;
     }
 
     @Override
@@ -191,10 +222,10 @@ public class SalesOrderServiceImpl implements ISalesOrderService {
         // 订单信息
         SalesOrder order = salesOrderMapper.selectByPrimaryKey(orderId);
         // 客户信息
-        Customer customer = new Customer();
-        customer.setCustomerId(order.getCustomerId());
-        List<Customer> customers = customerMapper.selectCustomerByParms(customer);
-        order.setCustomer(customers.get(0));
+        Customer customer = customerMapper.selectByPrimaryKey(order.getCustomerId());
+        //客户类型信息
+        customer.setCustomerType(customerTypeMapper.selectByPrimaryKey(order.getCustomerTypeId()));
+        order.setCustomer(customer);
         // 运输商品信息
         ItemInfoDto itemInfoDto = new ItemInfoDto();
         itemInfoDto.setSalesOrderId(orderId);
@@ -209,5 +240,27 @@ public class SalesOrderServiceImpl implements ISalesOrderService {
         order.setDisbursementDtos(disbursementMapper.selectDisbursementDtosByParms(disbursementDto));
 
         return order;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void deleteOrders(List<SalesOrder> orders) throws OrderException {
+        for (SalesOrder order : orders) {
+            //订单信息
+            salesOrderMapper.deleteByPrimaryKey(order.getSalesOrderId());
+            //商品信息
+            itemInfoMapper.deleteByOrderId(order.getSalesOrderId());
+            //行上车辆信息
+            lineCarMapper.deleteByOrderId(order.getSalesOrderId());
+            //代垫费用
+            disbursementMapper.deleteByOrderId(order.getSalesOrderId());
+            //文件信息
+            fileManagerMapper.deleteByOrderId(order.getSalesOrderId());
+        }
+    }
+
+    @Override
+    public List<SalesOrder> queryOrdersByParms(SalesOrder order) throws OrderException {
+        return salesOrderMapper.queryOrderByParams(order);
     }
 }

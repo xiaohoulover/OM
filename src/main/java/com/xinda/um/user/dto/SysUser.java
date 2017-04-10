@@ -34,6 +34,11 @@ public class SysUser extends BaseDto {
     private String password;
 
     /**
+     * 用户类型.
+     */
+    private String userType;
+
+    /**
      * 是否有效.
      */
     private String status;
@@ -60,6 +65,14 @@ public class SysUser extends BaseDto {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
     }
 
     public String getStatus() {

@@ -48,7 +48,6 @@ public class VerificationCodeServiceImpl implements IVerificationCodeService {
         // 将四位数字的验证码保存到Session中。
         HttpSession session = request.getSession();
         session.setAttribute("verificationCode", verificationCode);
-        session.setMaxInactiveInterval(60 * 5);
 
         // 定义图像buffer
         BufferedImage buffImg = new BufferedImage(BaseConstants.VERIFICATION_CODE_WIDTH,

@@ -1,23 +1,24 @@
 package com.xinda.cm.customer.controller;
 
 import com.xinda.cm.customer.dto.Customer;
+import com.xinda.cm.customer.dto.CustomerType;
 import com.xinda.cm.customer.service.ICustomerService;
 import com.xinda.system.sys.contant.BaseConstants;
+import com.xinda.system.sys.controller.BaseController;
 import com.xinda.system.sys.dto.ResponseJsonData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-
-import com.xinda.system.sys.controller.BaseController;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
  * 客户处理Controller.
  *
- * @author coudy
- *         <p>
- *         2017年3月8日
+ * @Author Coundy.
+ * @Date 2017/4/6
  */
 @Controller
 @RequestMapping("/customer")
@@ -29,15 +30,14 @@ public class CustomerController extends BaseController {
     /**
      * 查询所有的客户信息.
      *
-     * @param page     页码
-     * @param pagesize 页显示条数
      * @return
      */
-    @RequestMapping("/queryAllCustomers")
+    @RequestMapping(value = "/queryAllCustomers", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseJsonData queryAllCustomers(@RequestParam(defaultValue = BaseConstants.DEFAULT_PAGE_NUM) int page,
-                                              @RequestParam(defaultValue = BaseConstants.DEFAULT_PAGE_SIZE) int pagesize) {
-        return new ResponseJsonData(customerService.queryAllCustomers(page, pagesize));
+    public List<Customer> queryCustomersByParams(HttpServletRequest request,
+                                                 HttpServletResponse response,
+                                                 Customer customer) {
+        return customerService.queryCustomersByParams(customer);
     }
 
     /**
@@ -60,34 +60,34 @@ public class CustomerController extends BaseController {
      */
     @RequestMapping(value = "/getCustomerDetails", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseJsonData getCustomerDetails(Integer customerId) {
-        return new ResponseJsonData(customerService.getCustomerDetails(customerId));
+    public Customer getCustomerDetails(Integer customerId) {
+        return customerService.getCustomerDetails(customerId);
     }
 
     /**
      * 根据参数条件查询客户信息.
      *
-     * @param customer 客户参数对象
+     * @param customerType 客户类型参数对象
      * @return
      */
     @RequestMapping(value = "/selectCustomerByParms", method = RequestMethod.POST)
     @ResponseBody
     public ResponseJsonData selectCustomerByParms(@RequestParam(defaultValue = BaseConstants.DEFAULT_PAGE_NUM) int page,
                                                   @RequestParam(defaultValue = BaseConstants.DEFAULT_PAGE_SIZE) int pagesize,
-                                                  Customer customer) {
-        return new ResponseJsonData(customerService.selectCustomerByParms(page, pagesize, customer));
+                                                  CustomerType customerType) {
+        return new ResponseJsonData(customerService.selectCustomerByParms(page, pagesize, customerType));
     }
 
     /**
      * 删除客户信息.
      *
-     * @param customers 参数对象
+     * @param customerTypes 参数对象
      * @return
      */
     @RequestMapping(value = "/deleteCustomer", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseJsonData deleteCustomer(@RequestBody List<Customer> customers) {
-        customerService.deleteCustomer(customers);
+    public ResponseJsonData deleteCustomer(@RequestBody List<CustomerType> customerTypes) {
+        customerService.deleteCustomer(customerTypes);
         return new ResponseJsonData(true);
     }
 

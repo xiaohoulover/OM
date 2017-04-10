@@ -2,7 +2,7 @@
 
 <style>
 	#orderdata {
-	  text-align :'center';
+	  text-align :center;
 	  font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
 	  width:80%;
 	  border-collapse:collapse;
@@ -57,25 +57,26 @@
 				<caption>任务完成总概</caption>
 				<tr>
 					<th>日期</th>
-					<th>未完成任务数量</th>
+					<th>已受理任务数量</th>
+					<th>已运输任务数量</th>
+					<th>已反馈任务数量</th>
 					<th>已完成任务数量</th>
 				</tr>
 				
 				<#list orders as order>
 					<tr>
-						<!-- <#if order.timeFlag == 'B'>
-							<td>前三天</td>
-						<#elseif order.timeFlag == 'T'>
-							<td>今天</td>
-						<#elseif order.timeFlag == 'A'>
-							<td>后三天</td>
-						</#if> -->
 						<td>${order.shippingDate?date}</td>
 						<td>
-							<a href="javascript:f_toQueryOrder('SAVE', '${order.shippingDate?date}');">${order.saveNum}</a>
+							<a href="javascript:f_toQueryOrder('ACCE', '${order.shippingDate?date}');">${order.orderStatusAcce}</a>
 						</td>
 						<td>
-							<a href="javascript:f_toQueryOrder('COMP', '${order.shippingDate?date}'); ">${order.compNum}</a>
+							<a href="javascript:f_toQueryOrder('SHIP', '${order.shippingDate?date}');">${order.orderStatusShip}</a>
+						</td>
+						<td>
+							<a href="javascript:f_toQueryOrder('FDBK', '${order.shippingDate?date}');">${order.orderStatusFdbk}</a>
+						</td>
+						<td>
+							<a href="javascript:f_toQueryOrder('COMP', '${order.shippingDate?date}'); ">${order.orderStatusComp}</a>
 						</td>
 					</tr>
 				</#list>

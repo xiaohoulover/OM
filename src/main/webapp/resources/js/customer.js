@@ -10,26 +10,38 @@ function init_btns() {
     saveBtn = $("#saveBtn").ligerButton({
         text: '保存',
         click: function () {
-            $.ligerDialog.waitting("正在保存中,请稍候...");
-            var reqDate = customerForm.getData();
+            var reqData = customerForm.getData();
+            reqData.customerTypeList = customerGrid.currentData.lines  == undefined ? null : customerGrid.currentData.lines;
+            //校验
+            if (!reqData.customerName) {
+                $.ligerDialog.warn("客户名称未填写!");
+                return false;
+            }
+
+            var manager = $.ligerDialog.waitting('正在处理中,请稍候...');
+            setTimeout(function () {
+                manager.close();
+            }, 1000);
             $.ajax({
                 url: _basePath + "/customer/saveCustomer",
                 type: 'POST',
                 dataType: 'json',
                 contentType: 'application/json',
-                data: JSON2.stringify(reqDate),
+                data: JSON2.stringify(reqData),
                 success: function (resData) {
                     if (resData.success) {
-                        window.location = _basePath
-                            + "/customer/cm_customer_create.html?customerId="+resData.objData.customerId;
+                        window.top.f_removeTab("CUSTOMER_CREATE");
+                        window.top.f_removeTab("CUSTOMER_DETAILS");
+                        window.top.f_addTab("CUSTOMER_DETAILS", '客户详情', _basePath
+                            + "/customer/cm_customer_create.html?customerId=" + resData.objData.customerId);
+                        /*window.location = _basePath
+                            + "/customer/cm_customer_create.html?customerId="+resData.objData.customerId;*/
                     } else {
                         $.ligerDialog.error(resData.resMsg);
                     }
-                    $.ligerDialog.closeWaitting();
                 },
                 error: function () {
-                    $.ligerDialog.closeWaitting();
-                    $.ligerDialog.error("error");
+                    $.ligerDialog.error("Error");
                 }
             });
         }
@@ -42,7 +54,10 @@ function init_btns() {
  */
 function load_data(parm) {
     $.getJSON(_basePath + "/customer/getCustomerDetails", parm, function (resdata) {
-        customerForm.setData(resdata.objData);
+        customerForm.setData(resdata);
+        var obj = {};
+        obj.lines = resdata.customerTypeList;
+        customerGrid.loadData(obj);
     });
 }
 
@@ -68,6 +83,10 @@ function delete_customer(gridName, urlParm) {
         return;
     $.ligerDialog.confirm(("确认删除？"), function(yes) {
         if (yes) {
+            var manager = $.ligerDialog.waitting('正在处理中,请稍候...');
+            setTimeout(function () {
+                manager.close();
+            }, 1000);
             $.ajax({
                 url : urlParm,
                 type : 'POST',

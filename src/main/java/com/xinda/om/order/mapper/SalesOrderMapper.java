@@ -25,7 +25,7 @@ public interface SalesOrderMapper {
     int updateByPrimaryKey(SalesOrder record);
 
     /**
-     * 查询订单信息
+     * 查询页-根据参数查询订单详细信息(带分页).
      *
      * @param order 订单参数对象
      * @return List<Order>
@@ -35,17 +35,18 @@ public interface SalesOrderMapper {
     /**
      * 查询订单前后7天订单已完成与未完成数量.
      *
-     * @param orderStatus 订单状态
      * @return List<Order>
      */
-    List<SalesOrder> selectOrderNumFromHome(String orderStatus);
+    //List<SalesOrder> selectOrderNumFromHome(String orderStatus);
+    List<SalesOrder> selectOrderNumFromHome();
 
     /**
      * 查询所有订单信息.
      *
+     * @param order
      * @return List<SalesOrder>
      */
-    List<SalesOrder> selectAllOrders();
+    List<SalesOrder> queryOrderByParams(SalesOrder order);
 
     /**
      * 导出Excel数据.
