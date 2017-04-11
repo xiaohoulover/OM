@@ -5,6 +5,7 @@ import com.xinda.system.sys.exception.FileException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -52,8 +53,8 @@ public interface IFileManagerService {
      * 查询上传文件信息.
      *
      * @param fileManagerDto  文件对象
-     * @param pagenum  当前页码
-     * @param pagesize 每页显示条数
+     * @param pageNum  当前页码
+     * @param pageSize 每页显示条数
      * @return List<FileManagerDto> 文件对象集合
      */
     public List<FileManagerDto> queryFileOperate(int pageNum, int pageSize, FileManagerDto fileManagerDto);
@@ -61,10 +62,10 @@ public interface IFileManagerService {
     /**
      * 根据fileId删除记录.
      *
-     * @param fileId
+     * @param fileManagerDto
      * @return int
      * @throws FileException
      */
-    int deleteByPrimaryKey(Integer fileId) throws FileException;
+    public void batchDeleteByParam(List<FileManagerDto> fileManagerDto) throws FileException;
 
 }

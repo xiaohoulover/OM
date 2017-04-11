@@ -24,10 +24,10 @@
         <result column="CUSTOMER_NAME" jdbcType="VARCHAR" property="customerName" />
         <result column="TRANSACTION_NO" jdbcType="VARCHAR" property="transactionNo" />
 
-        <result column="ORDER_STATUS_ACCE" jdbcType="VARCHAR" property="orderStatusAcce" />
-        <result column="ORDER_STATUS_SHIP" jdbcType="VARCHAR" property="orderStatusShip" />
-        <result column="ORDER_STATUS_FDBK" jdbcType="VARCHAR" property="orderStatusFdbk" />
-        <result column="ORDER_STATUS_COMP" jdbcType="VARCHAR" property="orderStatusComp" />
+        <result column="ORDER_STATUS_ACCE" jdbcType="DECIMAL" property="orderStatusAcce" />
+        <result column="ORDER_STATUS_SHIP" jdbcType="DECIMAL" property="orderStatusShip" />
+        <result column="ORDER_STATUS_FDBK" jdbcType="DECIMAL" property="orderStatusFdbk" />
+        <result column="ORDER_STATUS_COMP" jdbcType="DECIMAL" property="orderStatusComp" />
 
     </resultMap>
     <sql id="Base_Column_List">
@@ -165,7 +165,7 @@
     </select>
 
     <select id="selectOrdersByParms" resultMap="BaseResultMap" parameterType="com.xinda.om.order.dto.SalesOrder" >
-        SELECT
+        SELECT DISTINCT
             oo.SALES_ORDER_ID,
             oo.ORDER_NUMBER,
             cci.CUSTOMER_NAME,

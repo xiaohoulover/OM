@@ -2,14 +2,12 @@ package com.xinda.cm.car.controller;
 
 import com.xinda.cm.car.dto.CarInfoDto;
 import com.xinda.cm.car.service.ICarService;
+import com.xinda.system.sys.contant.BaseConstants;
 import com.xinda.system.sys.controller.BaseController;
 import com.xinda.system.sys.dto.ResponseJsonData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -50,15 +48,29 @@ public class CarController extends BaseController {
     }
 
     /**
-     * 查询所有车辆信息.
+     * 查询页-根据参数条件查询车辆信息(带分页).
      *
      * @param carInfoDto
      * @return
      */
     @RequestMapping(value = "/car/queryCarsByParams", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseJsonData queryCarsByParams(CarInfoDto carInfoDto) {
-        return new ResponseJsonData(carService.queryCarsByParams(carInfoDto));
+    public ResponseJsonData queryCarsByParams(@RequestParam(defaultValue = BaseConstants.DEFAULT_PAGE_NUM) int page,
+                                              @RequestParam(defaultValue = BaseConstants.DEFAULT_PAGE_SIZE) int pagesize,
+                                              CarInfoDto carInfoDto) {
+        return new ResponseJsonData(carService.queryCarsByParams(page, pagesize, carInfoDto));
+    }
+
+    /**
+     * 订单创建页-车辆信息查询.
+     *
+     * @param carInfoDto
+     * @return
+     */
+    @RequestMapping(value = "/car/getCarsByParams", method = RequestMethod.POST)
+    @ResponseBody
+    public List<CarInfoDto> getCarsByParams(CarInfoDto carInfoDto) {
+        return carService.getCarsByParams(carInfoDto);
     }
 
     /**

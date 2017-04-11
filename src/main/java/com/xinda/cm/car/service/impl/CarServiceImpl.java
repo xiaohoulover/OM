@@ -1,5 +1,6 @@
 package com.xinda.cm.car.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.xinda.cm.car.dto.CarInfoDto;
 import com.xinda.cm.car.dto.CarProjectDto;
 import com.xinda.cm.car.mapper.CarInfoMapper;
@@ -65,7 +66,13 @@ public class CarServiceImpl implements ICarService {
     }
 
     @Override
-    public List<CarInfoDto> queryCarsByParams(CarInfoDto carInfoDto) {
+    public List<CarInfoDto> queryCarsByParams(int page, int pagesize, CarInfoDto carInfoDto) {
+        PageHelper.startPage(page, pagesize);
+        return carInfoMapper.queryCarsByParams(carInfoDto);
+    }
+
+    @Override
+    public List<CarInfoDto> getCarsByParams(CarInfoDto carInfoDto) {
         return carInfoMapper.queryCarsByParams(carInfoDto);
     }
 

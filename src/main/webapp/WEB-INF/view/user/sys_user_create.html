@@ -15,8 +15,6 @@
 
     <script type="text/javascript">
 
-
-
         $(function () {
             var userId = ${Session.userId};
             jQuery.validator.addMethod("pwdEquals", function(value, element) {
@@ -61,7 +59,9 @@
                     name : 'userType',
                     type : 'combobox',
                     newline : true,
+            <#if Session.userType != '0'>
                     readonly : true,
+            </#if>
                     options : {
                         data : userTypeData,
                         valueField : 'value',
@@ -89,7 +89,8 @@
                     type: "password",
                     validate: {
                         required: true,
-                        minlength: 8
+                        minlength: 8,
+                        pwdEquals: true
                     }
                 }, {
                     display: '确认密码',

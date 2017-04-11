@@ -1,4 +1,4 @@
-<#include "../../head.html" >
+<#include "../../head.html" />
 
 
 <script type="text/javascript">
@@ -67,7 +67,7 @@
 						id : 'om_order_delete',
 						text : '删除',
 						click : function() {
-							//TODO 删除文件
+							// 删除文件
 							var selected = fm_query_grid.getSelectedRow();
 							if (selected == null) {
 								$.ligerDialog.error("请先选择行")

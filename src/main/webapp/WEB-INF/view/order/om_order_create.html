@@ -52,7 +52,7 @@
                     data: orderStatusData,
                     valueField: 'value',
                     textField: 'text',
-                    value: 'NEW'
+                    value: 'ACCE'
                 },
                 validate: {
                     required: true
@@ -388,7 +388,7 @@
             onAfterEdit : function (e) {
                 // 联动
                 if ("shipWeight" == e.column.columnname || "receiptWeight" == e.column.columnname) {
-                    if ((e.record.shipWeight) == 'undefined' || typeof (e.record.receiptWeight) == 'undefined' ) {
+                    if (typeof(e.record.shipWeight) == "undefined" || typeof (e.record.receiptWeight) == "undefined") {
                         return true;
                     }
                     var poundsWorse = (Number(e.record.receiptWeight)-Number(e.record.shipWeight)) * 1000;
@@ -432,7 +432,7 @@
             checkbox: true,
             columns: [{
                 display: "车头编号",
-                name: "carId",
+                name: "fuelConsumptionRatio",
                 textField: "carFrontNo",
                 align: 'center',
                 width: 100,
@@ -441,17 +441,15 @@
                 },
                 editor: {
                     type: "combobox",
-                    valueField: 'carId',
+                    valueField: 'fuelConsumptionRatio',
                     textField: 'plateNo',
                     slide: false,
                     keySupport: true,
-                    delayLoadGrid : false,
-                    selectBoxWidth: 150,
-                    grid: {
-                        columns: [{ display: '车辆编号', name: 'plateNo' }],
-                        url : _basePath + '/car/queryCarsByParams?type=CF',
-                        usePager : false,
-                        rownumbers : false
+                    autocomplete : true,
+                    url : _basePath + '/car/getCarsByParams?type=CF',
+                    onSelected : function(value ,text) {
+                        //TODO 更新核定油耗
+                        console.log(carGrid.getSelected());
                     }
                 }
             }, {
@@ -468,14 +466,7 @@
                     textField: 'plateNo',
                     slide: false,
                     keySupport: true,
-                    delayLoadGrid : false,
-                    selectBoxWidth: 150,
-                    grid: {
-                        columns: [{ display: '车辆编号', name: 'plateNo' }],
-                        url : _basePath + '/car/queryCarsByParams?type=CP',
-                        usePager : false,
-                        rownumbers : false
-                    }
+                    url : _basePath + '/car/getCarsByParams?type=CP'
                 }
             }, {
                 display: "司机姓名 ",
@@ -487,7 +478,7 @@
                 },
                 editor: {
                     type: 'text'
-                },
+                }
             }, {
                 display: "押运员姓名",
                 name: "escortName",
@@ -498,7 +489,7 @@
                 },
                 editor: {
                     type: 'text'
-                },
+                }
             }, {
                 display: "运输路径",
                 name: "shipPath",
@@ -543,9 +534,6 @@
                 align: 'center',
                 width: 90,
                 isSort: false,
-                editor: {
-                    type: 'number'
-                },
                 validate: {
                     required: true
                 }
@@ -563,6 +551,12 @@
                 var orderStatus = liger.get("orderStatus").getValue();
                 if ("COMP" == orderStatus) {
                     return false;
+                }
+            },
+            onAfterEdit : function (e) {
+                // 核定油耗=区间路程*车头油耗比
+                if ("distance" == e.column.columnname) {
+                    carGrid.updateCell('fuelCosts', BaseCommonUI.roundPrecision(e.value*e.record.fuelConsumptionRatio, 2), e.record);
                 }
             },
             toolbar: {

@@ -29,12 +29,22 @@ public interface ICarService {
     CarInfoDto getCarDetails(Integer carId);
 
     /**
-     * 查询所有车辆信息.
+     * 分页查询所有车辆信息.
      *
+     * @param page       页码
+     * @param pagesize   页显示条数
      * @param carInfoDto 参数对象
      * @return
      */
-    List<CarInfoDto> queryCarsByParams(CarInfoDto carInfoDto);
+    List<CarInfoDto> queryCarsByParams(int page, int pagesize, CarInfoDto carInfoDto);
+
+    /**
+     * 获取车辆信息.
+     *
+     * @param carInfoDto
+     * @return
+     */
+    List<CarInfoDto> getCarsByParams(CarInfoDto carInfoDto);
 
     /**
      * 删除车辆信息

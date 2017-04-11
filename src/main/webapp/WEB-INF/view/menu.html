@@ -2,7 +2,7 @@
 <style>
 	#header {
 	    background-color:#778899;
-        height: 50px;
+        height: 55px;
 	    color:white;
 	    text-align:center;
 	    padding:5px;
@@ -53,11 +53,15 @@
 				 url : '${base.contextPath}/customer/cm_customer_query.html',
 				 text : '客户查询',
 				 code : 'CUSTOMER_QUERY'
-			 },{
+			 }
+         <#if Session.userType == '0'>
+			 ,{
 				 url : '${base.contextPath}/customer/cm_customer_create.html',
 				 text : '新建客户',
 				 code : 'CUSTOMER_CREATE'
-			 }]
+			 }
+         </#if>
+			 ]
 		 },{
             text : '车辆管理',
             isexpand : true,
@@ -65,11 +69,15 @@
                 url : '${base.contextPath}/car/cm_car_query.html',
                 text : '车辆查询',
                 code : 'CAR_QUERY'
-            },{
+            }
+         <#if Session.userType == '0'>
+            ,{
                 url : '${base.contextPath}/car/cm_car_create.html',
                 text : '新建车辆',
                 code : 'CAR_CREATE'
-            }]
+            }
+         </#if>
+            ]
         },{
 			 text : '文件管理',
 			 isexpand : true,
@@ -275,7 +283,12 @@
 <body style="padding:0px;background:#EAEEF5; overflow: hidden;">
 
 	<div id="header">
-		<h1 style="margin-top: 10px !important;">广州欣达运输-订单管理系统</h1>
+        <!--<div style="font-size: 25px !important;">广州欣达运输-订单管理系统</div>-->
+        <div style="display:block; float:right; margin-right:20px;">
+            <form id="logoutForm" action = "${base.contextPath}/logout" method="get" >
+                <button id="logout">退 出</button>
+            </form>
+        </div>
     </div>
     <div id="layout1" style="width:99.2%; margin:0 auto; margin-top:4px; ">
         <div position="left"  title="主要菜单" id="accordion1">
@@ -291,10 +304,5 @@
     </div>
     <div id="footer">
             Copyright XinDa 2017.02.25.
-        <div style="display:block; float:right; margin-right:20px;">
-            <form id="logoutForm" action = "${base.contextPath}/logout" method="get" >
-                <button style="margin-top: 10px !important;" id="logout">退 出</button>
-            </form>
-        </div>
     </div>
 </body>

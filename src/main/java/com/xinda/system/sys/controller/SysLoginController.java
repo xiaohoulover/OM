@@ -86,7 +86,7 @@ public class SysLoginController extends BaseController {
      */
     @RequestMapping(value = "/verificationCode", method = RequestMethod.GET)
     public void code(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        //todo 获取验证码
+        // 获取验证码
         logger.info("Create verificationCode ...");
         //生成验证码图片
         verificationCodeService.generateVerificationCode(request, response);

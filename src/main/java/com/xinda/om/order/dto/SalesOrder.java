@@ -109,17 +109,21 @@ public class SalesOrder extends BaseDto {
      */
     private String receiver;
 
-    private String orderStatusAcce;
-    private String orderStatusShip;
-    private String orderStatusFdbk;
-    private String orderStatusComp;
+    private int orderStatusAcce;
+    private int orderStatusShip;
+    private int orderStatusFdbk;
+    private int orderStatusComp;
 
     public SalesOrder() {
     }
 
-    public SalesOrder(Date shippingDate) {
+    public SalesOrder(Date shippingDate, int orderStatusAcce, int orderStatusShip, int orderStatusFdbk, int orderStatusComp) {
         super();
         this.shippingDate = shippingDate;
+        this.orderStatusAcce = orderStatusAcce;
+        this.orderStatusShip = orderStatusShip;
+        this.orderStatusFdbk = orderStatusFdbk;
+        this.orderStatusComp = orderStatusComp;
     }
 
     public Integer getSalesOrderId() {
@@ -298,35 +302,35 @@ public class SalesOrder extends BaseDto {
         this.receiver = receiver;
     }
 
-    public String getOrderStatusAcce() {
+    public int getOrderStatusAcce() {
         return orderStatusAcce;
     }
 
-    public void setOrderStatusAcce(String orderStatusAcce) {
+    public void setOrderStatusAcce(int orderStatusAcce) {
         this.orderStatusAcce = orderStatusAcce;
     }
 
-    public String getOrderStatusShip() {
+    public int getOrderStatusShip() {
         return orderStatusShip;
     }
 
-    public void setOrderStatusShip(String orderStatusShip) {
+    public void setOrderStatusShip(int orderStatusShip) {
         this.orderStatusShip = orderStatusShip;
     }
 
-    public String getOrderStatusFdbk() {
+    public int getOrderStatusFdbk() {
         return orderStatusFdbk;
     }
 
-    public void setOrderStatusFdbk(String orderStatusFdbk) {
+    public void setOrderStatusFdbk(int orderStatusFdbk) {
         this.orderStatusFdbk = orderStatusFdbk;
     }
 
-    public String getOrderStatusComp() {
+    public int getOrderStatusComp() {
         return orderStatusComp;
     }
 
-    public void setOrderStatusComp(String orderStatusComp) {
+    public void setOrderStatusComp(int orderStatusComp) {
         this.orderStatusComp = orderStatusComp;
     }
 

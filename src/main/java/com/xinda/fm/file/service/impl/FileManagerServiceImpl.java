@@ -37,7 +37,6 @@ public class FileManagerServiceImpl implements IFileManagerService {
 
     @Autowired
     private FileManagerMapper fileManagerMapper;
-
     @Autowired
     private CommonsMultipartResolver multipartResolver;
 
@@ -45,9 +44,9 @@ public class FileManagerServiceImpl implements IFileManagerService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void uploadFile(HttpServletRequest request, HttpServletResponse response, Integer salesOrderId)
             throws IOException, FileException {
-        logger.info("Starting upload file ...");
         // 保存上传文件信息
         String orderNo = request.getParameter("orderNumber");
+        logger.info("Starting upload file ...[{}]", orderNo);
         // 多文件上传转换
         if (multipartResolver.isMultipart(request)) {
             MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
@@ -88,8 +87,8 @@ public class FileManagerServiceImpl implements IFileManagerService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void downloadFile(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        logger.info("Starting download file ...");
         Integer fileId = Integer.valueOf(request.getParameter("fileId"));
+        logger.info("Starting download file ...[{}]", fileId);
         FileManagerDto fileManagerDto = fileManagerMapper.selectByPrimaryKey(fileId);
         if (fileManagerDto != null && !StringUtils.isEmpty(fileManagerDto.getFilePath())) {
             File file = new File(fileManagerDto.getFilePath());
@@ -134,8 +133,38 @@ public class FileManagerServiceImpl implements IFileManagerService {
     }
 
     @Override
-    public int deleteByPrimaryKey(Integer fileId) throws FileException {
-        return fileManagerMapper.deleteByPrimaryKey(fileId);
+    public void batchDeleteByParam(List<FileManagerDto> fileManagerDtoLists) throws FileException {
+        // 删除数据库中记录
+        for (FileManagerDto fileManagerDto : fileManagerDtoLists) {
+            fileManagerMapper.deleteByPrimaryKey(fileManagerDto.getFileId());
+        }
+        // 删除服务器上文件
+        for (FileManagerDto fileManagerDto : fileManagerDtoLists) {
+            deleteFileFromServer(fileManagerDto.getFilePath());
+        }
+    }
+
+    /**
+     * 删除服务器上文件.
+     *
+     * @param path 全路径名
+     * @return
+     */
+    private boolean deleteFileFromServer(String path) {
+        File file = new File(path);
+        // 如果文件路径所对应的文件存在，并且是一个文件，则直接删除
+        if (file.exists() && file.isFile()) {
+            if (file.delete()) {
+                logger.info("删除单个文件[{}]成功", path);
+                return true;
+            } else {
+                logger.error("删除单个文件[{}]失败!", path);
+                return false;
+            }
+        } else {
+            logger.error("删除文件失败：[{}]不存在!", path);
+            return false;
+        }
     }
 
 }

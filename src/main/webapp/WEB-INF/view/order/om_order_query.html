@@ -19,8 +19,40 @@
             		display: "客户名称 ",
             		name: "customerName",
             		newline: false,
-            		type: "text"
-            	},{
+                    type: "combobox",
+                    options : {
+                        valueField : 'customerName',
+                        textField : 'customerName',
+                        url : _basePath + "/customer/queryAllCustomers",
+                        isMultiSelect : false,
+                        isShowCheckBox : false,
+                        highLight : true,
+                        autocomplete : true,
+                        keySupport : true,
+                        autocompleAllowEmpty : true
+                    }
+            	}, {
+                    display: "车头编号",
+                    name: "carFrontNo",
+                    newline: false,
+                    type: "combobox",
+                    options : {
+                        valueField : 'plateNo',
+                        textField : 'plateNo',
+                        url : _basePath + "/car/getCarsByParams?type=CF",
+                        isMultiSelect : false,
+                        isShowCheckBox : false,
+                        highLight : true,
+                        autocomplete : true,
+                        keySupport : true,
+                        autocompleAllowEmpty : true
+                    }
+                }, {
+                    display: '提运单号',
+                    name: 'wayBillNo',
+                    newline: true,
+                    type : 'text'
+                }, {
                     display: '交易单号',
                     name: 'transactionNo',
                     newline: false,
@@ -28,18 +60,8 @@
                 },{
             		display: "罐柜号 ",
             		name: "tankNo",
-            		newline: true,
-            		type: "text"  
-            	}, {
-                    display: '提运单号',
-                    name: 'wayBillNo',
-                    newline: false,
-                    type : 'text'
-                }, {
-            		display: "车头编号",
-            		name: "carFrontNo",
             		newline: false,
-            		type: "text"
+            		type: "text"  
             	},{
             		display: "运输日期从",
             		name: "shippingDateFrom",
@@ -71,7 +93,7 @@
             	}, {
                     display: "收货单位",
                     name: "receiver",
-                    newline: true,
+                    newline: false,
                     type: "text"
 				}],
             	buttons : [ {

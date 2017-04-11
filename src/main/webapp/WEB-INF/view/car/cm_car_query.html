@@ -29,7 +29,7 @@
         });
 
         var carGrid = window['carGrid'] = $("#carGrid").ligerGrid({
-            title: '车辆项目信息',
+            title: '查询结果',
             width: '99%',
             height: '99%',
             rownumbers: true,
@@ -64,9 +64,13 @@
                     align: 'center',
                     width: 300
                 }],
+
             toolbar : {
                 items : [{
                     id : 'cm_car_add',
+                <#if Session.userType != '0'>
+                    disable : true,
+                </#if>
                     text : '新建车辆',
                     click : function() {
                         // 跳转到创建页
@@ -77,15 +81,18 @@
                     { line: true },
                     {
                         id : 'cm_car_delete',
+                    <#if Session.userType != '0'>
+                        disable : true,
+                    </#if>
                         text : '删除',
                         click : function() {
-                            // todo 删除选择订单
+                            // 删除选择订单
                             delete_car(carGrid, _basePath+"/car/deleteCars");
                         },
                         icon : 'delete'
                     }]
             }
-        });
+        })
 
     });
 

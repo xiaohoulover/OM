@@ -1,4 +1,4 @@
-<#include "../../head.html" >
+<#include "../../head.html" />
 
 
 <script type="text/javascript">
@@ -43,7 +43,7 @@
 				title : '查询结果',
 	            height : '100%',
 				usePager : true,
-				checkbox : false,
+				checkbox : true,
 				delayLoad : false,
 	            url : '${base.contextPath}/file/queryFileOperate',
 				columns : [{
@@ -66,44 +66,28 @@
 				}],
 				toolbar : {
 					items : [{
-						id : 'om_order_add',
-						text : '上传文件',
-						click : function() {
-							$.ligerDialog.open({
-								title : '上传文件',
-								url : 'fm_file_upload.html',
-						        width : 500,
-						        height : 280,
-						        buttons: [{
-						        	text: '取消', 
-						        	onclick: function (item, dialog) {
-						        		dialog.hide();
-						        	}
-						        }]
-						    });
-						},
-						icon : 'add'
-					},
-					{ line: true },
-					{
 						id : 'om_order_delete',
 						text : '删除',
 						click : function() {
-							//TODO 删除文件
-							var selected = fm_query_grid.getSelectedRow();
-							if (selected == null) {
-								$.ligerDialog.error("请先选择行")
-								return false;
-							}
+							// 删除文件
+							var selected = fm_query_grid.getSelectedRows();
+                            if (selected.length < 1) {
+                                $.ligerDialog.error("请先选择行");
+                                return;
+                            }
 							$.ligerDialog.confirm("确认删除？", function(yes) {
 								if (yes) {
 									$.ajax({
-										url : _basePath + '/file/deleteByFileId?fileId='+selected.fileId,
+										url : _basePath + '/file/batchDeleteByParam',
 										type : 'POST',
+										data : JSON2.stringify(selected),
 										dataType : 'json',
 										contentType : 'application/json',
 										success : function(resdata) {
-											fm_query_grid.reload();
+										    if (resdata.success) {
+                                                $.ligerDialog.success("删除成功！");
+                                                fm_query_grid.reload();
+                                            }
 										}
 									});
 									return true;

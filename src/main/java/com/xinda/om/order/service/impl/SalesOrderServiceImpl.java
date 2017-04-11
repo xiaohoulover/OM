@@ -27,8 +27,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -100,6 +102,7 @@ public class SalesOrderServiceImpl implements ISalesOrderService {
                 }
                 throw new OrderException(OrderException.MSG_ERROR_OM_ORDER_INFO_HAD_CHANGED);
             }
+            //变更运输日期，同时更新订单编号
             if (!order.getShippingDate().equals(oldOrder.getShippingDate())) {
                 if (logger.isInfoEnabled()) {
                     logger.info("SalesOrder shippingDate had changed.newDate:[{}],oldDate:[{}]", order.getShippingDate(), oldOrder.getShippingDate());
@@ -196,14 +199,22 @@ public class SalesOrderServiceImpl implements ISalesOrderService {
     public List<SalesOrder> selectOrderNumFromHome() {
         List<SalesOrder> orders = salesOrderMapper.selectOrderNumFromHome();
         List<SalesOrder> orderList = new ArrayList<SalesOrder>();
-        for (int i = 0; i < 15; i++) {
-            orderList.add(new SalesOrder(new Date()));
-        }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DAY_OF_MONTH, -8);
+        for (int i = 1; i <= 15; i++) {
+            cal.add(Calendar.DAY_OF_MONTH, 1);
+            orderList.add(new SalesOrder(cal.getTime(), 0, 0, 0, 0));
+        }
         for (SalesOrder salesOrder : orderList) {
             for (SalesOrder order : orders) {
                 if (sdf.format(order.getShippingDate()).equals(sdf.format(salesOrder.getShippingDate()))) {
-                    salesOrder = order;
+                    salesOrder.setOrderStatusAcce(order.getOrderStatusAcce());
+                    salesOrder.setOrderStatusComp(order.getOrderStatusComp());
+                    salesOrder.setOrderStatusFdbk(order.getOrderStatusFdbk());
+                    salesOrder.setOrderStatusShip(order.getOrderStatusShip());
                     break;
                 }
             }
@@ -263,4 +274,16 @@ public class SalesOrderServiceImpl implements ISalesOrderService {
     public List<SalesOrder> queryOrdersByParms(SalesOrder order) throws OrderException {
         return salesOrderMapper.queryOrderByParams(order);
     }
+
+
+    public static void main(String[] args) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        for (int i = 1; i <= 15; i++) {
+            cal.add(Calendar.DAY_OF_MONTH, i - 8);
+            System.out.println(sdf.format(cal.getTime()));
+        }
+    }
+
 }

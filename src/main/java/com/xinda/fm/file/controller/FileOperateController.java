@@ -8,14 +8,12 @@ import com.xinda.system.sys.dto.ResponseJsonData;
 import com.xinda.system.sys.exception.FileException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * 文件管理Controller.
@@ -88,11 +86,12 @@ public class FileOperateController extends BaseController {
      * @return
      * @throws FileException
      */
-    @RequestMapping(value = "/deleteByFileId", method = RequestMethod.POST)
+    @RequestMapping(value = "/batchDeleteByParam", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseJsonData deleteByFileId(HttpServletRequest request, HttpServletResponse response,
-                                           @RequestParam Integer fileId) throws FileException {
-        fileManagerService.deleteByPrimaryKey(fileId);
+    public ResponseJsonData deleteByFileId(HttpServletRequest request,
+                                           HttpServletResponse response,
+                                           @RequestBody List<FileManagerDto> fileManagerDtoList) throws FileException {
+        fileManagerService.batchDeleteByParam(fileManagerDtoList);
         return new ResponseJsonData(true);
     }
 
