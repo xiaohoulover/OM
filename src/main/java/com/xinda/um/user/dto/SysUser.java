@@ -43,6 +43,23 @@ public class SysUser extends BaseDto {
      */
     private String status;
 
+    //add properties
+    /**
+     * 旧密码.
+     */
+    private String oldPassword;
+
+    public SysUser() {
+    }
+
+    public SysUser(Integer userId, String userName, String password, String userType, String status, String oldPassword) {
+        this.userId = userId;
+        this.userName = userName;
+        this.password = password;
+        this.userType = userType;
+        this.status = status;
+    }
+
     public Integer getUserId() {
         return userId;
     }
@@ -83,4 +100,11 @@ public class SysUser extends BaseDto {
         this.status = status;
     }
 
+    public String getOldPassword() {
+        return oldPassword;
+    }
+
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
+    }
 }

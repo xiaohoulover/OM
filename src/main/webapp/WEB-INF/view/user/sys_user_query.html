@@ -2,43 +2,43 @@
 
 <script type="text/javascript">
 
-	$(function() {
+    $(function () {
         var userQueryForm = window['userQueryForm'] = $("#userQueryForm").ligerForm({
             inputWidth: 200,
             labelWidth: 80,
-            fields : [{
+            fields: [{
                 display: '用户名',
                 name: 'userName',
                 newline: true,
                 type: "text",
-				group : '查询条件'
+                group: '查询条件'
             }],
-            buttons : [ {
-                text : '查询',
-                width : 60,
-                click : function() {
+            buttons: [{
+                text: '查询',
+                width: 60,
+                click: function () {
                     BaseCommonUI.formToGridQuery(userQueryForm, userGrid);
                 }
             }]
         });
 
         var userGrid = window['userGrid'] = $("#userGrid").ligerGrid({
-            title : '查询结果',
-            height : '99%',
-            usePager : true,
-            checkbox : true,
-            rownumbers : true,
-            enabledEdit : true,
-            url : '${base.contextPath}/user/querySysUserByParam',
-            columns : [{
-                display : '用户名',
-                name : 'userId',
-                textField : 'userName',
-                align : 'center'
+            title: '查询结果',
+            height: '99%',
+            usePager: true,
+            checkbox: false,
+            rownumbers: true,
+            enabledEdit: true,
+            url: '${base.contextPath}/user/querySysUserByParam',
+            columns: [{
+                display: '用户名',
+                name: 'userId',
+                textField: 'userName',
+                align: 'center'
             }, {
-                display : '用户类型',
-                name : 'userType',
-                align : 'center',
+                display: '用户类型',
+                name: 'userType',
+                align: 'center',
                 editor: {
                     type: 'select',
                     data: userTypeData,
@@ -47,9 +47,9 @@
                 },
                 render: BaseCommonUI.gridSelectRender
             }, {
-                display : '是否失效',
-				name : 'status',
-				align : 'center',
+                display: '是否有效',
+                name: 'status',
+                align: 'center',
                 editor: {
                     type: 'select',
                     data: yesOrNoData,
@@ -57,34 +57,77 @@
                     textField: 'text'
                 },
                 render: BaseCommonUI.gridSelectRender
-			}],
-            toolbar : {
-                items : [{
-                    id : 'sys_user_add',
-                    text : '创建用户',
-                    click : function() {
+            }],
+            toolbar: {
+                items: [{
+                    id: 'sys_user_add',
+                    text: '创建用户',
+                    click: function () {
                         window.top.f_removeTab("USER_CREATE");
-                        window.parent.f_addTab("USER_CREATE", '创建用户',"${base.contextPath}/user/sys_user_create.html?flag=1");
+                        window.parent.f_addTab("USER_CREATE", '创建用户', "${base.contextPath}/user/sys_user_create.html?flag=1");
                     },
-                    icon : 'add'
+                    icon: 'add'
                 },
-                    { line: true },
+                    {line: true},
                     {
-                        id : 'sys_user_delete',
-                        text : '删除',
-                        click : function() {
-                            // 删除用户
-							var deleteLines = userGrid.getSelectedRows();
-							if (deleteLines.length > 0) {
-                                $.ligerDialog.confirm(("确认删除？"), function (yes) {
-									if (yes) {
+                        id: 'sys_user_add',
+                        text: '保存',
+                        click: function () {
+                            var selected = userGrid.currentData.lines;
+                            //校验
+                            for (var i = 0; i < selected.length; i++) {
+                                if (!selected[i].userName || !selected[i].userType
+                                    || !selected[i].status) {
+                                    $.ligerDialog.warn("存在字段未填写!");
+                                    return false;
+                                }
+                            }
+                            $.ligerDialog.confirm(("确认保存？"), function (yes) {
+                                    if (yes) {
+                                        var manager = $.ligerDialog.waitting('正在处理中,请稍候...');
+                                        setTimeout(function () {
+                                            manager.close();
+                                        }, 1000);
                                         $.ajax({
-                                            url : _basePath + "/user/deleteSysUsers",
-                                            data : JSON2.stringify(deleteLines),
-                                            type : 'POST',
-                                            dataType : 'json',
-                                            contentType : 'application/json',
-                                            success : function (resData) {
+                                            url: _basePath + "/user/batchSaveSysUsers",
+                                            data: JSON2.stringify(selected),
+                                            type: 'POST',
+                                            dataType: 'json',
+                                            contentType: 'application/json',
+                                            success: function (resData) {
+                                                if (resData.success) {
+                                                    $.ligerDialog.success("保存成功!");
+                                                } else {
+                                                    $.ligerDialog.error("保存失败!");
+                                                }
+                                            },
+                                            error: function () {
+                                                $.ligerDialog.error("ERROR");
+                                            }
+                                        });
+                                    }
+                            });
+                        },
+                        icon: 'add'
+                    },
+                    {line: true},
+                    {
+                        id: 'sys_user_delete',
+                        text: '删除',
+                        click: function () {
+                            // 删除用户
+                            var deleteLines = userGrid.getSelectedRows();
+                            if (deleteLines.length > 0) {
+                                $.ligerDialog.confirm(("确认删除？"), function (yes) {
+                                    if (yes) {
+                                        userGrid.deleteSelectedRow();
+                                        /*$.ajax({
+                                            url: _basePath + "/user/deleteSysUsers",
+                                            data: JSON2.stringify(deleteLines),
+                                            type: 'POST',
+                                            dataType: 'json',
+                                            contentType: 'application/json',
+                                            success: function (resData) {
                                                 if (resData.success) {
                                                     $.ligerDialog.success("删除成功!");
                                                 } else {
@@ -92,26 +135,26 @@
                                                 }
                                                 userGrid.reload();
                                             },
-                                            error : function () {
+                                            error: function () {
                                                 $.ligerDialog.error("ERROR");
                                             }
-                                        });
-									}
+                                        });*/
+                                    }
                                 });
-							}
+                            }
                         },
-                        icon : 'delete'
+                        icon: 'delete'
                     }]
             }
-		});
-	});
+        });
+    });
 
-	
+
 </script>
 
 <body>
-	<div>
-		<form id="userQueryForm" ></form>
-		<div id="userGrid" ></div>
-	</div>
+<div>
+    <form id="userQueryForm"></form>
+    <div id="userGrid"></div>
+</div>
 </body>

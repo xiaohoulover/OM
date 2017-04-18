@@ -1,6 +1,6 @@
 <#include "head.html" />
 <style>
-	#header {
+	/*#header {
 	    background-color:#778899;
         height: 55px;
 	    color:white;
@@ -14,7 +14,7 @@
 	    text-align:center;
         height:40px;
         line-height:32px;
-	    /*padding:5px;*/
+	    !*padding:5px;*!
 	}
 
     .l-topmenu-welcome {
@@ -23,8 +23,74 @@
         line-height: 24px;
         right: 30px;
         top: 10px;
+    }*/
+    #header {
+        background-color:#778899;
+        margin: 0;
+        padding: 0;
+        position: relative;
+    }
+    .title {
+        font-size: 25px;
+        line-height: 60px;
+        height: 60px;
+        text-align:center;
+    }
+    .user {
+        font-size: 20px;
+        color: #FFC340;
+        position: absolute;
+        height: 24px;
+        line-height: 24px;
+        right: 100px;
+        top: 20px;
+    }
+    .logout {
+        position: absolute;
+        height: 24px;
+        line-height: 24px;
+        right: 30px;
+        top: 15px;
+    }
+
+    #footer {
+        background-color:#778899;
+        color:white;
+        clear:both;
+        text-align:center;
+        height:40px;
+        line-height:32px;
+        /*padding:5px;*/
     }
 </style>
+
+
+<body style="padding:0px;background:#EAEEF5; overflow: hidden;">
+
+<div id="header">
+    <div class="user">${Session.userName}</div>
+    <div class="logout">
+        <form id="logoutForm" action = "${base.contextPath}/logout" method="get" >
+            <img src="${base.contextPath}/resources/images/logout4.png" onclick="logout()">
+        </form>
+    </div>
+</div>
+<div id="layout1" style="width:99.2%; margin:0 auto; margin-top:4px; ">
+    <div position="left"  title="主要菜单" id="accordion1">
+        <div title="功能列表" class="l-scroll">
+            <ul id="tree1" style="margin-top:3px;" />
+        </div>
+    </div>
+    <div position="center" id="framecenter">
+        <div tabid="home" title="我的主页" style="height:300px" >
+            <iframe frameborder="0" name="home" id="home" src="home.html"></iframe>
+        </div>
+    </div>
+</div>
+<div id="footer">
+    Copyright XinDa 2017.02.25.
+</div>
+</body>
 
 <script type="text/javascript">
 
@@ -83,13 +149,13 @@
 			 isexpand : true,
 			 children : [{
 				 url : '${base.contextPath}/file/fm_file_query.html',
-				 text : '查询及下载',
+				 text : '文件下载',
 				 code : 'FILE_QUERY'
-			 }/*,{
-				 url : '${base.contextPath}/file/fm_file_upload.html',
-				 text : '文件上传',
-				 code : 'FILE_UPLOAD'
-			 }*/]
+			 },{
+				 url : '${base.contextPath}/report/rpt_export_data.html',
+				 text : '报表下载',
+				 code : 'EXCEL_DOWNLOAD'
+			 }]
 		 },{
             text : '用户管理',
             isexpand : true,
@@ -222,7 +288,6 @@
     }
     /*移除Tab页*/
     function f_removeTab(tabid) {
-    	//TODO
     	setTimeout(function() {
     		tab.removeTabItem(tabid);
     	},100);
@@ -279,30 +344,14 @@
             }
         }
     }
-</script>
-<body style="padding:0px;background:#EAEEF5; overflow: hidden;">
 
-	<div id="header">
-        <!--<div style="font-size: 25px !important;">广州欣达运输-订单管理系统</div>-->
-        <div style="display:block; float:right; margin-right:20px;">
-            <form id="logoutForm" action = "${base.contextPath}/logout" method="get" >
-                <button id="logout">退 出</button>
-            </form>
-        </div>
-    </div>
-    <div id="layout1" style="width:99.2%; margin:0 auto; margin-top:4px; ">
-        <div position="left"  title="主要菜单" id="accordion1">
-	        <div title="功能列表" class="l-scroll">
-                 <ul id="tree1" style="margin-top:3px;" />
-            </div>
-        </div>
-        <div position="center" id="framecenter">
-            <div tabid="home" title="我的主页" style="height:300px" >
-                <iframe frameborder="0" name="home" id="home" src="home.html"></iframe>
-            </div>
-        </div>
-    </div>
-    <div id="footer">
-            Copyright XinDa 2017.02.25.
-    </div>
-</body>
+    //退出
+    function logout() {
+        $.ligerDialog.confirm(("确认退出？"), function (yes) {
+            if (yes) {
+                jQuery('#logoutForm').submit();
+            }
+        });
+    }
+
+</script>

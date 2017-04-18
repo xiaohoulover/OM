@@ -5,6 +5,7 @@ import com.xinda.system.sys.exception.SysException;
 import com.xinda.system.sys.service.IVerificationCodeService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +24,7 @@ import java.util.Random;
  * @Date 2017/3/28 14:32.
  */
 @Service
+@Transactional
 public class VerificationCodeServiceImpl implements IVerificationCodeService {
 
     @Override

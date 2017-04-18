@@ -39,7 +39,7 @@ public class SysUserController extends BaseController {
     }
 
     /**
-     * 保存用户信息.
+     * 创建用户信息.
      *
      * @param request
      * @param response
@@ -49,14 +49,30 @@ public class SysUserController extends BaseController {
      */
     @RequestMapping("/user/saveSysUser")
     @ResponseBody
-    public ResponseJsonData saveSysUser(HttpServletRequest request, HttpServletResponse response,
-                               @RequestBody SysUser sysUser)
-            throws SysException {
-        return new ResponseJsonData(sysUserService.saveSysUser(sysUser));
+    public ResponseJsonData createSysUser(HttpServletRequest request,
+                                          HttpServletResponse response,
+                                          @RequestBody SysUser sysUser) throws SysException {
+        return new ResponseJsonData(sysUserService.createSysUser(sysUser));
     }
 
     /**
-     * 保存用户信息.
+     * 批量保存用户信息.
+     *
+     * @param request
+     * @param response
+     * @param sysUsers
+     * @return
+     */
+    @RequestMapping("/user/batchSaveSysUsers")
+    @ResponseBody
+    public ResponseJsonData batchSaveOrUpdateSysUsers(HttpServletRequest request,
+                                                      HttpServletResponse response,
+                                                      @RequestBody List<SysUser> sysUsers) throws SysException {
+        return new ResponseJsonData(sysUserService.batchSaveOrUpdateSysUsers(sysUsers));
+    }
+
+    /**
+     * 查询用户信息.
      *
      * @param request
      * @param response
@@ -68,15 +84,14 @@ public class SysUserController extends BaseController {
      */
     @RequestMapping("/user/querySysUserByParam")
     @ResponseBody
-    public ResponseJsonData querySysUserByParam(HttpServletRequest request, HttpServletResponse response,
-                                                SysUser sysUser, int page, int pagesize)
-            throws SysException {
+    public ResponseJsonData querySysUserByParam(HttpServletRequest request,
+                                                HttpServletResponse response,
+                                                SysUser sysUser, int page, int pagesize) throws SysException {
         return new ResponseJsonData(sysUserService.querySysUser(sysUser, page, pagesize));
     }
 
-
     /**
-     * 保存用户信息.
+     * 删除用户信息.
      *
      * @param request
      * @param response
@@ -86,9 +101,8 @@ public class SysUserController extends BaseController {
      */
     @RequestMapping("/user/deleteSysUsers")
     @ResponseBody
-    public ResponseJsonData querySysUserByParam(HttpServletRequest request, HttpServletResponse response,
-                                                @RequestBody List<SysUser> sysUsers)
-            throws SysException {
+    public ResponseJsonData deleteSysUsers(HttpServletRequest request, HttpServletResponse response,
+                                           @RequestBody List<SysUser> sysUsers) throws SysException {
         return new ResponseJsonData(sysUserService.deleteSysUsers(sysUsers));
     }
 

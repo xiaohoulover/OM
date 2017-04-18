@@ -4,13 +4,13 @@
     .buttons {
         position: absolute;
         right: 0;
-        margin: 10px;
-        height: 35px;
+        margin-top: 230px;
+        height: 35px
     }
 
     .buttons div {
         float: left;
-        margin-right: 5px;
+        margin-right: 10px;
     }
 </style>
 
@@ -22,8 +22,8 @@
 <script type="text/javascript">
 
     $(function () {
-
         var customerTypeData;
+        var carFrontData;
         //初始化Form表单
         var orderForm = window['orderForm'] = $("#orderForm").ligerForm({
             inputWidth: 200,
@@ -84,12 +84,16 @@
 
         /*客户信息*/
         var customerForm = window['customerForm'] = $("#customerForm").ligerForm({
-            inputWidth: 170,
-            labelWidth: 110,
+            inputWidth: 200,
+            labelWidth: 80,
             space: 20,
             fields: [{
+                name : 'lineCustomerId',
+                type : 'hidden'
+            }, {
                 display: "客户名称",
                 name: "customerId",
+                textField : 'customerName',
                 newline: true,
                 type: "combobox",
                 options : {
@@ -100,7 +104,7 @@
                     isShowCheckBox : false,
                     highLight : true,
                     autocomplete : true,
-                    keySupport : true,
+                    triggerToLoad : true,
                     autocompleAllowEmpty : true,
                     onSelected : function (value, text) {
                         if (value) {
@@ -120,6 +124,7 @@
 
                             var parm = {'customerId': value};
                             $.getJSON(_basePath + "/customer/getCustomerDetails", parm, function (resdata) {
+                                //将客户对应的客户类型保存
                                 customerTypeData = resdata.customerTypeList;
                                 liger.get('customerTypeId').setData(resdata.customerTypeList);
                             });
@@ -133,6 +138,7 @@
             }, {
                 display: "业务类型",
                 name: "customerTypeId",
+                textField : 'businessType',
                 newline: false,
                 type: "combobox",
                 options : {
@@ -191,7 +197,7 @@
                 type: "text",
                 readonly : true
             }, {
-                display: "收货方",
+                display: "收货单位",
                 name: "receiver",
                 newline: true,
                 type: "text",
@@ -200,12 +206,13 @@
                 display: "收货地址",
                 name: "receiptLocation",
                 newline: false,
+                width : 500,
                 type: "text",
                 readonly : true
             }, {
                 display: "收货联系人",
                 name: "receivingContact",
-                newline: false,
+                newline: true,
                 type: "text",
                 readonly : true
             }, {
@@ -259,7 +266,7 @@
                 display: '提运单号',
                 name: 'wayBillNo',
                 align: 'center',
-                width: 100,
+                width: 115,
                 validate: {
                     required: true
                 },
@@ -291,7 +298,8 @@
             }, {
                 display: '货物名称',
                 name: 'itemName',
-                textField: 'itemId',
+                valueFiled: 'itemId',
+                textField: 'itemName',
                 align: 'center',
                 validate: {
                     required: true
@@ -303,7 +311,7 @@
                 display: '罐柜类型',
                 name: 'tankType',
                 align: 'center',
-                width: 80,
+                width: 60,
                 validate: {
                     required: true
                 },
@@ -318,7 +326,7 @@
                 display: '危险类别',
                 name: 'hazardCategory',
                 align: 'center',
-                width: 80,
+                width: 60,
                 editor: {
                     type: 'select',
                     data: itemCategoryData,
@@ -379,6 +387,20 @@
                     type : 'text'
                 }
             }],
+            onBeforeSubmitEdit: function (e) {
+                if ("tankNo" == e.column.columnname && e.value) {
+                    if (e.value.length > 11) {
+                        $.ligerDialog.warn("长度不能大于11位!");
+                        return false;
+                    }
+                }
+                if ("unNo" == e.column.columnname && e.value) {
+                    if (e.value.length > 4) {
+                        $.ligerDialog.warn("长度不能大于4位!");
+                        return false;
+                    }
+                }
+            },
             onBeforeEdit: function (e) {
                 var orderStatus = liger.get("orderStatus").getValue();
                 if ("COMP" == orderStatus) {
@@ -388,17 +410,19 @@
             onAfterEdit : function (e) {
                 // 联动
                 if ("shipWeight" == e.column.columnname || "receiptWeight" == e.column.columnname) {
-                    if (typeof(e.record.shipWeight) == "undefined" || typeof (e.record.receiptWeight) == "undefined") {
+                    /*if (typeof(e.record.shipWeight) == "undefined" || typeof (e.record.receiptWeight) == "undefined") {
+                        return true;
+                    }*/
+                    if (e.record.shipWeight && e.record.receiptWeight) {
+                        var poundsWorse = (Number(e.record.receiptWeight)-Number(e.record.shipWeight)) * 1000;
+                        //var differenceRate = (Number(e.record.receiptWeight)-Number(e.record.shipWeight)) / Number(e.record.receiptWeight) * 1000;
+                        var differenceRate = Number(poundsWorse) / Number(e.record.receiptWeight);
+                        //磅差=（签收重量-出货重量）*1000
+                        itemGrid.updateCell('poundsWorse', BaseCommonUI.roundPrecision(poundsWorse, 2), e.record);
+                        //差异率=（签收重量-出货重量）/签收重量*1000
+                        itemGrid.updateCell('differenceRate', BaseCommonUI.roundPrecision(differenceRate, 1), e.record);
                         return true;
                     }
-                    var poundsWorse = (Number(e.record.receiptWeight)-Number(e.record.shipWeight)) * 1000;
-                    //var differenceRate = (Number(e.record.receiptWeight)-Number(e.record.shipWeight)) / Number(e.record.receiptWeight) * 1000;
-                    var differenceRate = Number(poundsWorse) / Number(e.record.receiptWeight);
-                    //磅差=（签收重量-出货重量）*1000
-                    itemGrid.updateCell('poundsWorse', BaseCommonUI.roundPrecision(poundsWorse, 2), e.record);
-                    //差异率=（签收重量-出货重量）/签收重量*1000
-                    itemGrid.updateCell('differenceRate', BaseCommonUI.roundPrecision(differenceRate, 1), e.record);
-                    return true;
                 }
             },
             toolbar: {
@@ -410,15 +434,15 @@
                     },
                     icon: 'add'
                 },
-                    {line: true},
-                    {
-                        id: 'om_item_delete',
-                        text: '删除',
-                        click: function () {
-                            itemGrid.deleteSelectedRow();
-                        },
-                        icon: 'delete'
-                    }]
+                {line: true},
+                {
+                    id: 'om_item_delete',
+                    text: '删除',
+                    click: function () {
+                        itemGrid.deleteSelectedRow();
+                    },
+                    icon: 'delete'
+                }]
             }
         });
 
@@ -447,9 +471,28 @@
                     keySupport: true,
                     autocomplete : true,
                     url : _basePath + '/car/getCarsByParams?type=CF',
-                    onSelected : function(value ,text) {
-                        //TODO 更新核定油耗
-                        console.log(carGrid.getSelected());
+                    onSuccess : function(data) {
+                        carFrontData = data;
+                    },
+                    onSelected : function (value, text) {
+                        //车辆项目信息校验
+                        var dialogStr = "";
+                        for (var i in carFrontData) {
+                            if (text == carFrontData[i].plateNo) {
+                                var carProjectList = carFrontData[i].carProjectDtoList;
+                                for (var j in carProjectList) {
+                                    var today = new Date().parseStr("@YYYY@-@MM@-@DD@");
+                                    if (today < carProjectList[j].validPeriodFrom
+                                        || today > carProjectList[j].validPeriodTo) {
+                                        dialogStr += carProjectList[j].projectName + ', ';
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                        if (dialogStr) {
+                            $.ligerDialog.warn("注意：["+dialogStr+"]已过期！");
+                        }
                     }
                 }
             }, {
@@ -554,9 +597,12 @@
                 }
             },
             onAfterEdit : function (e) {
-                // 核定油耗=区间路程*车头油耗比
+                // 核定油耗=区间路程/车头油耗比
                 if ("distance" == e.column.columnname) {
-                    carGrid.updateCell('fuelCosts', BaseCommonUI.roundPrecision(e.value*e.record.fuelConsumptionRatio, 2), e.record);
+                    carGrid.updateCell('fuelCosts', BaseCommonUI.roundPrecision(e.value/e.record.fuelConsumptionRatio, 2), e.record);
+                }
+                if ("fuelConsumptionRatio" == e.column.columnname) {
+                    carGrid.updateCell('fuelCosts', BaseCommonUI.roundPrecision(e.record.distance/e.value, 2), e.record);
                 }
             },
             toolbar: {
@@ -582,7 +628,7 @@
 
         var disbursementGrid = window['disbursementGrid'] = $("#disbursementGrid").ligerGrid({
             title: '代垫费用',
-            width: '99%',
+            width: '49%',
             rownumbers: true,
             usePager: false,
             enabledEdit: true,
@@ -592,6 +638,7 @@
             columns: [{
                 display: '费用类型',
                 name: 'type',
+                width: 100,
                 textField: 'disbursementId',
                 align: 'center',
                 editor: {
@@ -604,7 +651,7 @@
             }, {
                 display: '金额(元)',
                 name: 'amount',
-                width: 200,
+                width: 100,
                 align: 'center',
                 editor: {
                     type: 'float'
@@ -626,7 +673,56 @@
                     return false;
                 }
             }
-        })
+        });
+
+        var disbursementGrid2 = window['disbursementGrid2'] = $("#disbursementGrid2").ligerGrid({
+            title: '代垫费用',
+            width: '49%',
+            rownumbers: true,
+            usePager: false,
+            enabledEdit: true,
+            allowHideColumn: false,
+            checkbox: false,
+            frozen: false,
+            columns: [{
+                display: '费用类型',
+                name: 'type',
+                width: 100,
+                textField: 'disbursementId',
+                align: 'center',
+                editor: {
+                    type: 'select',
+                    data: disbursementData,
+                    valueField: 'value',
+                    textField: 'text'
+                },
+                render: BaseCommonUI.gridSelectRender
+            }, {
+                display: '金额(元)',
+                name: 'amount',
+                width: 100,
+                align: 'center',
+                editor: {
+                    type: 'float'
+                }
+            }, {
+                display: '备注',
+                name: 'remark',
+                align: 'center',
+                editor: {
+                    type: 'text'
+                }
+            }],
+            onBeforeEdit: function (e) {
+                var orderStatus = liger.get("orderStatus").getValue();
+                if ("COMP" == orderStatus) {
+                    return false;
+                }
+                if ("type" == e.column.columnname) {
+                    return false;
+                }
+            }
+        });
 
         init_order_btn();
 
@@ -650,7 +746,10 @@
     <!-- 车辆表格Grid -->
     <div id="carGrid" style="margin-top: 10px"></div>
     <!-- 代垫费用表格Grid -->
-    <div id="disbursementGrid" style="margin-top: 10px"></div>
+    <div>
+        <div id="disbursementGrid" style="margin-top: 10px;float: left;"></div>
+        <div id="disbursementGrid2" style="margin-top: 10px;margin-right: 10px; float: right;"></div>
+    </div>
     <!-- 按钮 -->
     <div id="buttons" class="buttons">
         <div id="fileUploadBtn"></div>

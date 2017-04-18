@@ -17,6 +17,12 @@
 
         $(function () {
             var userId = ${Session.userId};
+
+            /*jQuery.validator.addMethod("isPassword", function(value, element) {
+                var tel = /^(?![^a-zA-Z]+$)(?!\D+$)[a-zA-Z0-9._`~!@#$%^&*()+-={}:;<>?,\\\"\'\[\]]{8,}$/;
+                return this.optional(element) || (tel.test(value));
+            }, '密码格式错误');*/
+
             jQuery.validator.addMethod("pwdEquals", function(value, element) {
                 var passwordAgain = $.ligerui.get('passwordAgain').getValue();
                 var newPassword = $.ligerui.get('password').getValue();
@@ -29,6 +35,7 @@
             var userForm = window['userForm'] = $("#userForm").ligerForm({
                 inputWidth: 200,
                 labelWidth: 80,
+                validate : true,
                 fields : [{
                     name : 'userId',
                     type : 'hidden',
@@ -41,7 +48,6 @@
                     space: 20,
                     validate: true,
                     display: '用户名',
-                    id : 'userName',
                     name: 'userName',
                     newline: true,
                     type: "text",
@@ -52,7 +58,9 @@
                     },
                 </#if>
                     validate: {
-                        required: true
+                        required: true,
+                        minlength: 1,
+                        maxlength: 11
                     }
                 }, {
                     display : '用户类型',
@@ -72,13 +80,13 @@
             <#if RequestParameters.flag != 1>
                     {
                     display: '原密码',
-                    id : 'oldPassword',
                     name: 'oldPassword',
                     newline: true,
                     type: "password",
                     validate: {
                         required: true,
-                        minlength: 8
+                        minlength: 6,
+                        maxlength:12
                     }
                 },
             </#if>
@@ -89,8 +97,8 @@
                     type: "password",
                     validate: {
                         required: true,
-                        minlength: 8,
-                        pwdEquals: true
+                        minlength: 6,
+                        maxlength:12
                     }
                 }, {
                     display: '确认密码',
@@ -99,7 +107,8 @@
                     type: "password",
                     validate: {
                         required: true,
-                        minlength: 8,
+                        minlength: 6,
+                        maxlength:12,
                         pwdEquals: true
                     }
                 }]
@@ -111,27 +120,40 @@
                     // 保存
                     var  data = userForm.getData();
 
+                    if (data.password != data.passwordAgain) {
+                        $.ligerDialog.warn("密码不一致!");
+                        return false;
+                    }
+                    if (data.password.length < 6 || data.passwordAgain.length < 6) {
+                        $.ligerDialog.warn("密码长度不小于6位!");
+                        return false;
+                    }
                     if (data.userName && data.password && data.passwordAgain) {
-                        var manager = $.ligerDialog.waitting('正在处理中,请稍候...');
-                        setTimeout(function () {
-                            manager.close();
-                        }, 1000);
-                        $.ajax({
-                            url : _basePath + "/user/saveSysUser",
-                            data : JSON2.stringify(data),
-                            type : 'POST',
-                            dataType : 'json',
-                            contentType : 'application/json',
-                            success : function (resData) {
-                                if (resData.success) {
-                                    $.ligerDialog.success("保存成功!");
-                                } else {
-                                    $.ligerDialog.error("保存失败!");
-                                }
+                        $.ligerDialog.confirm(("确认保存？"), function (yes) {
+                            if (yes) {
+                                var manager = $.ligerDialog.waitting('正在处理中,请稍候...');
+                                setTimeout(function () {
+                                    manager.close();
+                                }, 1000);
+                                $.ajax({
+                                    url : _basePath + "/user/saveSysUser",
+                                    data : JSON2.stringify(data),
+                                    type : 'POST',
+                                    dataType : 'json',
+                                    contentType : 'application/json',
+                                    success : function (resData) {
+                                        if (resData.success) {
+                                            $.ligerDialog.success("保存成功!");
+                                            location.reload();
+                                        } else {
+                                            $.ligerDialog.error(resData.resMsg);
+                                        }
+                                    }
+                                });
                             }
                         });
                     } else {
-                        $.ligerDialog.error("值不能为空!");
+                        $.ligerDialog.warn("值不能为空!");
                     }
                 }
             });

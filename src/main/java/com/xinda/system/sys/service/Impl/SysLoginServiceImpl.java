@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,9 +25,11 @@ import java.util.Date;
  * @Date 2017/3/27 23:10
  */
 @Service
+@Transactional
 public class SysLoginServiceImpl implements ISysLoginService {
 
-    private Logger logger = LoggerFactory.getLogger(SysLoginServiceImpl.class);
+
+    private final Logger logger = LoggerFactory.getLogger(SysLoginServiceImpl.class);
 
     @Autowired
     private ISysUserService sysUserService;
@@ -38,6 +41,7 @@ public class SysLoginServiceImpl implements ISysLoginService {
         ModelAndView view = new ModelAndView();
         view.setViewName("/login");
         // 记录用户输入的用户名，登录失败刷新页面时，不需要重新输入
+
         try {
             //验证码校验
             verificationCodeService.valiLoginVerificationCode(request);

@@ -1,24 +1,18 @@
 package com.xinda.om.order.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.xinda.cm.customer.dto.Customer;
-import com.xinda.cm.customer.dto.CustomerType;
-import com.xinda.cm.customer.mapper.CustomerMapper;
-import com.xinda.cm.customer.mapper.CustomerTypeMapper;
 import com.xinda.fm.file.mapper.FileManagerMapper;
 import com.xinda.om.order.dto.DisbursementDto;
 import com.xinda.om.order.dto.ItemInfoDto;
 import com.xinda.om.order.dto.LineCarDto;
 import com.xinda.om.order.dto.SalesOrder;
-import com.xinda.om.order.mapper.DisbursementMapper;
-import com.xinda.om.order.mapper.ItemInfoMapper;
-import com.xinda.om.order.mapper.LineCarMapper;
-import com.xinda.om.order.mapper.SalesOrderMapper;
+import com.xinda.om.order.mapper.*;
 import com.xinda.om.order.service.ISalesOrderService;
 import com.xinda.system.sys.contant.BaseConstants;
 import com.xinda.system.sys.dto.SysSequence;
 import com.xinda.system.sys.exception.OrderException;
 import com.xinda.system.sys.service.ISysSequenceService;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +21,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -50,10 +43,14 @@ public class SalesOrderServiceImpl implements ISalesOrderService {
     private SalesOrderMapper salesOrderMapper;
     @Autowired
     private ISysSequenceService sysSequenceService;
-    @Autowired
+
+    /*@Autowired
     private CustomerMapper customerMapper;
     @Autowired
-    private CustomerTypeMapper customerTypeMapper;
+    private CustomerTypeMapper customerTypeMapper;*/
+    @Autowired
+    private LineCustomerMapper lineCustomerMapper;
+
     @Autowired
     private ItemInfoMapper itemInfoMapper;
     @Autowired
@@ -79,16 +76,16 @@ public class SalesOrderServiceImpl implements ISalesOrderService {
                 sBuilder.toString(), null, null, null));
     }
 
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public SalesOrder saveSalesOrder(SalesOrder order, boolean isSubmit) throws OrderException {
-        logger.info("Starting save SalesOrder ...[{}]", order.toString());
-        // 1.保存订单头信息和客户Id
-        // 2.保存客户信息
-        if (null == order.getSalesOrderId()) {// insert
-            order.setOrderNumber(createOrderNumber(order));
-            salesOrderMapper.insertSelective(order);
-        } else {// update
+    /**
+     * 订单保存信息校验.
+     *
+     * @param order
+     * @throws OrderException
+     */
+    private void valSalesOrderInfo(SalesOrder order) throws OrderException {
+        //TODO 校验
+
+        if (null != order.getSalesOrderId()) {//update
             SalesOrder oldOrder = salesOrderMapper.selectByOrderIdForUpdate(order.getSalesOrderId());
             if (null == oldOrder) {//订单已删除
                 if (logger.isInfoEnabled()) {
@@ -109,8 +106,31 @@ public class SalesOrderServiceImpl implements ISalesOrderService {
                 }
                 order.setOrderNumber(createOrderNumber(order));
             }
+        }
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public SalesOrder saveSalesOrder(SalesOrder order, boolean isSubmit) throws OrderException {
+        logger.info("Starting save SalesOrder ...[{}]", order.toString());
+        //信息校验
+        valSalesOrderInfo(order);
+
+        // 1.保存订单头信息
+        if (null == order.getSalesOrderId()) {// insert
+            order.setOrderNumber(createOrderNumber(order));
+            salesOrderMapper.insertSelective(order);
+        } else {// update
             salesOrderMapper.updateByPrimaryKeySelective(order);
         }
+        // 2.保存客户信息
+        if (null == order.getLineCustomer().getLineCustomerId()) {
+            order.getLineCustomer().setSalesOrderId(order.getSalesOrderId());
+            lineCustomerMapper.insertSelective(order.getLineCustomer());
+        } else {
+            lineCustomerMapper.updateByPrimaryKeySelective(order.getLineCustomer());
+        }
+
         // 3.保存商品信息
         if (order.getItemInfoDtos() != null) {
             for (ItemInfoDto item : order.getItemInfoDtos()) {
@@ -165,13 +185,13 @@ public class SalesOrderServiceImpl implements ISalesOrderService {
         // 5.保存代垫费用
         if (order.getDisbursementDtos() != null) {
             for (DisbursementDto disbursement : order.getDisbursementDtos()) {
-                if (null == disbursement.getDisbursementId()) {
+                if (null == disbursement.getDisbursementId() && StringUtils.isEmpty(disbursement.getRemark())) {
                     if (null == disbursement.getAmount() || BigDecimal.ZERO.compareTo(disbursement.getAmount()) >= 0) {
                         continue;
                     }
                 }
                 if (null != disbursement.getDisbursementId()) {
-                    if (null == disbursement.getAmount() || BigDecimal.ZERO.equals(disbursement.getAmount())) {
+                    if (StringUtils.isEmpty(disbursement.getRemark()) && (null == disbursement.getAmount() || BigDecimal.ZERO.equals(disbursement.getAmount()))) {
                         disbursement.set__status(BaseConstants.BASE_DTO_DELETE);
                     } else {
                         disbursement.set__status(BaseConstants.BASE_DTO_UPDATE);
@@ -233,10 +253,12 @@ public class SalesOrderServiceImpl implements ISalesOrderService {
         // 订单信息
         SalesOrder order = salesOrderMapper.selectByPrimaryKey(orderId);
         // 客户信息
-        Customer customer = customerMapper.selectByPrimaryKey(order.getCustomerId());
+        order.setLineCustomer(lineCustomerMapper.selectBySalesOrderId(order.getSalesOrderId()));
+        /*Customer customer = customerMapper.selectByPrimaryKey(order.getLineCustomerId());
         //客户类型信息
         customer.setCustomerType(customerTypeMapper.selectByPrimaryKey(order.getCustomerTypeId()));
-        order.setCustomer(customer);
+        order.setCustomer(customer);*/
+
         // 运输商品信息
         ItemInfoDto itemInfoDto = new ItemInfoDto();
         itemInfoDto.setSalesOrderId(orderId);

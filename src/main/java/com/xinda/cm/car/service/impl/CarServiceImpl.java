@@ -73,7 +73,11 @@ public class CarServiceImpl implements ICarService {
 
     @Override
     public List<CarInfoDto> getCarsByParams(CarInfoDto carInfoDto) {
-        return carInfoMapper.queryCarsByParams(carInfoDto);
+        List<CarInfoDto> carInfoDtos = carInfoMapper.queryCarsByParams(carInfoDto);
+        for (CarInfoDto infoDto : carInfoDtos) {
+            infoDto.setCarProjectDtoList(carProjectMapper.selectByCarId(infoDto.getCarId()));
+        }
+        return carInfoDtos;
     }
 
     @Override

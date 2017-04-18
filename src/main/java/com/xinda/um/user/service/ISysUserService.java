@@ -48,7 +48,15 @@ public interface ISysUserService {
      * @return
      * @throws SysException
      */
-    SysUser saveSysUser(SysUser sysUser) throws SysException;
+    SysUser createSysUser(SysUser sysUser) throws SysException;
+
+    /**
+     * 批量保存用户信息.
+     *
+     * @param sysUsers
+     * @return
+     */
+    List<SysUser> batchSaveOrUpdateSysUsers(List<SysUser> sysUsers) throws SysException;
 
     /**
      * 删除用户.
@@ -56,6 +64,6 @@ public interface ISysUserService {
      * @param sysUsers
      * @return
      */
-    List<SysUser> deleteSysUsers(List<SysUser> sysUsers);
+    List<SysUser> deleteSysUsers(List<SysUser> sysUsers) throws SysException;
 
 }

@@ -1,19 +1,35 @@
 <#include "../../head.html" />
 
 <script src="${base.contextPath}/resources/js/car.js"  type="text/javascript" ></script>
+<style>
+    .buttons {
+        position: absolute;
+        right: 0;
+        margin: 10px;
+        height: 35px;
+    }
 
+    .buttons div {
+        float: left;
+        margin-right: 5px;
+    }
+</style>
 <script type="text/javascript" >
 
     $(function () {
         var carForm = window['carForm'] = $('#carForm').ligerForm({
             inputWidth: 170,
             labelWidth: 110,
+            validate : true,
             space: 20,
             fields: [{
                 name : 'carId',
                 type : 'hidden'
             },{
                 display: "车辆编号",
+            <#if Session.userType != '0'>
+                readonly : true,
+            </#if>
                 name: "plateNo",
                 newline: true,
                 type: "text",
@@ -23,6 +39,9 @@
                 }
             }, {
                 display: "类型",
+            <#if Session.userType != '0'>
+                readonly : true,
+            </#if>
                 name: "type",
                 newline: false,
                 type: "select",
@@ -33,6 +52,7 @@
                     onSelected : function (value, text) {
                         if ("CP" == value) {//车板
                             liger.get("fuelConsumptionRatio").setDisabled();
+                            liger.get("fuelConsumptionRatio").setValue(0);
                         } else {
                             liger.get("fuelConsumptionRatio").setEnabled();
                         }
@@ -43,6 +63,9 @@
                 }
             }, {
                 display: "油耗比",
+            <#if Session.userType != '0'>
+                readonly : true,
+            </#if>
                 name: "fuelConsumptionRatio",
                 newline: false,
                 type: "number",
@@ -55,18 +78,20 @@
         var carProjectGrid = window['carProjectGrid'] = $('#carProjectGrid').ligerGrid({
             title: '车辆项目信息',
             width: '99%',
-            height : '75%',
+            height : '98%',
             rownumbers: true,
             usePager: false,
-            enabledEdit: true,
-            allowHideColumn: false,
+            <#if Session.userType == '0'>
+                enabledEdit: true,
+            </#if>
             checkbox: true,
-            frozen: false,
             columns: [{
                 display: '项目',
                 name: 'projectName',
+                valueFiled: 'projectId',
+                textField: 'projectName',
                 align: 'center',
-                width: 300,
+                width: 200,
                 editor: {
                     type: 'text'
                 }
@@ -77,7 +102,6 @@
                 width: 150,
                 type : 'date',
                 editor: {
-                    format : 'yyyy-MM-dd',
                     type: 'date'
                 }
             }, {
@@ -88,7 +112,6 @@
                 type : 'date',
                 format : 'yyyy-MM-dd',
                 editor: {
-                    format : 'yyyy-MM-dd',
                     type: 'date'
                 }
             }, {
@@ -98,14 +121,13 @@
                 editor: {
                     type: 'text'
                 }
-            }, {
-                hide : true,
-                width : 1,
-                name : 'projectId'
             }],
             toolbar: {
                 items: [{
                     id: 'cm_car_add',
+                <#if Session.userType != '0'>
+                    disable : true,
+                </#if>
                     text: '新增',
                     click: function () {
                         carProjectGrid.addRow();
@@ -115,6 +137,9 @@
                     {line: true},
                     {
                         id: 'cm_car_delete',
+                    <#if Session.userType != '0'>
+                        disable : true,
+                    </#if>
                         text: '删除',
                         click: function () {
                             carProjectGrid.deleteSelectedRow();
@@ -135,6 +160,9 @@
                 carProjectGrid.loadData(obj);
             })
         </#if>
+        <#if Session.userType != '0'>
+            $.ligerui.get("saveBtn").setDisabled(true);
+        </#if>
 
     });
 
@@ -147,7 +175,9 @@
 
         <div id="carProjectGrid" ></div>
 
-        <div id="saveBtn" style="margin-top: 10px"></div>
+        <div id="buttons" class="buttons">
+            <div id="saveBtn"></div>
+        </div>
     </div>
 
 </body>

@@ -13,11 +13,19 @@
                 display: "车辆编号",
                 name: "plateNo",
                 newline: true,
-                type: "text",
+                type: "combobox",
                 group : '查询条件',
-                validate: {
-                    required: true
-                }
+                options : {
+                    valueField : 'plateNo',
+                    textField : 'plateNo',
+                    url : _basePath + '/car/getCarsByParams',
+                    isMultiSelect : false,
+                    isShowCheckBox : false,
+                    highLight : true,
+                    autocomplete : true,
+                    triggerToLoad : true,
+                    autocompleAllowEmpty : true
+                },
             }],
             buttons : [ {
                 text : '查询',

@@ -4,11 +4,11 @@ import com.github.pagehelper.PageHelper;
 import com.xinda.fm.file.dto.FileManagerDto;
 import com.xinda.fm.file.mapper.FileManagerMapper;
 import com.xinda.fm.file.service.IFileManagerService;
-import com.xinda.system.sys.contant.BaseConstants;
 import com.xinda.system.sys.exception.FileException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +33,13 @@ import java.util.List;
 @Transactional
 public class FileManagerServiceImpl implements IFileManagerService {
 
-    private Logger logger = LoggerFactory.getLogger(FileManagerServiceImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(FileManagerServiceImpl.class);
+
+    /**
+     * 通过配置文件加载.
+     */
+    @Value("${file.uploadDirPath}")
+    private String dirPath;
 
     @Autowired
     private FileManagerMapper fileManagerMapper;
@@ -56,11 +62,11 @@ public class FileManagerServiceImpl implements IFileManagerService {
                 if (file != null) {
                     String fileName = file.getOriginalFilename();
                     if (!StringUtils.isEmpty(fileName.trim())) {
-                        File dir = new File(BaseConstants.FILE_SAVE_DIR + orderNo);
+                        File dir = new File(dirPath + orderNo);
                         if (!dir.exists()) {
                             dir.mkdirs();
                         }
-                        String filePath = BaseConstants.FILE_SAVE_DIR + orderNo + File.separator + fileName;
+                        String filePath = dirPath + orderNo + File.separator + fileName;
                         // 获取输出流
                         FileOutputStream fos = new FileOutputStream(filePath);
                         // 获取输入流

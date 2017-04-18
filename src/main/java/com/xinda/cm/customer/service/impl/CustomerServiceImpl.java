@@ -26,7 +26,7 @@ import java.util.List;
 @Transactional
 public class CustomerServiceImpl implements ICustomerService {
 
-    Logger logger = LoggerFactory.getLogger(CustomerServiceImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(CustomerServiceImpl.class);
 
     @Autowired
     private CustomerMapper customerMapper;
@@ -94,9 +94,15 @@ public class CustomerServiceImpl implements ICustomerService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void deleteCustomer(List<CustomerType> customerTypes) {
+    public void deleteCustomerType(List<CustomerType> customerTypes) {
         for (CustomerType customerType : customerTypes) {
             customerTypeMapper.deleteByPrimaryKey(customerType.getTypeId());
         }
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void deleteCustomer(Integer customerId) {
+        customerMapper.deleteByPrimaryKey(customerId);
     }
 }

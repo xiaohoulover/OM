@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xinda.om.order.mapper.LineCustomerMapper" >
+    <resultMap id="BaseResultMap" type="com.xinda.om.order.dto.LineCustomer" >
+        <id column="LINE_CUSTOMER_ID" property="lineCustomerId" jdbcType="DECIMAL" />
+        <result column="SALES_ORDER_ID" property="salesOrderId" jdbcType="DECIMAL" />
+        <result column="CUSTOMER_NAME" property="customerName" jdbcType="VARCHAR" />
+        <result column="BUSINESS_TYPE" property="businessType" jdbcType="VARCHAR" />
+        <result column="BUSINESS_PRICE" property="businessPrice" jdbcType="DECIMAL" />
+        <result column="MANAGER_NAME" property="managerName" jdbcType="VARCHAR" />
+        <result column="MANAGER_PHONE" property="managerPhone" jdbcType="VARCHAR" />
+        <result column="RECEIVER" property="receiver" jdbcType="VARCHAR" />
+        <result column="RECEIVING_CONTACT" property="receivingContact" jdbcType="VARCHAR" />
+        <result column="CONTACT_PHONE" property="contactPhone" jdbcType="VARCHAR" />
+        <result column="RECEIPT_LOCATION" property="receiptLocation" jdbcType="VARCHAR" />
+        <result column="BILL_BOARD_LOCATION" property="billBoardLocation" jdbcType="VARCHAR" />
+        <result column="LOADING_LOCATION" property="loadingLocation" jdbcType="VARCHAR" />
+        <result column="DISCHARGE_LOCATION" property="dischargeLocation" jdbcType="VARCHAR" />
+        <result column="COUNTER_LOCATION" property="counterLocation" jdbcType="VARCHAR" />
+        <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+        <result column="CREATION_DATE" property="creationDate" jdbcType="TIMESTAMP" />
+        <result column="LAST_UPDATE_DATE" property="lastUpdateDate" jdbcType="TIMESTAMP" />
+        <result column="OBJECT_VERSION_NUM" property="objectVersionNum" jdbcType="DECIMAL" />
+        <result column="CUSTOMER_ID" property="customerId" jdbcType="DECIMAL" />
+        <result column="CUSTOMER_TYPE_ID" property="customerTypeId" jdbcType="DECIMAL" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        LINE_CUSTOMER_ID, SALES_ORDER_ID, CUSTOMER_NAME, BUSINESS_TYPE, BUSINESS_PRICE, MANAGER_NAME, MANAGER_PHONE,
+        RECEIVER, RECEIVING_CONTACT, CONTACT_PHONE, RECEIPT_LOCATION, BILL_BOARD_LOCATION,
+        LOADING_LOCATION, DISCHARGE_LOCATION, COUNTER_LOCATION, REMARK, CREATION_DATE, LAST_UPDATE_DATE,
+        OBJECT_VERSION_NUM, CUSTOMER_ID, CUSTOMER_TYPE_ID
+    </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select
+        <include refid="Base_Column_List" />
+        from om_sales_line_customer
+        where LINE_CUSTOMER_ID = #{lineCustomerId,jdbcType=DECIMAL}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+        delete from om_sales_line_customer
+        where LINE_CUSTOMER_ID = #{lineCustomerId,jdbcType=DECIMAL}
+    </delete>
+    <insert id="insert" parameterType="com.xinda.om.order.dto.LineCustomer" >
+        <selectKey resultType="int" keyProperty="lineCustomerId" >
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into om_sales_line_customer (LINE_CUSTOMER_ID, SALES_ORDER_ID, CUSTOMER_NAME, BUSINESS_TYPE,
+        BUSINESS_PRICE, MANAGER_NAME, MANAGER_PHONE,
+        RECEIVER, RECEIVING_CONTACT, CONTACT_PHONE,
+        RECEIPT_LOCATION, BILL_BOARD_LOCATION, LOADING_LOCATION,
+        DISCHARGE_LOCATION, COUNTER_LOCATION, REMARK,
+        CREATION_DATE, LAST_UPDATE_DATE, OBJECT_VERSION_NUM,
+        CUSTOMER_ID, CUSTOMER_TYPE_ID
+        )
+        values (#{lineCustomerId,jdbcType=DECIMAL}, #{salesOrderId,jdbcType=DECIMAL}, #{customerName,jdbcType=VARCHAR}, #{businessType,jdbcType=VARCHAR},
+        #{businessPrice,jdbcType=DECIMAL}, #{managerName,jdbcType=VARCHAR}, #{managerPhone,jdbcType=VARCHAR},
+        #{receiver,jdbcType=VARCHAR}, #{receivingContact,jdbcType=VARCHAR}, #{contactPhone,jdbcType=VARCHAR},
+        #{receiptLocation,jdbcType=VARCHAR}, #{billBoardLocation,jdbcType=VARCHAR}, #{loadingLocation,jdbcType=VARCHAR},
+        #{dischargeLocation,jdbcType=VARCHAR}, #{counterLocation,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},
+        CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, #{customerId,jdbcType=DECIMAL}, #{customerTypeId,jdbcType=DECIMAL},
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.xinda.om.order.dto.LineCustomer" >
+        <selectKey resultType="int" keyProperty="lineCustomerId" >
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into om_sales_line_customer
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="lineCustomerId != null" >
+                LINE_CUSTOMER_ID,
+            </if>
+            <if test="salesOrderId != null" >
+                SALES_ORDER_ID,
+            </if>
+            <if test="customerName != null" >
+                CUSTOMER_NAME,
+            </if>
+            <if test="businessType != null" >
+                BUSINESS_TYPE,
+            </if>
+            <if test="businessPrice != null" >
+                BUSINESS_PRICE,
+            </if>
+            <if test="managerName != null" >
+                MANAGER_NAME,
+            </if>
+            <if test="managerPhone != null" >
+                MANAGER_PHONE,
+            </if>
+            <if test="receiver != null" >
+                RECEIVER,
+            </if>
+            <if test="receivingContact != null" >
+                RECEIVING_CONTACT,
+            </if>
+            <if test="contactPhone != null" >
+                CONTACT_PHONE,
+            </if>
+            <if test="receiptLocation != null" >
+                RECEIPT_LOCATION,
+            </if>
+            <if test="billBoardLocation != null" >
+                BILL_BOARD_LOCATION,
+            </if>
+            <if test="loadingLocation != null" >
+                LOADING_LOCATION,
+            </if>
+            <if test="dischargeLocation != null" >
+                DISCHARGE_LOCATION,
+            </if>
+            <if test="counterLocation != null" >
+                COUNTER_LOCATION,
+            </if>
+            <if test="remark != null" >
+                REMARK,
+            </if>
+            CREATION_DATE,
+            LAST_UPDATE_DATE,
+            OBJECT_VERSION_NUM,
+            <if test="customerId != null" >
+                CUSTOMER_ID,
+            </if>
+            <if test="customerTypeId != null" >
+                CUSTOMER_TYPE_ID,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="lineCustomerId != null" >
+                #{lineCustomerId,jdbcType=DECIMAL},
+            </if>
+            <if test="salesOrderId != null" >
+                #{salesOrderId,jdbcType=DECIMAL},
+            </if>
+            <if test="customerName != null" >
+                #{customerName,jdbcType=VARCHAR},
+            </if>
+            <if test="businessType != null" >
+                #{businessType,jdbcType=VARCHAR},
+            </if>
+            <if test="businessPrice != null" >
+                #{businessPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="managerName != null" >
+                #{managerName,jdbcType=VARCHAR},
+            </if>
+            <if test="managerPhone != null" >
+                #{managerPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="receiver != null" >
+                #{receiver,jdbcType=VARCHAR},
+            </if>
+            <if test="receivingContact != null" >
+                #{receivingContact,jdbcType=VARCHAR},
+            </if>
+            <if test="contactPhone != null" >
+                #{contactPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="receiptLocation != null" >
+                #{receiptLocation,jdbcType=VARCHAR},
+            </if>
+            <if test="billBoardLocation != null" >
+                #{billBoardLocation,jdbcType=VARCHAR},
+            </if>
+            <if test="loadingLocation != null" >
+                #{loadingLocation,jdbcType=VARCHAR},
+            </if>
+            <if test="dischargeLocation != null" >
+                #{dischargeLocation,jdbcType=VARCHAR},
+            </if>
+            <if test="counterLocation != null" >
+                #{counterLocation,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null" >
+                #{remark,jdbcType=VARCHAR},
+            </if>
+                CURRENT_TIMESTAMP,
+                CURRENT_TIMESTAMP,
+                1,
+            <if test="customerId != null" >
+                #{customerId,jdbcType=DECIMAL},
+            </if>
+            <if test="customerTypeId != null" >
+                #{customerTypeId,jdbcType=DECIMAL},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.xinda.om.order.dto.LineCustomer" >
+        update om_sales_line_customer
+        <set >
+            <if test="salesOrderId != null" >
+                SALES_ORDER_ID = #{salesOrderId,jdbcType=DECIMAL},
+            </if>
+            <if test="customerName != null" >
+                CUSTOMER_NAME = #{customerName,jdbcType=VARCHAR},
+            </if>
+            <if test="businessType != null" >
+                BUSINESS_TYPE = #{businessType,jdbcType=VARCHAR},
+            </if>
+            <if test="businessPrice != null" >
+                BUSINESS_PRICE = #{businessPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="managerName != null" >
+                MANAGER_NAME = #{managerName,jdbcType=VARCHAR},
+            </if>
+            <if test="managerPhone != null" >
+                MANAGER_PHONE = #{managerPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="receiver != null" >
+                RECEIVER = #{receiver,jdbcType=VARCHAR},
+            </if>
+            <if test="receivingContact != null" >
+                RECEIVING_CONTACT = #{receivingContact,jdbcType=VARCHAR},
+            </if>
+            <if test="contactPhone != null" >
+                CONTACT_PHONE = #{contactPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="receiptLocation != null" >
+                RECEIPT_LOCATION = #{receiptLocation,jdbcType=VARCHAR},
+            </if>
+            <if test="billBoardLocation != null" >
+                BILL_BOARD_LOCATION = #{billBoardLocation,jdbcType=VARCHAR},
+            </if>
+            <if test="loadingLocation != null" >
+                LOADING_LOCATION = #{loadingLocation,jdbcType=VARCHAR},
+            </if>
+            <if test="dischargeLocation != null" >
+                DISCHARGE_LOCATION = #{dischargeLocation,jdbcType=VARCHAR},
+            </if>
+            <if test="counterLocation != null" >
+                COUNTER_LOCATION = #{counterLocation,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null" >
+                REMARK = #{remark,jdbcType=VARCHAR},
+            </if>
+                LAST_UPDATE_DATE = CURRENT_TIMESTAMP,
+                OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1,
+            <if test="customerId != null" >
+                CUSTOMER_ID = #{customerId,jdbcType=DECIMAL},
+            </if>
+            <if test="customerTypeId != null" >
+                CUSTOMER_TYPE_ID = #{customerTypeId,jdbcType=DECIMAL},
+            </if>
+        </set>
+        where LINE_CUSTOMER_ID = #{lineCustomerId,jdbcType=DECIMAL}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.xinda.om.order.dto.LineCustomer" >
+        update om_sales_line_customer
+        set SALES_ORDER_ID = #{salesOrderId,jdbcType=DECIMAL},
+        CUSTOMER_NAME = #{customerName,jdbcType=VARCHAR},
+        BUSINESS_TYPE = #{businessType,jdbcType=VARCHAR},
+        BUSINESS_PRICE = #{businessPrice,jdbcType=DECIMAL},
+        MANAGER_NAME = #{managerName,jdbcType=VARCHAR},
+        MANAGER_PHONE = #{managerPhone,jdbcType=VARCHAR},
+        RECEIVER = #{receiver,jdbcType=VARCHAR},
+        RECEIVING_CONTACT = #{receivingContact,jdbcType=VARCHAR},
+        CONTACT_PHONE = #{contactPhone,jdbcType=VARCHAR},
+        RECEIPT_LOCATION = #{receiptLocation,jdbcType=VARCHAR},
+        BILL_BOARD_LOCATION = #{billBoardLocation,jdbcType=VARCHAR},
+        LOADING_LOCATION = #{loadingLocation,jdbcType=VARCHAR},
+        DISCHARGE_LOCATION = #{dischargeLocation,jdbcType=VARCHAR},
+        COUNTER_LOCATION = #{counterLocation,jdbcType=VARCHAR},
+        REMARK = #{remark,jdbcType=VARCHAR},
+        LAST_UPDATE_DATE = CURRENT_TIMESTAMP,
+        OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1,
+        CUSTOMER_ID = #{customerId,jdbcType=DECIMAL},
+        CUSTOMER_TYPE_ID = #{customerTypeId,jdbcType=DECIMAL}
+        where LINE_CUSTOMER_ID = #{lineCustomerId,jdbcType=DECIMAL}
+    </update>
+
+    <select id="selectBySalesOrderId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+          FROM om_sales_line_customer
+        WHERE SALES_ORDER_ID = #{salesOrderId,jdbcType=DECIMAL}
+    </select>
+
+</mapper>

@@ -88,20 +88,7 @@ public class BaseConstants {
      */
     public static final int OM_SEQ_LENGTH = 3;
 
-    //File
-    /**
-     * 文件保存目录.
-     */
-    //Windows
-    public static final String FILE_SAVE_DIR = "D:/ZiLiao/";
-    //Linux
-    //public static final String FILE_SAVE_DIR = "/usr/local/OM_Files";
-
     //System
-    /**
-     * 验证码存储时Key值.
-     */
-    public static final String VERIFICATION_KEY = "verification_key";
     /**
      * 验证码图片宽度.
      */

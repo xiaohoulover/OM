@@ -49,10 +49,17 @@ public interface ICustomerService {
     public List<CustomerType> selectCustomerByParms(int page, int pagesize, CustomerType customerType);
 
     /**
-     * 删除客户信息.
+     * 删除客户类型信息.
      *
      * @param customerTypes 参数集合对象
      */
-    public void deleteCustomer(List<CustomerType> customerTypes);
+    public void deleteCustomerType(List<CustomerType> customerTypes);
+
+    /**
+     * 删除客户信息.
+     *
+     * @param customerId 对象Id
+     */
+    public void deleteCustomer(Integer customerId);
 
 }

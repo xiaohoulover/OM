@@ -30,6 +30,10 @@ public class SysException extends BaseException {
 
     public static final String MSG_ERROR_SYS_VERIFICATION_CODE_ERROR = "验证码输入错误!";
 
+    public static final String MSG_ERROR_SYS_USER_OLD_PASSWORD_NOT_EQUALS = "原密码输入错误!";
+
+    public static final String MSG_ERROR_SYS_USER_NAME_HAD_EXISTS = "用户名重复!";
+
     /**
      * 构造方法.用户代码中声明抛出异常信息.
      *

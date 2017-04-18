@@ -13,16 +13,27 @@
                 fields: [{
                     display: "客户名称",
                     name: "customerName",
+                    type: "combobox",
                     newline: false,
-                    type: "text",
+                    options : {
+                        valueField : 'customerName',
+                        textField : 'customerName',
+                        url : _basePath + "/customer/queryAllCustomers",
+                        isMultiSelect : false,
+                        isShowCheckBox : false,
+                        highLight : true,
+                        autocomplete : true,
+                        triggerToLoad : true,
+                        autocompleAllowEmpty : true
+                    },
                     group : '查询条件'
-                }, {
+                }/*, {
                     display: "业务类型",
                     name: "businessType",
                     newline: false,
                     type: "text",
                     group : '查询条件'
-                }],
+                }*/],
                 buttons: [{
                     text: '查询',
                     width: 60,
@@ -37,7 +48,7 @@
                 height: '100%',
                 usePager: true,
                 allowHideColumn: false,
-                checkbox: true,
+                checkbox: false,
                 rownumbers: true,
                 //delayLoad: true,
                 //scrollToPage : true,
@@ -79,20 +90,7 @@
                             window.parent.f_addTab("CUSTOMER_CREATE", '新建客户', "${base.contextPath}/customer/cm_customer_create.html");
                         },
                         icon: 'add'
-                    },
-                        {line: true},
-                        {
-                            id: 'om_order_delete',
-                        <#if Session.userType != '0'>
-                            disable : true,
-                        </#if>
-                            text: '删除',
-                            click: function () {
-                                // 删除选择客户
-                                delete_customer(queryGrid, _basePath+"/customer/deleteCustomer");
-                            },
-                            icon: 'delete'
-                        }]
+                    }]
                 }
             })
 

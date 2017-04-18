@@ -16,10 +16,13 @@
     <result column="CREATION_DATE" property="creationDate" jdbcType="TIMESTAMP" />
     <result column="LAST_UPDATE_DATE" property="lastUpdateDate" jdbcType="TIMESTAMP" />
     <result column="OBJECT_VERSION_NUM" property="objectVersionNum" jdbcType="DECIMAL" />
+    <result column="FUEL_CONSUMPTION_RATIO" property="fuelConsumptionRatio" jdbcType="DECIMAL" />
+
   </resultMap>
   <sql id="Base_Column_List" >
     LINE_CAR_ID, SALES_ORDER_ID, CAR_FRONT_NO, CAR_PLATE_NO, DRIVER_NAME, ESCORT_NAME,
-    SHIP_PATH, DISTANCE, ROAD_BRIDGE_FEE, FUEL_COSTS, REMARK, CREATION_DATE, LAST_UPDATE_DATE, OBJECT_VERSION_NUM
+    SHIP_PATH, DISTANCE, ROAD_BRIDGE_FEE, FUEL_COSTS, REMARK, CREATION_DATE, LAST_UPDATE_DATE, OBJECT_VERSION_NUM,
+    FUEL_CONSUMPTION_RATIO
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select
@@ -39,12 +42,12 @@
     CAR_PLATE_NO, DRIVER_NAME, ESCORT_NAME,
     SHIP_PATH, DISTANCE, ROAD_BRIDGE_FEE,
     FUEL_COSTS, REMARK, CREATION_DATE,
-    LAST_UPDATE_DATE, OBJECT_VERSION_NUM)
+    LAST_UPDATE_DATE, OBJECT_VERSION_NUM, FUEL_CONSUMPTION_RATIO)
     values (#{lineCarId,jdbcType=DECIMAL}, #{salesOrderId,jdbcType=DECIMAL}, #{carFrontNo,jdbcType=VARCHAR},
     #{carPlateNo,jdbcType=VARCHAR}, #{driverName,jdbcType=VARCHAR}, #{escortName,jdbcType=VARCHAR},
     #{shipPath,jdbcType=VARCHAR}, #{distance,jdbcType=DECIMAL}, #{roadBridgeFee,jdbcType=DECIMAL},
     #{fuelCosts,jdbcType=DECIMAL}, #{remark,jdbcType=VARCHAR}, CURRENT_TIMESTAMP,
-    CURRENT_TIMESTAMP, 1)
+    CURRENT_TIMESTAMP, 1, #{fuelConsumptionRatio,jdbcType=DECIMAL})
   </insert>
   <insert id="insertSelective" parameterType="com.xinda.om.order.dto.LineCarDto" >
     <selectKey resultType="int" keyProperty="lineCarId" >
@@ -88,6 +91,9 @@
         CREATION_DATE,
         LAST_UPDATE_DATE,
         OBJECT_VERSION_NUM,
+      <if test="fuelConsumptionRatio != null" >
+        FUEL_CONSUMPTION_RATIO,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="lineCarId != null" >
@@ -126,6 +132,9 @@
       CURRENT_TIMESTAMP,
       CURRENT_TIMESTAMP,
       1,
+      <if test="fuelConsumptionRatio != null" >
+        #{fuelConsumptionRatio,jdbcType=DECIMAL},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.xinda.om.order.dto.LineCarDto" >
@@ -162,7 +171,10 @@
         REMARK = #{remark,jdbcType=VARCHAR},
       </if>
         LAST_UPDATE_DATE = CURRENT_TIMESTAMP,
-        OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1
+        OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1,
+      <if test="fuelConsumptionRatio != null" >
+        FUEL_CONSUMPTION_RATIO = #{fuelConsumptionRatio,jdbcType=DECIMAL},
+      </if>
     </set>
     where LINE_CAR_ID = #{lineCarId,jdbcType=DECIMAL}
   </update>
@@ -179,7 +191,8 @@
       FUEL_COSTS = #{fuelCosts,jdbcType=DECIMAL},
       REMARK = #{remark,jdbcType=VARCHAR},
       LAST_UPDATE_DATE = CURRENT_TIMESTAMP,
-      OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1
+      OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1,
+      FUEL_CONSUMPTION_RATIO = #{fuelConsumptionRatio,jdbcType=DECIMAL}
     where LINE_CAR_ID = #{lineCarId,jdbcType=DECIMAL}
   </update>
 

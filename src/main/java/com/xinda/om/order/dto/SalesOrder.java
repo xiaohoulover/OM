@@ -1,7 +1,6 @@
 package com.xinda.om.order.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.xinda.cm.customer.dto.Customer;
 import com.xinda.system.sys.contant.BaseConstants;
 import com.xinda.system.sys.dto.BaseDto;
 
@@ -39,19 +38,14 @@ public class SalesOrder extends BaseDto {
     @JsonFormat(pattern = BaseConstants.DATE_TIME_FORMAT, timezone = BaseConstants.TIME_ZONE)
     private Date shippingDate;
     /**
-     * 客户Id.
-     */
-    private Integer customerId;
-    /**
-     * 客户类型Id.
-     */
-    private Integer customerTypeId;
-    /**
      * 客户信息.
      */
-    private Customer customer;
     /**
-     * 商品集合.
+     * 订单-客户信息.
+     */
+    private LineCustomer lineCustomer;
+    /**
+     * 行-商品集合.
      */
     private List<ItemInfoDto> itemInfoDtos;
     /**
@@ -166,28 +160,12 @@ public class SalesOrder extends BaseDto {
         this.shippingDate = shippingDate;
     }
 
-    public void setCustomerId(Integer customerId) {
-        this.customerId = customerId;
+    public LineCustomer getLineCustomer() {
+        return lineCustomer;
     }
 
-    public Integer getCustomerId() {
-        return customerId;
-    }
-
-    public Integer getCustomerTypeId() {
-        return customerTypeId;
-    }
-
-    public void setCustomerTypeId(Integer customerTypeId) {
-        this.customerTypeId = customerTypeId;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public void setLineCustomer(LineCustomer lineCustomer) {
+        this.lineCustomer = lineCustomer;
     }
 
     public List<DisbursementDto> getDisbursementDtos() {
@@ -342,7 +320,6 @@ public class SalesOrder extends BaseDto {
                 ", orderStatus='" + orderStatus + '\'' +
                 ", createDate=" + createDate +
                 ", shippingDate=" + shippingDate +
-                ", customerId=" + customerId +
                 '}';
     }
 }

@@ -11,15 +11,15 @@
 	
 	#orderdata caption {
 		font-weight:bold;
-		font-size:1.7em;
+		font-size:1.8em;
 		text-align:center;
-		padding: 20px;
+		padding: 2px;
 	}
 	
 	#orderdata td, #orderdata th {
 	  font-size:1.2em;
 	  border:1px solid #98bf21;
-	  padding:3px 7px 2px 7px;
+	  padding:3px 7px 3px 7px;
 	  text-align:center;
 	}
 	
@@ -28,19 +28,24 @@
 	  text-align:center;
 	  padding-top:5px;
 	  padding-bottom:4px;
-	  background-color:#A7C999;
+	  background-color:#FFC340;
 	}
 	
-	#orderdata tr.alt td {
-	  color:#000000;
-	  background-color:#EAF2D3;
+	#orderdata tr {
+	  	color:#000000;
+		font-size: 1.4em;
+	  	background-color:#84A0C4;
 	}
 </style>
 
 <script type="text/javascript">
-	//TODO 获取前后7天已完成和待完成的订单任务
+	// 当前时间
 	$(function() {
 		$("#nowdate")[0].innerHTML= new Date().parseStr("@YYYY@-@MM@-@DD@ @hh@:@mm@:@ss@");
+		//表格设置背景颜色
+		var table = document.getElementById("orderdata")
+        var rows = table.getElementsByTagName("tr"); // 获取table中的行tr
+        rows[8].style.backgroundColor = "#f4ef3e";
 	});
 	
 </script>
@@ -48,7 +53,7 @@
 <body>
 	<div>
 		<div id="div1">
-			<span style="font-size:1.2em;">当前时间：<span id="nowdate"></span></span>
+			<span style="font-size:1.2em;margin-left: 5px;font-size: 18px;">当前时间：<span id="nowdate"></span></span>
 		</div>
 		<hr/>
 		

@@ -2,6 +2,8 @@ package com.xinda.om.order.dto;
 
 import com.xinda.system.sys.dto.BaseDto;
 
+import java.math.BigDecimal;
+
 /**
  * 运输商品信息DTO.
  *
@@ -45,19 +47,19 @@ public class ItemInfoDto extends BaseDto {
     /**
      * 出货重量.
      */
-    private Float shipWeight;
+    private BigDecimal shipWeight;
     /**
-     * 收获重量.
+     * 签收重量.
      */
-    private Float receiptWeight;
+    private BigDecimal receiptWeight;
     /**
      * 磅差.
      */
-    private Integer poundsWorse;
+    private BigDecimal poundsWorse;
     /**
      * 差异率.
      */
-    private Float differenceRate;
+    private BigDecimal differenceRate;
     /**
      * 备注.
      */
@@ -131,35 +133,35 @@ public class ItemInfoDto extends BaseDto {
         this.unNo = unNo == null ? null : unNo.trim();
     }
 
-    public Float getShipWeight() {
+    public BigDecimal getShipWeight() {
         return shipWeight;
     }
 
-    public void setShipWeight(Float shipWeight) {
+    public void setShipWeight(BigDecimal shipWeight) {
         this.shipWeight = shipWeight;
     }
 
-    public Float getReceiptWeight() {
+    public BigDecimal getReceiptWeight() {
         return receiptWeight;
     }
 
-    public void setReceiptWeight(Float receiptWeight) {
+    public void setReceiptWeight(BigDecimal receiptWeight) {
         this.receiptWeight = receiptWeight;
     }
 
-    public Integer getPoundsWorse() {
+    public BigDecimal getPoundsWorse() {
         return poundsWorse;
     }
 
-    public void setPoundsWorse(Integer poundsWorse) {
+    public void setPoundsWorse(BigDecimal poundsWorse) {
         this.poundsWorse = poundsWorse;
     }
 
-    public Float getDifferenceRate() {
+    public BigDecimal getDifferenceRate() {
         return differenceRate;
     }
 
-    public void setDifferenceRate(Float differenceRate) {
+    public void setDifferenceRate(BigDecimal differenceRate) {
         this.differenceRate = differenceRate;
     }
 

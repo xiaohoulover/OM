@@ -2,6 +2,8 @@ package com.xinda.om.order.dto;
 
 import com.xinda.system.sys.dto.BaseDto;
 
+import java.math.BigDecimal;
+
 /**
  * 订单行上-车辆信息.
  *
@@ -40,19 +42,23 @@ public class LineCarDto extends BaseDto {
     /**
      * 区间路程.
      */
-    private Float distance;
+    private BigDecimal distance;
     /**
      * 区间路桥费.
      */
-    private Float roadBridgeFee;
+    private BigDecimal roadBridgeFee;
     /**
      * 核定油耗.
      */
-    private Float fuelCosts;
+    private BigDecimal fuelCosts;
     /**
      * 备注.
      */
     private String remark;
+    /**
+     * 油耗比.
+     */
+    private BigDecimal fuelConsumptionRatio;
 
     public Integer getLineCarId() {
         return lineCarId;
@@ -110,27 +116,27 @@ public class LineCarDto extends BaseDto {
         this.shipPath = shipPath == null ? null : shipPath.trim();
     }
 
-    public Float getDistance() {
+    public BigDecimal getDistance() {
         return distance;
     }
 
-    public void setDistance(Float distance) {
+    public void setDistance(BigDecimal distance) {
         this.distance = distance;
     }
 
-    public Float getRoadBridgeFee() {
+    public BigDecimal getRoadBridgeFee() {
         return roadBridgeFee;
     }
 
-    public void setRoadBridgeFee(Float roadBridgeFee) {
+    public void setRoadBridgeFee(BigDecimal roadBridgeFee) {
         this.roadBridgeFee = roadBridgeFee;
     }
 
-    public Float getFuelCosts() {
+    public BigDecimal getFuelCosts() {
         return fuelCosts;
     }
 
-    public void setFuelCosts(Float fuelCosts) {
+    public void setFuelCosts(BigDecimal fuelCosts) {
         this.fuelCosts = fuelCosts;
     }
 
@@ -142,4 +148,11 @@ public class LineCarDto extends BaseDto {
         this.remark = remark == null ? null : remark.trim();
     }
 
+    public BigDecimal getFuelConsumptionRatio() {
+        return fuelConsumptionRatio;
+    }
+
+    public void setFuelConsumptionRatio(BigDecimal fuelConsumptionRatio) {
+        this.fuelConsumptionRatio = fuelConsumptionRatio;
+    }
 }

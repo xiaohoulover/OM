@@ -9,9 +9,7 @@
         <result column="SHIPPING_DATE" jdbcType="TIMESTAMP" property="shippingDate"/>
         <result column="CREATION_DATE" jdbcType="TIMESTAMP" property="creationDate"/>
         <result column="LAST_UPDATE_DATE" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
-        <result column="CUSTOMER_ID" jdbcType="DECIMAL" property="customerId"/>
         <result column="OBJECT_VERSION_NUM" property="objectVersionNum" jdbcType="DECIMAL" />
-        <result column="CUSTOMER_TYPE_ID" jdbcType="DECIMAL" property="customerTypeId"/>
 
         <!-- new add columns -->
         <result column="ORDER_COUNT" property="orderCount" jdbcType="DECIMAL" />
@@ -32,7 +30,7 @@
     </resultMap>
     <sql id="Base_Column_List">
         SALES_ORDER_ID, ORDER_NUMBER, ORDER_STATUS, CREATE_DATE, SHIPPING_DATE, CREATION_DATE,
-        LAST_UPDATE_DATE, CUSTOMER_ID, OBJECT_VERSION_NUM, CUSTOMER_TYPE_ID
+        LAST_UPDATE_DATE, OBJECT_VERSION_NUM
     </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
@@ -50,10 +48,10 @@
         </selectKey>
         insert into om_sales_order (SALES_ORDER_ID, ORDER_NUMBER, ORDER_STATUS,
         CREATE_DATE, SHIPPING_DATE, CREATION_DATE,
-        LAST_UPDATE_DATE, CUSTOMER_ID, OBJECT_VERSION_NUM, CUSTOMER_TYPE_ID)
+        LAST_UPDATE_DATE, OBJECT_VERSION_NUM)
         values (#{salesOrderId,jdbcType=DECIMAL}, #{orderNumber,jdbcType=VARCHAR}, #{orderStatus,jdbcType=VARCHAR},
         #{createDate,jdbcType=TIMESTAMP}, #{shippingDate,jdbcType=TIMESTAMP}, CURRENT_TIMESTAMP,
-        CURRENT_TIMESTAMP, #{customerId,jdbcType=DECIMAL}, 1, #{customerTypeId, jdbcType=DECIMAL})
+        CURRENT_TIMESTAMP, 1)
     </insert>
     <insert id="insertSelective" parameterType="com.xinda.om.order.dto.SalesOrder">
         <selectKey resultType="int" keyProperty="salesOrderId">
@@ -78,13 +76,7 @@
             </if>
             CREATION_DATE,
             LAST_UPDATE_DATE,
-            <if test="customerId != null">
-                CUSTOMER_ID,
-            </if>
             OBJECT_VERSION_NUM,
-            <if test="customerTypeId != null">
-                CUSTOMER_TYPE_ID,
-            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="salesOrderId != null">
@@ -104,13 +96,7 @@
             </if>
             CURRENT_TIMESTAMP,
             CURRENT_TIMESTAMP,
-            <if test="customerId != null">
-                #{customerId,jdbcType=DECIMAL},
-            </if>
             1,
-            <if test="customerTypeId != null">
-                #{customerTypeId,jdbcType=DECIMAL},
-            </if>
         </trim>
     </insert>
     <update id="updateByPrimaryKeySelective" parameterType="com.xinda.om.order.dto.SalesOrder">
@@ -129,13 +115,7 @@
                 SHIPPING_DATE = #{shippingDate,jdbcType=TIMESTAMP},
             </if>
             LAST_UPDATE_DATE = CURRENT_TIMESTAMP,
-            <if test="customerId != null">
-                CUSTOMER_ID = #{customerId,jdbcType=DECIMAL},
-            </if>
             OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1,
-            <if test="customerTypeId != null">
-                CUSTOMER_TYPE_ID = #{customerTypeId,jdbcType=DECIMAL}
-            </if>
         </set>
         where SALES_ORDER_ID = #{salesOrderId,jdbcType=DECIMAL}
     </update>
@@ -146,9 +126,7 @@
         CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
         SHIPPING_DATE = #{shippingDate,jdbcType=TIMESTAMP},
         LAST_UPDATE_DATE = CURRENT_TIMESTAMP,
-        CUSTOMER_ID = #{customerId,jdbcType=DECIMAL},
-        OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1,
-        CUSTOMER_TYPE_ID = #{customerTypeId,jdbcType=DECIMAL}
+        OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1
         where SALES_ORDER_ID = #{salesOrderId,jdbcType=DECIMAL}
     </update>
 
@@ -168,15 +146,14 @@
         SELECT DISTINCT
             oo.SALES_ORDER_ID,
             oo.ORDER_NUMBER,
-            cci.CUSTOMER_NAME,
+            cutomer.CUSTOMER_NAME,
             iii.TANK_NO,
-            cct.RECEIVER,
+            cutomer.RECEIVER,
             oo.CREATE_DATE,
             oo.SHIPPING_DATE,
             oo.ORDER_STATUS
         FROM om_sales_order oo
-          LEFT JOIN cm_customer_info cci ON oo.CUSTOMER_ID = cci.CUSTOMER_ID
-          LEFT JOIN cm_customer_type cct ON oo.CUSTOMER_TYPE_ID = cct.TYPE_ID
+          LEFT JOIN om_sales_line_customer cutomer ON oo.SALES_ORDER_ID = cutomer.SALES_ORDER_ID
           LEFT JOIN im_item_info iii ON iii.SALES_ORDER_ID = oo.SALES_ORDER_ID
           LEFT JOIN om_sales_line_car oslc ON oslc.SALES_ORDER_ID = oo.SALES_ORDER_ID
         <trim prefix="where" prefixOverrides="AND|OR">
@@ -195,14 +172,11 @@
             <if test="shippingDateTo != null">
                 AND oo.SHIPPING_DATE &lt;= #{shippingDateTo,jdbcType=TIMESTAMP}
             </if>
-            <if test="customerId != null">
-                AND oo.CUSTOMER_ID = #{customerId,jdbcType=DECIMAL}
-            </if>
             <if test="customerName != null">
-                AND cci.CUSTOMER_NAME LIKE CONCAT('%', CONCAT(UPPER(#{customerName,jdbcType=VARCHAR}), '%'))
+                AND cutomer.CUSTOMER_NAME LIKE CONCAT('%', CONCAT(UPPER(#{customerName,jdbcType=VARCHAR}), '%'))
             </if>
             <if test="receiver != null">
-                AND cct.RECEIVER LIKE CONCAT('%', CONCAT(UPPER(#{receiver,jdbcType=VARCHAR}), '%'))
+                AND cutomer.RECEIVER LIKE CONCAT('%', CONCAT(UPPER(#{receiver,jdbcType=VARCHAR}), '%'))
             </if>
             <if test="transactionNo != null">
                 AND iii.TRANSACTION_NO LIKE CONCAT('%', CONCAT(UPPER(#{transactionNo,jdbcType=VARCHAR}), '%'))
@@ -244,12 +218,6 @@
             </if>
             <if test="shippingDate != null">
                 AND SHIPPING_DATE = #{shippingDate,jdbcType=TIMESTAMP}
-            </if>
-            <if test="customerId != null">
-                AND CUSTOMER_ID = #{customerId,jdbcType=DECIMAL}
-            </if>
-            <if test="customerTypeId != null">
-                AND CUSTOMER_TYPE_ID = #{customerTypeId,jdbcType=DECIMAL}
             </if>
         </trim>
     </select>

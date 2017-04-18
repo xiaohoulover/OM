@@ -154,9 +154,35 @@
      * @returns {Number}
      */
     BaseCommonUI.roundPrecision = function (number, fractionDigits) {
+        if (isNaN(number)) {
+            number = 0;
+        }
         with (Math) {
             return round(number * pow(10, fractionDigits)) / pow(10, fractionDigits);
         }
+    }
+
+    /**
+     * 获取年份参数.
+     * @param start_year 开始年份
+     * @returns {Array}
+     */
+    BaseCommonUI.getYearData = function getYearData(start_year) {
+        if (start_year == null) {
+            start_year = 2015;
+        }
+        var currency_year = new Date().getFullYear();
+        var yearData = [];
+        for (var year = start_year; year <= currency_year + 2; year ++) {
+            yearData.push(get_year(year));
+        }
+        return yearData;
+    }
+    function get_year(year) {
+        var o = {};
+        o.value = year;
+        o.text = year;
+        return o;
     }
 
 })(jQuery)

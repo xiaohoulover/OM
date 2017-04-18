@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xinda.rpt.report.mapper.ExportDataMapper">
+    <resultMap id="BaseResultMap" type="com.xinda.rpt.report.dto.ExportDataProperty">
+        <id column="ROW_NUM" jdbcType="DECIMAL" property="rowNum"/>
+        <result column="ORDER_NUMBER" jdbcType="VARCHAR" property="orderNumber"/>
+        <result column="ORDER_STATUS" jdbcType="VARCHAR" property="orderStatus"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="SHIPPING_DATE" jdbcType="TIMESTAMP" property="shippingDate"/>
+
+        <result column="CUSTOMER_NAME" property="customerName" jdbcType="VARCHAR" />
+        <result column="BUSINESS_TYPE" property="businessType" jdbcType="VARCHAR" />
+        <result column="BUSINESS_PRICE" property="businessPrice" jdbcType="DECIMAL" />
+        <result column="MANAGER_NAME" property="managerName" jdbcType="VARCHAR" />
+        <result column="MANAGER_PHONE" property="managerPhone" jdbcType="VARCHAR" />
+        <result column="RECEIVER" property="receiver" jdbcType="VARCHAR" />
+        <result column="RECEIVING_CONTACT" property="receivingContact" jdbcType="VARCHAR" />
+        <result column="CONTACT_PHONE" property="contactPhone" jdbcType="VARCHAR" />
+        <result column="RECEIPT_LOCATION" property="receiptLocation" jdbcType="VARCHAR" />
+        <result column="BILL_BOARD_LOCATION" property="billBoardLocation" jdbcType="VARCHAR" />
+        <result column="LOADING_LOCATION" property="loadingLocation" jdbcType="VARCHAR" />
+        <result column="DISCHARGE_LOCATION" property="dischargeLocation" jdbcType="VARCHAR" />
+        <result column="COUNTER_LOCATION" property="counterLocation" jdbcType="VARCHAR" />
+
+        <result column="WAYBILL_NO" property="wayBillNo" jdbcType="VARCHAR" />
+        <result column="TRANSACTION_NO" property="transactionNo" jdbcType="VARCHAR" />
+        <result column="TANK_NO" property="tankNo" jdbcType="VARCHAR" />
+        <result column="ITEM_NAME" property="itemName" jdbcType="VARCHAR" />
+        <result column="TANK_TYPE" property="tankType" jdbcType="VARCHAR" />
+        <result column="HAZARD_CATEGORY" property="hazardCategory" jdbcType="VARCHAR" />
+        <result column="UN_NO" property="unNo" jdbcType="VARCHAR" />
+        <result column="SHIP_WEIGHT" property="shipWeight" jdbcType="DECIMAL" />
+        <result column="RECEIPT_WEIGHT" property="receiptWeight" jdbcType="DECIMAL" />
+        <result column="POUNDS_WORSE" property="poundsWorse" jdbcType="DECIMAL" />
+        <result column="DIFFERENCE_RATE" property="differenceRate" jdbcType="DECIMAL" />
+
+        <result column="CAR_FRONT_NO" property="carFrontNo" jdbcType="VARCHAR" />
+        <result column="CAR_PLATE_NO" property="carPlateNo" jdbcType="VARCHAR" />
+        <result column="DRIVER_NAME" property="driverName" jdbcType="VARCHAR" />
+        <result column="ESCORT_NAME" property="escortName" jdbcType="VARCHAR" />
+        <result column="SHIP_PATH" property="shipPath" jdbcType="VARCHAR" />
+        <result column="DISTANCE" property="distance" jdbcType="DECIMAL" />
+        <result column="ROAD_BRIDGE_FEE" property="roadBridgeFee" jdbcType="DECIMAL" />
+        <result column="FUEL_COSTS" property="fuelCosts" jdbcType="DECIMAL" />
+
+        <result column="DISBURSEMENT_TYPE" property="disbursementType" jdbcType="VARCHAR" />
+        <result column="AMOUNT" property="amount" jdbcType="DECIMAL" />
+
+        <result column="ROW_NUM" property="rowNum" jdbcType="DECIMAL" />
+
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        SALES_ORDER_ID, ORDER_NUMBER, ORDER_STATUS, CREATE_DATE, SHIPPING_DATE, CUSTOMER_NAME, BUSINESS_TYPE, BUSINESS_PRICE,
+        MANAGER_NAME, MANAGER_PHONE, RECEIVER, RECEIVING_CONTACT, CONTACT_PHONE, RECEIPT_LOCATION, BILL_BOARD_LOCATION,
+        LOADING_LOCATION, DISCHARGE_LOCATION, COUNTER_LOCATION, WAYBILL_NO, TRANSACTION_NO, TANK_NO, ITEM_NAME, TANK_TYPE, HAZARD_CATEGORY,
+        UN_NO, SHIP_WEIGHT, RECEIPT_WEIGHT, POUNDS_WORSE, DIFFERENCE_RATE, CAR_FRONT_NO, CAR_PLATE_NO, DRIVER_NAME, ESCORT_NAME,
+        SHIP_PATH, DISTANCE, ROAD_BRIDGE_FEE, FUEL_COSTS, TYPE, AMOUNT
+    </sql>
+
+
+    <select id="getSummaryTableData" parameterType="com.xinda.rpt.report.dto.ReportParamDto" resultMap="BaseResultMap">
+      SELECT
+        oso.ORDER_NUMBER,	-- 订单编号
+        (@rowNum:=@rowNum+1) as ROW_NUM,	-- 序号
+        oso.SHIPPING_DATE,	-- 运输日期
+        l_customer.CUSTOMER_NAME,	-- 客户名称
+        l_customer.BUSINESS_TYPE,	-- 业务类型
+        l_customer.RECEIVER,	-- 收货方
+        l_item.ITEM_NAME,	-- 货物名称
+        l_item.WAYBILL_NO,	-- 提运单号
+        l_item.TRANSACTION_NO,	-- 交易号
+        l_item.TANK_NO,	-- 罐柜号
+        coalesce(l_item.SHIP_WEIGHT, 0) SHIP_WEIGHT,	-- 出货重量
+        coalesce(l_item.RECEIPT_WEIGHT, 0) RECEIPT_WEIGHT,	-- 签收重量
+        coalesce(l_item.POUNDS_WORSE, 0) POUNDS_WORSE,	-- 磅差
+        coalesce(l_item.DIFFERENCE_RATE, 0) DIFFERENCE_RATE,	-- 差异率
+        l_car.CAR_FRONT_NO,	-- 车头编号
+        l_car.CAR_PLATE_NO,	-- 车板编号
+        l_car.DRIVER_NAME,	-- 司机姓名
+        l_car.ESCORT_NAME,	-- 押运员
+        l_car.SHIP_PATH,	-- 运输路径
+        coalesce(l_car.DISTANCE, 0) DISTANCE,	-- 区间路程
+        coalesce(l_car.ROAD_BRIDGE_FEE, 0) ROAD_BRIDGE_FEE,	-- 区间路桥费
+        coalesce(l_car.FUEL_COSTS, 0) FUEL_COSTS	-- 核定油耗
+    FROM (select @rowNum:=0) as rown ,om_sales_order oso
+        LEFT JOIN om_sales_line_customer l_customer ON oso.SALES_ORDER_ID = l_customer.SALES_ORDER_ID
+        LEFT JOIN im_item_info l_item ON oso.SALES_ORDER_ID = l_item.SALES_ORDER_ID
+        LEFT JOIN om_sales_line_car l_car ON oso.SALES_ORDER_ID = l_car.SALES_ORDER_ID
+     WHERE oso.SHIPPING_DATE &gt;= #{startDate, jdbcType=TIMESTAMP}
+          AND oso.SHIPPING_DATE &lt;= #{endDate, jdbcType=TIMESTAMP}
+    -- ORDER BY oso.ORDER_NUMBER, l_customer.CUSTOMER_NAME, l_item.WAYBILL_NO, l_car.CAR_FRONT_NO ASC
+    </select>
+
+    <select id="getSchedulingRecords" resultMap="BaseResultMap" parameterType="com.xinda.rpt.report.dto.ReportParamDto">
+        SELECT
+            (@rowNum:=@rowNum+1) AS ROW_NUM,
+            oso.SHIPPING_DATE,
+            oso.ORDER_NUMBER,
+            l_car.DRIVER_NAME,
+            l_car.ESCORT_NAME,
+            l_car.CAR_FRONT_NO,
+            l_customer.CUSTOMER_NAME,
+            l_customer.BUSINESS_TYPE,
+            l_car.SHIP_PATH,
+            coalesce(l_car.ROAD_BRIDGE_FEE, 0) ROAD_BRIDGE_FEE,
+            coalesce(l_car.DISTANCE, 0) DISTANCE,
+            coalesce(l_car.FUEL_COSTS, 0) FUEL_COSTS
+        FROM (SELECT @rowNum:=0) AS rown, om_sales_order oso
+            LEFT JOIN om_sales_line_customer l_customer ON oso.SALES_ORDER_ID = l_customer.SALES_ORDER_ID
+            LEFT JOIN om_sales_line_car l_car ON oso.SALES_ORDER_ID = l_car.SALES_ORDER_ID
+        WHERE oso.SHIPPING_DATE &gt;= #{startDate, jdbcType=TIMESTAMP}
+          AND oso.SHIPPING_DATE &lt;= #{endDate, jdbcType=TIMESTAMP}
+        ORDER BY oso.SHIPPING_DATE
+    </select>
+
+    <select id="getStatementTableData" parameterType="com.xinda.rpt.report.dto.ReportParamDto" resultMap="BaseResultMap" >
+      SELECT
+        (@rowNum :=@rowNum + 1) ROW_NUM,
+        oso.ORDER_NUMBER,
+        oso.SHIPPING_DATE,
+        i_item.WAYBILL_NO,
+        i_item.TANK_NO,
+        l_customer.BUSINESS_TYPE,
+        i_item.ITEM_NAME,
+        coalesce(i_item.SHIP_WEIGHT, 0) SHIP_WEIGHT,
+        coalesce(i_item.RECEIPT_WEIGHT, 0) RECEIPT_WEIGHT,
+        coalesce(l_customer.BUSINESS_PRICE, 0) BUSINESS_PRICE,
+        l_disbursement.DISBURSEMENT_TYPE
+    FROM
+        (SELECT @rowNum := 0) AS rowN,
+        om_sales_order oso
+    LEFT JOIN om_sales_line_customer l_customer ON oso.SALES_ORDER_ID = l_customer.SALES_ORDER_ID
+    LEFT JOIN im_item_info i_item ON oso.SALES_ORDER_ID = i_item.SALES_ORDER_ID
+    LEFT JOIN (
+        SELECT
+            osd.SALES_ORDER_ID,
+            GROUP_CONCAT(concat(osd.TYPE, osd.AMOUNT) SEPARATOR ';') DISBURSEMENT_TYPE
+        FROM
+            om_sales_disbursement osd
+        GROUP BY
+            osd.SALES_ORDER_ID
+    ) l_disbursement ON oso.SALES_ORDER_ID = l_disbursement.SALES_ORDER_ID
+    WHERE oso.SHIPPING_DATE &gt;= #{startDate, jdbcType=TIMESTAMP}
+          AND oso.SHIPPING_DATE &lt;= #{endDate, jdbcType=TIMESTAMP}
+        ORDER BY oso.SHIPPING_DATE
+    </select>
+
+</mapper>

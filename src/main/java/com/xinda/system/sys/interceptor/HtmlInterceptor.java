@@ -1,5 +1,6 @@
 package com.xinda.system.sys.interceptor;
 
+import com.xinda.system.sys.utils.RequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -8,6 +9,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.Writer;
 
 /**
  * html文件映射拦截器.
@@ -17,7 +19,7 @@ import javax.servlet.http.HttpSession;
  */
 public class HtmlInterceptor implements HandlerInterceptor {
 
-    private Logger logger = LoggerFactory.getLogger(HandlerInterceptor.class);
+    private final Logger logger = LoggerFactory.getLogger(HandlerInterceptor.class);
 
     private static final String DEFAULT_VIEW = "/login.html";
 
@@ -47,12 +49,18 @@ public class HtmlInterceptor implements HandlerInterceptor {
         logger.info("Request Uri : [{}]", request.getRequestURI());
         HttpSession session = request.getSession(false);
         if (session == null || null == session.getAttribute("userId")) {
-            String contextPath = request.getContextPath();
-            String path = request.getRequestURI().substring(contextPath.length());
-            if ("".equals(path) || "/".equals(path)) {
-                request.getRequestDispatcher("/login").forward(request, response);
+            if (RequestUtils.isAjaxRequest(request)) {
+                try (Writer writer = response.getWriter()) {
+                    writer.write("{\"success\":false,\"code\":\"session_expired\"}");
+                }
             } else {
-                response.sendRedirect(contextPath + DEFAULT_VIEW);
+                String contextPath = request.getContextPath();
+                String path = request.getRequestURI().substring(contextPath.length());
+                if ("".equals(path) || "/".equals(path)) {
+                    request.getRequestDispatcher("/login").forward(request, response);
+                } else {
+                    response.sendRedirect(contextPath + DEFAULT_VIEW);
+                }
             }
             return false;
         }

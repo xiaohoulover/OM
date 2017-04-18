@@ -79,15 +79,28 @@ public class CustomerController extends BaseController {
     }
 
     /**
-     * 删除客户信息.
+     * 删除客户类型信息.
      *
      * @param customerTypes 参数对象
      * @return
      */
+    @RequestMapping(value = "/deleteCustomerType", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseJsonData deleteCustomerType(@RequestBody List<CustomerType> customerTypes) {
+        customerService.deleteCustomerType(customerTypes);
+        return new ResponseJsonData(true);
+    }
+
+    /**
+     * 删除客户信息.
+     *
+     * @param customerId 对象Id
+     * @return
+     */
     @RequestMapping(value = "/deleteCustomer", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseJsonData deleteCustomer(@RequestBody List<CustomerType> customerTypes) {
-        customerService.deleteCustomer(customerTypes);
+    public ResponseJsonData deleteCustomer(Integer customerId) {
+        customerService.deleteCustomer(customerId);
         return new ResponseJsonData(true);
     }
 

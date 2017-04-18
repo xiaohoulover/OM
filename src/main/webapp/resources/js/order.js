@@ -18,7 +18,7 @@ function init_order_btn() {
             $.ligerDialog.open({
                 title: '上传文件',
                 url: _basePath + '/file/fm_file_upload.html',
-                width: 600,
+                width: 550,
                 height: 300,
                 buttons: [{
                     text: '取消',
@@ -112,32 +112,57 @@ function add_default_rows(param) {
         itemGrid.addRow();
         // 车辆信息
         carGrid.addRow();
-
         for (var i = 0; i < disbursementData.length; i++) {
-            disbursementGrid.addRow({
-                type: disbursementData[i].value
-            });
+            if (i<5) {
+                disbursementGrid.addRow({
+                    type: disbursementData[i].value
+                });
+            } else {
+                disbursementGrid2.addRow({
+                    type: disbursementData[i].value
+                });
+            }
         }
     } else {
-        if (param.length > 0) {
-            for (var i = 0; i < disbursementData.length; i++) {
-
-                for (var j = 0; j<param.length; j++) {
+        for (var i = 0; i < disbursementData.length; i++) {
+            var flag = false;
+            if (i<5) {
+                for (var j = 0; j < param.length; j++) {
                     if (disbursementData[i].value == param[j].type) {
+                        flag = true;
                         disbursementGrid.addRow({
-                            disbursementId : param[j].disbursementId,
+                            disbursementId: param[j].disbursementId,
                             type: disbursementData[i].value,
-                            amount : param[j].amount,
-                            remark : param[j].remark,
-                            salesOrderId : param.salesOrderId
+                            amount: param[j].amount,
+                            remark: param[j].remark,
+                            salesOrderId: param.salesOrderId
                         });
                         break;
                     }
-                    if (j+1 == param.length) {
-                        disbursementGrid.addRow({
-                            type: disbursementData[i].value
+                }
+                if (!flag) {
+                    disbursementGrid.addRow({
+                        type: disbursementData[i].value
+                    });
+                }
+            } else {
+                for (var j = 0; j < param.length; j++) {
+                    if (disbursementData[i].value == param[j].type) {
+                        flag = true;
+                        disbursementGrid2.addRow({
+                            disbursementId: param[j].disbursementId,
+                            type: disbursementData[i].value,
+                            amount: param[j].amount,
+                            remark: param[j].remark,
+                            salesOrderId: param.salesOrderId
                         });
+                        break;
                     }
+                }
+                if (!flag) {
+                    disbursementGrid2.addRow({
+                        type: disbursementData[i].value
+                    });
                 }
             }
         }
@@ -151,25 +176,32 @@ function init_order_page(parm) {
     if (parm) {// 订单详情
         $.getJSON(_basePath + "/om/getOrderDetails", parm, function (data) {
             orderForm.setData(data);
-            customerForm.setData(data.customer);
-            liger.get("customerId").setValue(data.customerId);
-            liger.get("customerId").setText(data.customer.customerName);
-            liger.get("customerTypeId").setValue(data.customerTypeId);
-            liger.get("customerTypeId").setText(data.customer.customerType.businessType);
+
+            /*customerForm.setData(data.customer);
+             liger.get("customerId").setValue(data.customerId);
+             liger.get("customerId").setText(data.customer.customerName);
+             liger.get("customerTypeId").setValue(data.customerTypeId);
+             liger.get("customerTypeId").setText(data.customer.customerType.businessType);*/
+            var lineCustomer = data.lineCustomer;
+            customerForm.setData(lineCustomer);
+            liger.get("customerId").setValue(lineCustomer.customerId);
+            liger.get("customerId").setText(lineCustomer.customerName);
+            liger.get("customerTypeId").setValue(lineCustomer.customerTypeId);
+            liger.get("customerTypeId").setText(lineCustomer.businessType);
 
             customerForm.setData({
-                "businessPrice": data.customer.customerType.businessPrice,
-                "managerName": data.customer.customerType.managerName,
-                "managerPhone": data.customer.customerType.managerPhone,
-                "receiver": data.customer.customerType.receiver,
-                "receiptLocation": data.customer.customerType.receiptLocation,
-                "receivingContact": data.customer.customerType.receivingContact,
-                "contactPhone": data.customer.customerType.contactPhone,
-                "billBoardLocation": data.customer.customerType.billBoardLocation,
-                "loadingLocation": data.customer.customerType.loadingLocation,
-                "dischargeLocation": data.customer.customerType.dischargeLocation,
-                "counterLocation": data.customer.customerType.counterLocation,
-                "remark": data.customer.customerType.remark
+                "businessPrice": lineCustomer.businessPrice,
+                "managerName": lineCustomer.managerName,
+                "managerPhone": lineCustomer.managerPhone,
+                "receiver": lineCustomer.receiver,
+                "receiptLocation": lineCustomer.receiptLocation,
+                "receivingContact": lineCustomer.receivingContact,
+                "contactPhone": lineCustomer.contactPhone,
+                "billBoardLocation": lineCustomer.billBoardLocation,
+                "loadingLocation": lineCustomer.loadingLocation,
+                "dischargeLocation": lineCustomer.dischargeLocation,
+                "counterLocation": lineCustomer.counterLocation,
+                "remark": lineCustomer.remark
             });
 
             var obj = {};
@@ -179,6 +211,7 @@ function init_order_page(parm) {
             carGrid.loadData(obj);
 
             add_default_rows(data.disbursementDtos);
+            console.log(data);
 
             if ("COMP" == data.orderStatus) {
                 // order
@@ -240,14 +273,19 @@ function jump_order_detail(orderId) {
  */
 function get_request_data() {
     var orderData = BaseCommonUI.dateFormat(orderForm, "@YYYY@-@MM@-@DD@");
-    orderData.customerId = customerForm.getData().customerId;
-    orderData.customerTypeId = customerForm.getData().customerTypeId;
+    //客户信息
+    //orderData.customerId = customerForm.getData().customerId;
+    //orderData.customerTypeId = customerForm.getData().customerTypeId;
+    orderData.lineCustomer = customerForm.getData();
+
     orderData.lineCarDtos = carGrid.currentData.lines == undefined ? null
         : carGrid.currentData.lines;
     orderData.itemInfoDtos = itemGrid.currentData.lines == undefined ? null
         : itemGrid.currentData.lines;
+
     orderData.disbursementDtos = disbursementGrid.currentData.lines == undefined ? null
         : disbursementGrid.currentData.lines;
+    orderData.disbursementDtos = orderData.disbursementDtos.concat(disbursementGrid2.currentData.lines);
 
     return orderData;
 }
@@ -268,23 +306,25 @@ function f_validatorData(reqData) {
         $.ligerDialog.warn("订单状态未填写!");
         return false;
     }
-    if (!reqData.customerId) {
+    if (!reqData.lineCustomer.customerId) {
         $.ligerDialog.warn("客户名称未填写!");
         return false;
     }
-    if (!reqData.customerTypeId) {
+    if (!reqData.lineCustomer.customerTypeId) {
         $.ligerDialog.warn("业务类型未填写!");
         return false;
     }
     // 商品行
     var itemData = reqData.itemInfoDtos;
-    for (var i = 0; i < itemData.length; i++) {
-        if ("delete" != itemData[i].__status) {
-            if (!itemData[i].wayBillNo || !itemData[i].tankNo || !itemData[i].unNo
-                || !itemData[i].tankType || !itemData[i].itemName
-                || !itemData[i].hazardCategory) {
-                $.ligerDialog.warn("运输商品信息中存在字段未填写!");
-                return false;
+    if (!"ACCE" == reqData.orderStatus) {
+        for (var i = 0; i < itemData.length; i++) {
+            if ("delete" != itemData[i].__status) {
+                if (!itemData[i].wayBillNo || !itemData[i].tankNo || !itemData[i].unNo
+                    || !itemData[i].tankType || !itemData[i].itemName
+                    || !itemData[i].hazardCategory) {
+                    $.ligerDialog.warn("运输商品信息中存在字段未填写!");
+                    return false;
+                }
             }
         }
     }
@@ -305,25 +345,30 @@ function save_or_submit(parm) {
     if (!parm) {
         reqDate.orderStatus = 'FDBK';
     }
-    var manager = $.ligerDialog.waitting('正在处理中,请稍候...');
-    setTimeout(function () {
-        manager.close();
-    }, 1000);
-    $.ajax({
-        url: _basePath + "/om/saveOrder?isSubmit=" + parm,
-        type: 'POST',
-        dataType: 'json',
-        contentType: 'application/json',
-        data: JSON2.stringify(reqDate),
-        success: function (resData) {
-            if (resData.success) {
-                window.top.f_removeTab("ORDER_CREATE");
-                window.top.f_removeTab("ORDER_DETAILS");
-                window.top.f_addTab("ORDER_DETAILS", '订单详情', _basePath
-                    + "/order/om_order_create.html?salesOrderId=" + resData.objData.salesOrderId);
-            } else {
-                $.ligerDialog.error(resData.resMsg);
-            }
+
+    $.ligerDialog.confirm("确认保存？", function (yes) {
+        if (yes) {
+            var manager = $.ligerDialog.waitting('正在处理中,请稍候...');
+            setTimeout(function () {
+                manager.close();
+            }, 2000);
+            $.ajax({
+                url: _basePath + "/om/saveOrder?isSubmit=" + parm,
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON2.stringify(reqDate),
+                success: function (resData) {
+                    if (resData.success) {
+                        window.top.f_removeTab("ORDER_CREATE");
+                        window.top.f_removeTab("ORDER_DETAILS");
+                        window.top.f_addTab("ORDER_DETAILS", '订单详情', _basePath
+                            + "/order/om_order_create.html?salesOrderId=" + resData.objData.salesOrderId);
+                    } else {
+                        $.ligerDialog.error(resData.resMsg);
+                    }
+                }
+            });
         }
     });
 }
