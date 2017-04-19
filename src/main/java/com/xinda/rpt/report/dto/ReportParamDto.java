@@ -14,10 +14,9 @@ import java.util.Date;
 public class ReportParamDto {
 
     /**
-     * 类型.
+     * 报表名称.
      */
-    private String reportType;
-
+    private String reportName;
     /**
      * 起始日期.
      */
@@ -29,12 +28,12 @@ public class ReportParamDto {
     @JsonFormat(pattern = BaseConstants.DATE_TIME_FORMAT, timezone = BaseConstants.TIME_ZONE)
     private Date endDate;
 
-    public String getReportType() {
-        return reportType;
+    public String getReportName() {
+        return reportName;
     }
 
-    public void setReportType(String reportType) {
-        this.reportType = reportType;
+    public void setReportName(String reportName) {
+        this.reportName = reportName;
     }
 
     public Date getStartDate() {
@@ -56,7 +55,7 @@ public class ReportParamDto {
     @Override
     public String toString() {
         return "ReportParamDto{" +
-                "reportType='" + reportType + '\'' +
+                "reportName='" + reportName + '\'' +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
                 '}';

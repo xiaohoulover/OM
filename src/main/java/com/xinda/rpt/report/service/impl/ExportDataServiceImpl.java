@@ -1,7 +1,6 @@
 package com.xinda.rpt.report.service.impl;
 
 import com.xinda.rpt.report.dto.ExportDataProperty;
-import com.xinda.rpt.report.dto.ReportParamDto;
 import com.xinda.rpt.report.mapper.ExportDataMapper;
 import com.xinda.rpt.report.service.IExportDataService;
 import com.xinda.rpt.report.util.ExportReportUtils;
@@ -20,6 +19,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Excel数据导出实现类.
@@ -37,17 +37,17 @@ public class ExportDataServiceImpl implements IExportDataService {
     private ExportDataMapper exportDataMapper;
 
     @Override
-    public void exportExcelData(HttpServletRequest request, HttpServletResponse response, ReportParamDto reportParamDto)
+    public void exportExcelData(HttpServletRequest request, HttpServletResponse response, Map<String, Object> requestParams)
             throws IOException {
-        switch (reportParamDto.getReportType()) {
+        switch (String.valueOf(requestParams.get("reportCode"))) {
             case "SUM"://总表
-                exportSummaryTableData(request, response, reportParamDto);
+                exportSummaryTableData(request, response, requestParams);
                 break;
             case "STM"://对账单
-                exportStatementTableData(request, response, reportParamDto);
+                exportStatementTableData(request, response, requestParams);
                 break;
             case "SDR"://调度记录表
-                exportSchedulingRecords(request, response, reportParamDto);
+                exportSchedulingRecords(request, response, requestParams);
                 break;
             default:
                 break;
@@ -55,11 +55,11 @@ public class ExportDataServiceImpl implements IExportDataService {
     }
 
     @Override
-    public void exportSummaryTableData(HttpServletRequest request, HttpServletResponse response, ReportParamDto reportParamDto)
+    public void exportSummaryTableData(HttpServletRequest request, HttpServletResponse response, Map<String, Object> requestParams)
             throws IOException {
-        logger.info("Start Export Summary.xls.Date:[{}]", reportParamDto.toString());
+        logger.info("Start Export Summary.xls.Params:[{}]", requestParams.toString());
         //获取数据
-        List<ExportDataProperty> exportDataPropertyList = exportDataMapper.getSummaryTableData(reportParamDto);
+        List<ExportDataProperty> exportDataPropertyList = exportDataMapper.getSummaryTableData(requestParams);
         //标题栏
         String[] headers = {"订单编号", "序号", "实际运输日期", "客户名称", "业务类型", "收货方", "货物名称", "提运单号",
                 "交易单号", "罐柜号码", "出货重量", "签收重量", "磅差(K-J)*1000", "差异率", "车头编号", "车板编号", "司机",
@@ -179,18 +179,19 @@ public class ExportDataServiceImpl implements IExportDataService {
     }
 
     @Override
-    public void exportStatementTableData(HttpServletRequest request, HttpServletResponse response, ReportParamDto reportParamDto)
+    public void exportStatementTableData(HttpServletRequest request, HttpServletResponse response, Map<String, Object> requestParams)
             throws IOException {
-        logger.info("Start Export StatementOfAccount.xls.Date:[{}]", reportParamDto.toString());
+        logger.info("Start Export StatementOfAccount.xls.Params:[{}]", requestParams.toString());
         //获取数据","
-        List<ExportDataProperty> exportDataPropertyList = exportDataMapper.getStatementTableData(reportParamDto);
+        List<ExportDataProperty> exportDataPropertyList = exportDataMapper.getStatementTableData(requestParams);
         String[] headers = {"序号", "订单编号", "日期", "提单号", "集装箱号", "业务类型", "货物名称", "出货重量", "签收重量", "压车费", "加热费", "报关费",
                 "换单费", "码头堆存费", "代垫海运费", "过磅费", "罐柜维修费", "吊箱费", "标签费", "其他费用", "", "业务价格", "总费用", "备注", "工作号"};
         //1.创建WorkBook
         HSSFWorkbook work = new HSSFWorkbook();
         //2,创建Sheet
         HSSFSheet sheet = work.createSheet("对账表");
-        HSSFWorkbook workbook = ExportReportUtils.designExcelReportStyle(work, "广州番禺欣达运输有限公司-对账表", headers, exportDataPropertyList);
+        String titleName = String.valueOf(requestParams.get("customerName"));
+        HSSFWorkbook workbook = ExportReportUtils.designExcelReportStyle(work, titleName + "-对账单", headers, exportDataPropertyList);
         //格式化
         HSSFDataFormat format = workbook.createDataFormat();
         HSSFCellStyle cellDateStyle = ExportReportUtils.designStyle(workbook, "宋体", (short) 9, Font.BOLDWEIGHT_NORMAL, HSSFCellStyle.ALIGN_CENTER);
@@ -351,10 +352,10 @@ public class ExportDataServiceImpl implements IExportDataService {
     }
 
     @Override
-    public void exportSchedulingRecords(HttpServletRequest request, HttpServletResponse response, ReportParamDto reportParamDto) throws IOException {
-        logger.info("Start Export SchedulingRecords.xls.Date:[{}]", reportParamDto.toString());
+    public void exportSchedulingRecords(HttpServletRequest request, HttpServletResponse response, Map<String, Object> requestParams) throws IOException {
+        logger.info("Start Export SchedulingRecords.xls.Params:[{}]", requestParams.toString());
         //获取数据
-        List<ExportDataProperty> exportDataPropertyList = exportDataMapper.getSchedulingRecords(reportParamDto);
+        List<ExportDataProperty> exportDataPropertyList = exportDataMapper.getSchedulingRecords(requestParams);
         String[] headers = {"序号", "日期", "订单编号", "司机姓名", "押运员姓名", "车牌", "客户名称",
                 "业务类型", "区间路径", "区间路桥费", "区间路程（KM）", "核定油耗(L)"};
         //1.创建WorkBook
@@ -440,4 +441,5 @@ public class ExportDataServiceImpl implements IExportDataService {
         os.flush();
         os.close();
     }
+
 }

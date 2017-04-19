@@ -6,6 +6,8 @@ import com.xinda.cm.customer.dto.CustomerType;
 import com.xinda.cm.customer.mapper.CustomerMapper;
 import com.xinda.cm.customer.mapper.CustomerTypeMapper;
 import com.xinda.cm.customer.service.ICustomerService;
+import com.xinda.om.order.dto.LineCustomer;
+import com.xinda.om.order.mapper.LineCustomerMapper;
 import com.xinda.system.sys.contant.BaseConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.sound.sampled.Line;
 import java.util.List;
 
 /**
@@ -32,6 +35,8 @@ public class CustomerServiceImpl implements ICustomerService {
     private CustomerMapper customerMapper;
     @Autowired
     private CustomerTypeMapper customerTypeMapper;
+    @Autowired
+    private LineCustomerMapper lineCustomerMapper;
 
     @Override
     public List<Customer> queryCustomersByParams(Customer customer) {
@@ -104,5 +109,10 @@ public class CustomerServiceImpl implements ICustomerService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void deleteCustomer(Integer customerId) {
         customerMapper.deleteByPrimaryKey(customerId);
+    }
+
+    @Override
+    public List<LineCustomer> queryAllLineCustomers(LineCustomer lineCustomer) {
+        return lineCustomerMapper.queryAllLineCustomer(lineCustomer);
     }
 }

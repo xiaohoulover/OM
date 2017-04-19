@@ -6,42 +6,67 @@
         var excel_download_form = window['excel_download_form'] = $("#excel_download_form").ligerForm({
             inputWidth: 150,
             labelWidth: 80,
-            fields: [
-                {
-                    display: "起始日期",
-                    name: "startDate",
-                    newline: true,
-                    type: "date",
-                    group : 'Excel数据导出',
-                    validate : {
-                        required : true
+            fields: [{
+                display: "报表名称",
+                name: "reportCode",
+                textField: 'reportName',
+                newline: true,
+                type: "combobox",
+                group: 'Excel数据导出',
+                options: {
+                    valueField: 'value',
+                    textField: 'text',
+                    data: reportNameData,
+                    onSelected: function (value, text) {
+                        if ("SUM" == value || "SDR" == value) {
+                            liger.get("customerName").setValue("");
+                            liger.get("customerName").setDisabled(true);
+                        } else {
+                            liger.get("customerName").setEnabled(true);
+                        }
                     }
-                }, {
-                    display: "终止日期",
-                    name: "endDate",
-                    newline: false,
-                    type: "date",
-                    validate : {
-                        required : true
-                    }
-                }],
+                },
+                validate: {
+                    required: true
+                }
+            }, {
+                display: "起始日期",
+                name: "startDate",
+                newline: true,
+                type: "date",
+                group: 'Excel数据导出',
+                validate: {
+                    required: true
+                }
+            }, {
+                display: "终止日期",
+                name: "endDate",
+                newline: true,
+                type: "date",
+                validate: {
+                    required: true
+                }
+            }, {
+                display: "客户名称",
+                name: "customerName",
+                textField: "customerText",
+                type: "combobox",
+                newline: true,
+                options: {
+                    valueField: 'customerName',
+                    textField: 'customerName',
+                    url: _basePath + "/customer/queryAllLineCustomers",
+                    highLight: true,
+                    autocomplete: true,
+                    triggerToLoad: true,
+                    autocompleAllowEmpty: true
+                }
+            }],
             buttons: [{
-                text: '总表导出',
+                text: 'Excel导出',
                 width: 60,
                 click: function () {
-                    exportExcel("SUM");
-                }
-            }, {
-                text: '对账单导出',
-                width: 60,
-                click: function () {
-                    exportExcel("STM");
-                }
-            }, {
-                text: '调度记录表导出',
-                width: 60,
-                click: function () {
-                    exportExcel("SDR");
+                    exportReportExcel();
                 }
             }]
         });
@@ -49,21 +74,26 @@
 
     /**
      * 导出Eccel.
-     * @param reportType 类型
+     * @param reportName 类型
      */
-    function exportExcel(reportType) {
+    function exportReportExcel() {
         var formData = BaseCommonUI.dateFormat(excel_download_form, "@YYYY@-@MM@-@DD@");
-        if (!formData.startDate || !formData.endDate) {
+        console.log(formData);
+        if (!formData.startDate || !formData.endDate || !formData.reportCode) {
             $.ligerDialog.warn("参数不能为空!");
             return false;
         }
+        if ("STM" == formData.reportCode && !formData.customerName) {
+            $.ligerDialog.warn("客户名称不能为空!");
+            return false;
+        }
         //这里不能用Ajax请求.
-        location.href=_basePath+"/export/excel?startDate="+formData.startDate+"&endDate="+formData.endDate+"&reportType="+reportType;
+        $("#excel_download_form").submit();
     }
 </script>
 
 <body>
-<div>
-    <div id="excel_download_form"></div>
+<div style="margin-left: 10px">
+    <form id="excel_download_form" action="${base.contextPath}/export/excel" method="post" autocomplete="off"></form>
 </div>
 </body>

@@ -2,6 +2,8 @@ package com.xinda.om.order.mapper;
 
 import com.xinda.om.order.dto.LineCustomer;
 
+import java.util.List;
+
 /**
  * 订单-行客户信息.
  *
@@ -28,4 +30,11 @@ public interface LineCustomerMapper {
      * @return
      */
     LineCustomer selectBySalesOrderId(Integer salesOrderId);
+
+    /**
+     * 查询所有订单上客户名称。
+     *
+     * @return 客户名称集合
+     */
+    List<LineCustomer> queryAllLineCustomer(LineCustomer lineCustomer);
 }

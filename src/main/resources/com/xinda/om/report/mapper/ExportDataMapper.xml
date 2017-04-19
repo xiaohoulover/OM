@@ -58,8 +58,8 @@
         SHIP_PATH, DISTANCE, ROAD_BRIDGE_FEE, FUEL_COSTS, TYPE, AMOUNT
     </sql>
 
-
-    <select id="getSummaryTableData" parameterType="com.xinda.rpt.report.dto.ReportParamDto" resultMap="BaseResultMap">
+    <!-- 总表 -->
+    <select id="getSummaryTableData" parameterType="java.util.Map" resultMap="BaseResultMap">
       SELECT
         oso.ORDER_NUMBER,	-- 订单编号
         (@rowNum:=@rowNum+1) as ROW_NUM,	-- 序号
@@ -91,8 +91,8 @@
           AND oso.SHIPPING_DATE &lt;= #{endDate, jdbcType=TIMESTAMP}
     -- ORDER BY oso.ORDER_NUMBER, l_customer.CUSTOMER_NAME, l_item.WAYBILL_NO, l_car.CAR_FRONT_NO ASC
     </select>
-
-    <select id="getSchedulingRecords" resultMap="BaseResultMap" parameterType="com.xinda.rpt.report.dto.ReportParamDto">
+    <!-- 车辆调度表 -->
+    <select id="getSchedulingRecords" resultMap="BaseResultMap" parameterType="java.util.Map">
         SELECT
             (@rowNum:=@rowNum+1) AS ROW_NUM,
             oso.SHIPPING_DATE,
@@ -114,7 +114,8 @@
         ORDER BY oso.SHIPPING_DATE
     </select>
 
-    <select id="getStatementTableData" parameterType="com.xinda.rpt.report.dto.ReportParamDto" resultMap="BaseResultMap" >
+    <!-- 对账单表 -->
+    <select id="getStatementTableData" parameterType="java.util.Map" resultMap="BaseResultMap" >
       SELECT
         (@rowNum :=@rowNum + 1) ROW_NUM,
         oso.ORDER_NUMBER,
@@ -143,6 +144,7 @@
     ) l_disbursement ON oso.SALES_ORDER_ID = l_disbursement.SALES_ORDER_ID
     WHERE oso.SHIPPING_DATE &gt;= #{startDate, jdbcType=TIMESTAMP}
           AND oso.SHIPPING_DATE &lt;= #{endDate, jdbcType=TIMESTAMP}
+          AND l_customer.CUSTOMER_NAME = #{customerName, jdbcType=DECIMAL}
         ORDER BY oso.SHIPPING_DATE
     </select>
 

@@ -1,16 +1,17 @@
 package com.xinda.rpt.report.controller;
 
-import com.xinda.rpt.report.dto.ReportParamDto;
 import com.xinda.rpt.report.service.IExportDataService;
 import com.xinda.system.sys.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * Excel数据导出.
@@ -31,14 +32,14 @@ public class ExportDataController extends BaseController {
      *
      * @param request
      * @param response
-     * @param reportParamDto 参数对象
+     * @param requestParams 参数集合
      * @throws IOException
      */
-    @RequestMapping(value = "/excel", method = RequestMethod.GET)
+    @RequestMapping(value = "/excel", method = RequestMethod.POST)
     public void exportExcelData(HttpServletRequest request,
                                 HttpServletResponse response,
-                                ReportParamDto reportParamDto) throws IOException {
-        exportDataService.exportExcelData(request, response, reportParamDto);
+                                @RequestParam Map<String, Object> requestParams) throws IOException {
+        exportDataService.exportExcelData(request, response, requestParams);
     }
 
 }

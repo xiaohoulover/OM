@@ -3,6 +3,7 @@ package com.xinda.cm.customer.controller;
 import com.xinda.cm.customer.dto.Customer;
 import com.xinda.cm.customer.dto.CustomerType;
 import com.xinda.cm.customer.service.ICustomerService;
+import com.xinda.om.order.dto.LineCustomer;
 import com.xinda.system.sys.contant.BaseConstants;
 import com.xinda.system.sys.controller.BaseController;
 import com.xinda.system.sys.dto.ResponseJsonData;
@@ -102,6 +103,20 @@ public class CustomerController extends BaseController {
     public ResponseJsonData deleteCustomer(Integer customerId) {
         customerService.deleteCustomer(customerId);
         return new ResponseJsonData(true);
+    }
+
+
+    /**
+     * 查询所有的订单上客户名称.
+     *
+     * @return
+     */
+    @RequestMapping(value = "/queryAllLineCustomers", method = RequestMethod.POST)
+    @ResponseBody
+    public List<LineCustomer> queryAllLineCustomers(HttpServletRequest request,
+                                                    HttpServletResponse response,
+                                                    LineCustomer lineCustomer) {
+        return customerService.queryAllLineCustomers(lineCustomer);
     }
 
 }

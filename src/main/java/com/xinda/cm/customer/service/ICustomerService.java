@@ -2,7 +2,9 @@ package com.xinda.cm.customer.service;
 
 import com.xinda.cm.customer.dto.Customer;
 import com.xinda.cm.customer.dto.CustomerType;
+import com.xinda.om.order.dto.LineCustomer;
 
+import javax.sound.sampled.Line;
 import java.util.List;
 
 
@@ -61,5 +63,13 @@ public interface ICustomerService {
      * @param customerId 对象Id
      */
     public void deleteCustomer(Integer customerId);
+
+    /**
+     * 查询订单上客户信息.
+     *
+     * @param lineCustomer
+     * @return
+     */
+    public List<LineCustomer> queryAllLineCustomers(LineCustomer lineCustomer);
 
 }

@@ -35,8 +35,8 @@ var tankTypeData = [{
     value: '3',
     text: '40＇GP'
 }, {
-    value : '4',
-    text : '自有柜'
+    value: '4',
+    text: '自有柜'
 }];
 
 /**
@@ -103,40 +103,40 @@ carTypeData = [{
 /**
  * 代垫费用.
  *//*
-var disbursementData = [{
-    value: 'FC',
-    text: '压车费'
-}, {
-    value: 'HF',
-    text: '加热费'
-}, {
-    value: 'CF',
-    text: '报关费'
-}, {
-    value: 'FSF',
-    text: '换单费'
-}, {
-    value: 'TF',
-    text: '标签费'
-}, {
-    value: 'HBF',
-    text: '吊箱费'
-}, {
-    value: 'WF',
-    text: '过磅费'
-}, {
-    value: 'TSF',
-    text: '码头堆存费'
-}, {
-    value: 'BSF',
-    text: '代垫海运费'
-}, {
-    value: 'TMF',
-    text: '罐柜维修费'
-}/!*, {
-    value: 'OT',
-    text: '其他费用'
-}*!/];*/
+ var disbursementData = [{
+ value: 'FC',
+ text: '压车费'
+ }, {
+ value: 'HF',
+ text: '加热费'
+ }, {
+ value: 'CF',
+ text: '报关费'
+ }, {
+ value: 'FSF',
+ text: '换单费'
+ }, {
+ value: 'TF',
+ text: '标签费'
+ }, {
+ value: 'HBF',
+ text: '吊箱费'
+ }, {
+ value: 'WF',
+ text: '过磅费'
+ }, {
+ value: 'TSF',
+ text: '码头堆存费'
+ }, {
+ value: 'BSF',
+ text: '代垫海运费'
+ }, {
+ value: 'TMF',
+ text: '罐柜维修费'
+ }/!*, {
+ value: 'OT',
+ text: '其他费用'
+ }*!/];*/
 
 /**
  * 代垫费用.
@@ -146,16 +146,16 @@ var disbursementData = [{
     text: '压车费'
 }, {
     value: 'HBF',
-        text: '吊箱费'
+    text: '吊箱费'
 }, {
     value: 'WF',
-        text: '过磅费'
+    text: '过磅费'
 }, {
     value: 'HF',
-        text: '加热费'
+    text: '加热费'
 }, {
     value: 'TF',
-        text: '标签费'
+    text: '标签费'
 }, {
     value: 'FSF',
     text: '换单费'
@@ -177,58 +177,72 @@ var disbursementData = [{
  * 是否.
  */
 var yesOrNoData = [{
-    value : 'Y',
-    text : '是'
+    value: 'Y',
+    text: '是'
 }, {
-    value : 'N',
-    text : '否'
+    value: 'N',
+    text: '否'
 }];
 
 /**
  * 用户类型.
  */
 var userTypeData = [{
-    value : 0,
-    text : '管理员'
+    value: 0,
+    text: '管理员'
 }, {
-    value : 1,
-    text : '普通用户'
+    value: 1,
+    text: '普通用户'
 }];
 
 var monthData = [{
-    value : 1,
-    text : 1
+    value: 1,
+    text: 1
 }, {
-    value : 2,
-    text : 2
+    value: 2,
+    text: 2
 }, {
-    value : 3,
-    text : 3
+    value: 3,
+    text: 3
 }, {
-    value : 4,
-    text : 4
+    value: 4,
+    text: 4
 }, {
-    value : 5,
-    text : 5
+    value: 5,
+    text: 5
 }, {
-    value : 6,
-    text : 6
+    value: 6,
+    text: 6
 }, {
-    value : 7,
-    text : 7
+    value: 7,
+    text: 7
 }, {
-    value : 8,
-    text : 8
+    value: 8,
+    text: 8
 }, {
-    value : 9,
-    text : 9
+    value: 9,
+    text: 9
 }, {
-    value : 10,
-    text : 10
+    value: 10,
+    text: 10
 }, {
-    value : 11,
-    text : 11
+    value: 11,
+    text: 11
 }, {
-    value : 12,
-    text : 12
+    value: 12,
+    text: 12
+}];
+
+/**
+ * 报表名称.
+ */
+var reportNameData = [{
+    value: 'SUM',
+    text: '总表'
+}, {
+    value: 'STM',
+    text: '对账单表'
+}, {
+    value: 'SDR',
+    text: '调度记录表'
 }];
