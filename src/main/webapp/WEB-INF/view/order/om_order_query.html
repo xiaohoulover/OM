@@ -15,23 +15,17 @@
             		name: "orderNumber",
             		newline: true,
             		type: "text" 
-            	},{
-            		display: "客户名称 ",
-            		name: "customerName",
-            		newline: false,
-                    type: "combobox",
-                    options : {
-                        valueField : 'customerName',
-                        textField : 'customerName',
-                        url : _basePath + "/customer/queryAllCustomers",
-                        isMultiSelect : false,
-                        isShowCheckBox : false,
-                        highLight : true,
-                        autocomplete : true,
-                        keySupport : true,
-                        autocompleAllowEmpty : true
-                    }
             	}, {
+                    display: '提运单号',
+                    name: 'wayBillNo',
+                    newline: false,
+                    type : 'text'
+                }, {
+                    display: '交易单号',
+                    name: 'transactionNo',
+                    newline: false,
+                    type : 'text'
+                }, {
                     display: "车头编号",
                     name: "carFrontNo",
                     newline: false,
@@ -47,16 +41,27 @@
                         keySupport : true,
                         autocompleAllowEmpty : true
                     }
-                }, {
-                    display: '提运单号',
-                    name: 'wayBillNo',
-                    newline: true,
-                    type : 'text'
-                }, {
-                    display: '交易单号',
-                    name: 'transactionNo',
+                },{
+            		display: "客户名称 ",
+            		name: "customerName",
+            		newline: true,
+                    type: "combobox",
+                    options : {
+                        valueField : 'customerName',
+                        textField : 'customerName',
+                        url : _basePath + "/customer/queryAllCustomers",
+                        isMultiSelect : false,
+                        isShowCheckBox : false,
+                        highLight : true,
+                        autocomplete : true,
+                        keySupport : true,
+                        autocompleAllowEmpty : true
+                    }
+            	}, {
+                    display: "收货单位",
+                    name: "receiver",
                     newline: false,
-					type : 'text'
+                    type: "text"
                 },{
             		display: "罐柜号 ",
             		name: "tankNo",
@@ -90,12 +95,7 @@
 	            		valueField : 'value',
 						textField : 'text'
             		}
-            	}, {
-                    display: "收货单位",
-                    name: "receiver",
-                    newline: false,
-                    type: "text"
-				}],
+            	}],
             	buttons : [ {
                     text : '查询',
                     width : 60,
@@ -109,6 +109,7 @@
 			title : '查询结果',
             height : '99%',
 			usePager : true,
+            pageSize : 30,
 			allowHideColumn : false,
 			checkbox : true,
 			rownumbers : true,
@@ -124,28 +125,27 @@
                     return '<a href="javascript:jump_order_detail('+rowData.salesOrderId+');">'+rowData.orderNumber+'</a>';
 				}
 			},{
+                display : '运输日期',
+                name : 'shippingDate',
+                align : 'center',
+                format : 'yyyy-MM-dd',
+            },{
 				display : '客户名称',
 				name : 'customerName',
 				align : 'center'
 			},{
+                display : '业务类型',
+                name : 'businessType',
+                align : 'center'
+            },{
 				display : '罐柜号',
 				name : 'tankNo',
 				align : 'center'
 			},{
-                display : '收货单位',
-                name : 'receiver',
-                align : 'center'
-            },{
-        		display: "创建日期",
-        		name: "createDate",
-        		align : 'center',
-        		format : 'yyyy-MM-dd',
-        	},{
-				display : '运输日期',
-				name : 'shippingDate',
-				align : 'center',
-                format : 'yyyy-MM-dd',
-			}, {
+        		display: "提货单号",
+        		name: "wayBillNo",
+        		align : 'center'
+        	}, {
 				display : '订单状态',
 				name : 'orderStatus',
 				align : 'center',
@@ -156,7 +156,18 @@
 					textField : 'text'
 				},
 				render : BaseCommonUI.gridSelectRender
-			}],
+			},{
+                display: "是否已上传文件",
+                name: "isUploadFile",
+                align : 'center',
+				editor: {
+                    type: 'select',
+                    data: yesOrNoData,
+                    valueField: 'value',
+                    textField: 'text'
+                },
+                render: BaseCommonUI.gridSelectRender
+            }],
 			toolbar : {
 				items : [{
 					id : 'om_order_add',

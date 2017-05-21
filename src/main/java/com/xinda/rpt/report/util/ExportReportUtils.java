@@ -1,9 +1,11 @@
 package com.xinda.rpt.report.util;
 
+import com.sun.xml.internal.fastinfoset.Encoder;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.util.CellRangeAddress;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -84,7 +86,6 @@ public class ExportReportUtils {
         font.setBoldweight(boldWeight);
         font.setFontName(fontName);
         font.setFontHeightInPoints(fontSize);
-
         style.setFont(font);
         return style;
     }
@@ -92,12 +93,12 @@ public class ExportReportUtils {
     /**
      * 设置单元格格式.
      *
-     * @param workbook  当前工作簿
      * @param formatObj 单元格对象
      * @param cellStyle 样式
      * @return
      */
-    public static HSSFCellStyle designDataFormat(HSSFWorkbook workbook, Object formatObj, HSSFCellStyle cellStyle, HSSFDataFormat format) {
+    public static HSSFCellStyle designDataFormat(Object formatObj, HSSFCellStyle cellStyle, HSSFDataFormat format) {
+        //根据类型设置单元格格式
         if (formatObj instanceof String) {//字符串
             cellStyle.setDataFormat(format.getFormat("@"));
         }
@@ -108,6 +109,32 @@ public class ExportReportUtils {
             cellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("0.00"));
         }
         return cellStyle;
+    }
+
+    /**
+     * 设置Cell自动大小宽度.
+     *
+     * @param sheet
+     * @param rowStart  从第几行开始的列宽度计算
+     * @param rowLen    行长度
+     * @param columnLen 列宽度
+     * @throws IOException
+     */
+    public static void designAutoColumnWidth(HSSFSheet sheet, int rowStart, int rowLen, int columnLen) throws IOException {
+        //设置单元格宽度
+        for (int colNum = 0; colNum < columnLen; colNum++) {//遍历列
+            //当前列宽度(从第一行)
+            int columnWidth = sheet.getRow(rowStart).getCell(colNum).toString().length();
+            for (int rowNum = 1; rowNum < sheet.getLastRowNum(); rowNum++) {//遍历行
+                HSSFCell currentCell = sheet.getRow(rowNum).getCell(colNum);
+                //当前单元格长度
+                int currentLen = String.valueOf(currentCell).getBytes(Encoder.UTF_8).length;
+                if (columnWidth < currentLen + 1) {
+                    columnWidth = currentLen;
+                }
+            }
+            sheet.setColumnWidth(colNum, columnWidth * 256);
+        }
     }
 
 }

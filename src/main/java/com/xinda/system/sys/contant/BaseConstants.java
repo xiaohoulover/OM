@@ -114,5 +114,9 @@ public class BaseConstants {
      */
     public static final char[] VERIFICATION_CODE_ARRAY = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P',
             'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '2', '3', '4', '5', '6', '7', '8', '9'};
+    /**
+     * 星期处理.
+      */
+    public static final String[] weekDays = {"日", "一", "二", "三", "四", "五", "六"};
 
 }

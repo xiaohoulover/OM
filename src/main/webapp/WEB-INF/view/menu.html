@@ -64,12 +64,14 @@
     }
 </style>
 
-
 <body style="padding:0px;background:#EAEEF5; overflow: hidden;">
 
 <div id="header">
-    <!--<div class="title">广州欣达运输-订单管理系统</div>-->
-    <div class="user">${Session.userName}</div>
+    <div class="title">广州欣达运输-订单管理系统</div>
+    <div class="user">
+        <!--<img src="${base.contextPath}/resources/images/user.jpg" height="30px" width="30px" style="background: #000000"/>-->
+        <div>${Session.userName}</div>
+    </div>
     <div class="logout">
         <form id="logoutForm" action = "${base.contextPath}/logout" method="get" >
             <img src="${base.contextPath}/resources/images/logout4.png" onclick="logout()">
@@ -115,7 +117,7 @@
 			 }]
 		 },{
 			 text : '客户管理',
-			 isexpand : true,
+			 isexpand : false,
 			 children : [{
 				 url : '${base.contextPath}/customer/cm_customer_query.html',
 				 text : '客户查询',
@@ -131,7 +133,7 @@
 			 ]
 		 },{
             text : '车辆管理',
-            isexpand : true,
+            isexpand : false,
             children : [{
                 url : '${base.contextPath}/car/cm_car_query.html',
                 text : '车辆查询',
@@ -147,7 +149,7 @@
             ]
         },{
 			 text : '文件管理',
-			 isexpand : true,
+			 isexpand : false,
 			 children : [{
 				 url : '${base.contextPath}/file/fm_file_query.html',
 				 text : '文件下载',
@@ -159,7 +161,7 @@
 			 }]
 		 },{
             text : '用户管理',
-            isexpand : true,
+            isexpand : false,
             children : [
             <#if Session.userType == '0'>
             {
@@ -180,7 +182,7 @@
     {
         //布局
         $("#layout1").ligerLayout({
-        	leftWidth: 180,
+        	leftWidth: 140,
         	height: '100%',
         	heightDiff:-34,
         	space:4,
@@ -348,11 +350,14 @@
 
     //退出
     function logout() {
-        $.ligerDialog.confirm(("确认退出？"), function (yes) {
+        if (confirm("确认退出？")) {
+            jQuery('#logoutForm').submit();
+        }
+        /*$.ligerDialog.confirm("确认退出？", function (yes) {
             if (yes) {
                 jQuery('#logoutForm').submit();
             }
-        });
+        });*/
     }
 
 </script>

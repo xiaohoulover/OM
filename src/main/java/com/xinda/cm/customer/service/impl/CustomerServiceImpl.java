@@ -9,6 +9,7 @@ import com.xinda.cm.customer.service.ICustomerService;
 import com.xinda.om.order.dto.LineCustomer;
 import com.xinda.om.order.mapper.LineCustomerMapper;
 import com.xinda.system.sys.contant.BaseConstants;
+import com.xinda.system.sys.exception.CustomerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.sound.sampled.Line;
 import java.util.List;
 
 /**
@@ -83,9 +83,15 @@ public class CustomerServiceImpl implements ICustomerService {
     }
 
     @Override
-    public Customer getCustomerDetails(Integer customerId) {
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public Customer getCustomerDetails(Integer customerId) throws CustomerException {
         //获取客户信息
         Customer customer = customerMapper.selectByPrimaryKey(customerId);
+        if (null == customer) {
+            //客户信息已删除
+            logger.debug("Customer information had deleted.CustomerId:[{}]", customerId);
+            throw new CustomerException(CustomerException.MSG_ERROR_CM_CUSTOMER_INFO_HAD_DELETED);
+        }
         //获取客户类型
         customer.setCustomerTypeList(customerTypeMapper.getCustomerTypesByCustomerId(customerId));
         return customer;
@@ -115,4 +121,5 @@ public class CustomerServiceImpl implements ICustomerService {
     public List<LineCustomer> queryAllLineCustomers(LineCustomer lineCustomer) {
         return lineCustomerMapper.queryAllLineCustomer(lineCustomer);
     }
+
 }

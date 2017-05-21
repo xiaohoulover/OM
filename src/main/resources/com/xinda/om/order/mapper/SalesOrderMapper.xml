@@ -27,6 +27,9 @@
         <result column="ORDER_STATUS_FDBK" jdbcType="DECIMAL" property="orderStatusFdbk" />
         <result column="ORDER_STATUS_COMP" jdbcType="DECIMAL" property="orderStatusComp" />
 
+        <result column="BUSINESS_TYPE" jdbcType="VARCHAR" property="businessType" />
+        <result column="IS_UPLOAD_FILE" jdbcType="VARCHAR" property="isUploadFile"/>
+
     </resultMap>
     <sql id="Base_Column_List">
         SALES_ORDER_ID, ORDER_NUMBER, ORDER_STATUS, CREATE_DATE, SHIPPING_DATE, CREATION_DATE,
@@ -147,11 +150,14 @@
             oo.SALES_ORDER_ID,
             oo.ORDER_NUMBER,
             cutomer.CUSTOMER_NAME,
+            cutomer.BUSINESS_TYPE,
+            iii.WAYBILL_NO,
             iii.TANK_NO,
             cutomer.RECEIVER,
             oo.CREATE_DATE,
             oo.SHIPPING_DATE,
-            oo.ORDER_STATUS
+            oo.ORDER_STATUS,
+            IF((SELECT COUNT(*) FROM fm_file_info ffi WHERE ffi.SALES_ORDER_ID = oo.SALES_ORDER_ID)=0, 'N', 'Y') IS_UPLOAD_FILE
         FROM om_sales_order oo
           LEFT JOIN om_sales_line_customer cutomer ON oo.SALES_ORDER_ID = cutomer.SALES_ORDER_ID
           LEFT JOIN im_item_info iii ON iii.SALES_ORDER_ID = oo.SALES_ORDER_ID
@@ -191,6 +197,7 @@
                 AND oslc.CAR_FRONT_NO LIKE CONCAT('%', CONCAT(UPPER(#{carFrontNo,jdbcType=VARCHAR}), '%'))
             </if>
         </trim>
+        ORDER BY oo.SHIPPING_DATE DESC, cutomer.CUSTOMER_NAME ASC
     </select>
 
     <select id="selectByOrderIdForUpdate" parameterType="java.lang.Integer" resultMap="BaseResultMap">

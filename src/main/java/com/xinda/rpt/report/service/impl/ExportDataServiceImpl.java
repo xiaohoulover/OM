@@ -61,13 +61,14 @@ public class ExportDataServiceImpl implements IExportDataService {
         //获取数据
         List<ExportDataProperty> exportDataPropertyList = exportDataMapper.getSummaryTableData(requestParams);
         //标题栏
-        String[] headers = {"订单编号", "序号", "实际运输日期", "客户名称", "业务类型", "收货方", "货物名称", "提运单号",
+        String[] headers = {"序号", "订单编号", "实际运输日期", "客户名称", "业务类型", "收货方", "货物名称", "提运单号",
                 "交易单号", "罐柜号码", "出货重量", "签收重量", "磅差(K-J)*1000", "差异率", "车头编号", "车板编号", "司机",
                 "押运员", "运输路径", "区间路程", "区间路桥费", "核定油耗（L）"};
         //1.创建WorkBook
         HSSFWorkbook work = new HSSFWorkbook();
         //2,创建Sheet
         HSSFSheet sheet = work.createSheet("总表");
+
         HSSFWorkbook workbook = ExportReportUtils.designExcelReportStyle(work, "广州番禺欣达运输有限公司-统计表", headers, exportDataPropertyList);
         //字体样式
         Font col1Font = workbook.createFont();
@@ -167,6 +168,8 @@ public class ExportDataServiceImpl implements IExportDataService {
                 }
             }
         }
+        //设置单元格宽度
+        ExportReportUtils.designAutoColumnWidth(sheet, 1, sheet.getLastRowNum(), headers.length);
         //输出
         OutputStream os = response.getOutputStream();
         response.reset();
@@ -431,6 +434,8 @@ public class ExportDataServiceImpl implements IExportDataService {
                 }
             }
         }
+        //设置单元格宽度
+        ExportReportUtils.designAutoColumnWidth(sheet, 1, sheet.getLastRowNum(), headers.length);
         //输出
         OutputStream os = response.getOutputStream();
         response.reset();

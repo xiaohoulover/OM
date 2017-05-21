@@ -3,8 +3,8 @@ package com.xinda.cm.customer.service;
 import com.xinda.cm.customer.dto.Customer;
 import com.xinda.cm.customer.dto.CustomerType;
 import com.xinda.om.order.dto.LineCustomer;
+import com.xinda.system.sys.exception.CustomerException;
 
-import javax.sound.sampled.Line;
 import java.util.List;
 
 
@@ -37,8 +37,9 @@ public interface ICustomerService {
      *
      * @param customerId 客户对象Id
      * @return
+     * @throws CustomerException 客户统一异常
      */
-    public Customer getCustomerDetails(Integer customerId);
+    public Customer getCustomerDetails(Integer customerId) throws CustomerException;
 
     /**
      * 根据参数条件查询客户信息.

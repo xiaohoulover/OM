@@ -312,6 +312,7 @@
       <if test="remark != null" >
         AND cct.REMARK = #{remark,jdbcType=VARCHAR}
       </if>
+    ORDER BY cci.CUSTOMER_NAME
   </select>
 
   <select id="getCustomerTypesByCustomerId" parameterType="java.lang.Integer" resultMap="BaseResultMap" >

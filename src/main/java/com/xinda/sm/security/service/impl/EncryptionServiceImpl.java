@@ -80,7 +80,7 @@ public class EncryptionServiceImpl implements IEncryptionService {
         byte[] decryptStrBytes = null;
         try {
             byte[] decryptBytes = base64Decoder.decodeBuffer(decryptStr);
-            Cipher cipher = Cipher.getInstance("DES");
+            Cipher cipher = Cipher.getInstance("DES/ECB/NoPadding");//DES
             cipher.init(Cipher.DECRYPT_MODE, generateKey());
             decryptStrBytes = cipher.doFinal(decryptBytes);
         } catch (Exception e) {
@@ -91,7 +91,7 @@ public class EncryptionServiceImpl implements IEncryptionService {
     }
 
     public static void main (String[] args) {
-        String str[] = {"sysadmin"};
+        String str[] = {"root","xd_mysql"};
         for (String s : str) {
             System.out.println(getEncryptString(s));
         }

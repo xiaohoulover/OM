@@ -83,8 +83,7 @@ public class SalesOrderServiceImpl implements ISalesOrderService {
      * @throws OrderException
      */
     private void valSalesOrderInfo(SalesOrder order) throws OrderException {
-        //TODO 校验
-
+        // 校验
         if (null != order.getSalesOrderId()) {//update
             SalesOrder oldOrder = salesOrderMapper.selectByOrderIdForUpdate(order.getSalesOrderId());
             if (null == oldOrder) {//订单已删除
@@ -115,7 +114,6 @@ public class SalesOrderServiceImpl implements ISalesOrderService {
         logger.info("Starting save SalesOrder ...[{}]", order.toString());
         //信息校验
         valSalesOrderInfo(order);
-
         // 1.保存订单头信息
         if (null == order.getSalesOrderId()) {// insert
             order.setOrderNumber(createOrderNumber(order));
@@ -130,7 +128,6 @@ public class SalesOrderServiceImpl implements ISalesOrderService {
         } else {
             lineCustomerMapper.updateByPrimaryKeySelective(order.getLineCustomer());
         }
-
         // 3.保存商品信息
         if (order.getItemInfoDtos() != null) {
             for (ItemInfoDto item : order.getItemInfoDtos()) {
@@ -226,7 +223,8 @@ public class SalesOrderServiceImpl implements ISalesOrderService {
         cal.add(Calendar.DAY_OF_MONTH, -8);
         for (int i = 1; i <= 15; i++) {
             cal.add(Calendar.DAY_OF_MONTH, 1);
-            orderList.add(new SalesOrder(cal.getTime(), 0, 0, 0, 0));
+            orderList.add(new SalesOrder(cal.getTime(), BaseConstants.weekDays[cal.get(Calendar.DAY_OF_WEEK) -1 ],
+                    0, 0, 0, 0));
         }
         for (SalesOrder salesOrder : orderList) {
             for (SalesOrder order : orders) {
@@ -297,14 +295,16 @@ public class SalesOrderServiceImpl implements ISalesOrderService {
         return salesOrderMapper.queryOrderByParams(order);
     }
 
-
     public static void main(String[] args) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        cal.setFirstDayOfWeek(Calendar.MONDAY);
+        cal.add(Calendar.DAY_OF_MONTH, -8);
         for (int i = 1; i <= 15; i++) {
-            cal.add(Calendar.DAY_OF_MONTH, i - 8);
+            cal.add(Calendar.DAY_OF_MONTH, 1);
             System.out.println(sdf.format(cal.getTime()));
+            System.out.println(cal.get(Calendar.DAY_OF_WEEK) == 1 ? 7 : cal.get(Calendar.DAY_OF_WEEK) - 1);
         }
     }
 

@@ -38,8 +38,10 @@ public class SalesOrder extends BaseDto {
     @JsonFormat(pattern = BaseConstants.DATE_TIME_FORMAT, timezone = BaseConstants.TIME_ZONE)
     private Date shippingDate;
     /**
-     * 客户信息.
+     * 是否已上传文件.
      */
+    private String isUploadFile;
+
     /**
      * 订单-客户信息.
      */
@@ -99,6 +101,10 @@ public class SalesOrder extends BaseDto {
      */
     private String customerName;
     /**
+     * 客户业务类型.
+     */
+    private String businessType;
+    /**
      * 收货方.
      */
     private String receiver;
@@ -107,13 +113,15 @@ public class SalesOrder extends BaseDto {
     private int orderStatusShip;
     private int orderStatusFdbk;
     private int orderStatusComp;
+    private String weekDay;
 
     public SalesOrder() {
     }
 
-    public SalesOrder(Date shippingDate, int orderStatusAcce, int orderStatusShip, int orderStatusFdbk, int orderStatusComp) {
+    public SalesOrder(Date shippingDate, String weekDay, int orderStatusAcce, int orderStatusShip, int orderStatusFdbk, int orderStatusComp) {
         super();
         this.shippingDate = shippingDate;
+        this.weekDay = weekDay;
         this.orderStatusAcce = orderStatusAcce;
         this.orderStatusShip = orderStatusShip;
         this.orderStatusFdbk = orderStatusFdbk;
@@ -158,6 +166,14 @@ public class SalesOrder extends BaseDto {
 
     public void setShippingDate(Date shippingDate) {
         this.shippingDate = shippingDate;
+    }
+
+    public String getIsUploadFile() {
+        return isUploadFile;
+    }
+
+    public void setIsUploadFile(String isUploadFile) {
+        this.isUploadFile = isUploadFile;
     }
 
     public LineCustomer getLineCustomer() {
@@ -280,6 +296,14 @@ public class SalesOrder extends BaseDto {
         this.receiver = receiver;
     }
 
+    public String getBusinessType() {
+        return businessType;
+    }
+
+    public void setBusinessType(String businessType) {
+        this.businessType = businessType;
+    }
+
     public int getOrderStatusAcce() {
         return orderStatusAcce;
     }
@@ -310,6 +334,14 @@ public class SalesOrder extends BaseDto {
 
     public void setOrderStatusComp(int orderStatusComp) {
         this.orderStatusComp = orderStatusComp;
+    }
+
+    public String getWeekDay() {
+        return weekDay;
+    }
+
+    public void setWeekDay(String weekDay) {
+        this.weekDay = weekDay;
     }
 
     @Override

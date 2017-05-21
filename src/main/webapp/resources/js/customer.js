@@ -17,9 +17,29 @@ function init_btns() {
                 $.ligerDialog.warn("客户名称未填写!");
                 return false;
             }
-            if (null == reqData.customerTypeList) {
+            var gridData = customerGrid.getData();
+            if (null == reqData.customerTypeList || gridData.length < 1) {
                 $.ligerDialog.warn("业务类型信息不能为空!");
                 return false;
+            }
+            //校验字段信息
+            for (var index in gridData) {
+                if (!gridData[index].businessType) {
+                    $.ligerDialog.warn("业务类型不能为空!");
+                    return false;
+                }
+                if (!gridData[index].managerName) {
+                    $.ligerDialog.warn("经办人姓名不能为空!");
+                    return false;
+                }
+                if (!gridData[index].managerPhone) {
+                    $.ligerDialog.warn("经办人电话不能为空!");
+                    return false;
+                }
+                if (!gridData[index].receiver) {
+                    $.ligerDialog.warn("收货方不能为空!");
+                    return false;
+                }
             }
             $.ligerDialog.confirm(("确认保存？"), function (yes) {
                 if (yes) {
@@ -99,12 +119,16 @@ function init_btns() {
 function load_data(parm) {
     if (parm) {
         $.getJSON(_basePath + "/customer/getCustomerDetails", parm, function (resdata) {
+            console.log(resdata);
+            if (false == resdata.success) {
+                $.ligerDialog.warn(resdata.resMsg);
+                return false;
+            }
             customerForm.setData(resdata);
             var obj = {};
             obj.lines = resdata.customerTypeList;
             customerGrid.loadData(obj);
         });
-
         deleteBtn.setEnabled(true);
     } else {
         deleteBtn.setDisabled(true);

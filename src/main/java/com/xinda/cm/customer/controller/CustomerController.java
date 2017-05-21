@@ -7,6 +7,7 @@ import com.xinda.om.order.dto.LineCustomer;
 import com.xinda.system.sys.contant.BaseConstants;
 import com.xinda.system.sys.controller.BaseController;
 import com.xinda.system.sys.dto.ResponseJsonData;
+import com.xinda.system.sys.exception.CustomerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -58,10 +59,11 @@ public class CustomerController extends BaseController {
      *
      * @param customerId
      * @return
+     * @throws CustomerException 客户统一异常
      */
     @RequestMapping(value = "/getCustomerDetails", method = RequestMethod.GET)
     @ResponseBody
-    public Customer getCustomerDetails(Integer customerId) {
+    public Customer getCustomerDetails(Integer customerId) throws CustomerException {
         return customerService.getCustomerDetails(customerId);
     }
 
@@ -104,7 +106,6 @@ public class CustomerController extends BaseController {
         customerService.deleteCustomer(customerId);
         return new ResponseJsonData(true);
     }
-
 
     /**
      * 查询所有的订单上客户名称.
