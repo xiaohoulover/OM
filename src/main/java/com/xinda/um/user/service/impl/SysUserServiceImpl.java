@@ -3,6 +3,7 @@ package com.xinda.um.user.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.xinda.sm.security.service.IEncryptionService;
 import com.xinda.system.sys.contant.BaseConstants;
+import com.xinda.system.sys.contant.RedisContants;
 import com.xinda.system.sys.exception.SysException;
 import com.xinda.um.user.dto.SysUser;
 import com.xinda.um.user.mapper.SysUserMapper;
@@ -10,6 +11,8 @@ import com.xinda.um.user.service.ISysUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.BoundListOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +36,8 @@ public class SysUserServiceImpl implements ISysUserService {
     private SysUserMapper sysUserMapper;
     @Autowired
     private IEncryptionService encryptionService;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     public SysUser getSysUserById(int userId) {
@@ -42,7 +47,12 @@ public class SysUserServiceImpl implements ISysUserService {
     @Override
     public List<SysUser> querySysUser(SysUser sysUser, int page, int pageSize) {
         PageHelper.startPage(page, pageSize);
-        return sysUserMapper.getSysUsers(sysUser);
+        //从Redis中获取
+        BoundListOperations<String, SysUser> userBoundListOperations = redisTemplate.boundListOps(RedisContants.OM_USER_KEY);
+        List<SysUser> userList = userBoundListOperations.range(0, -1);
+
+        //return sysUserMapper.getSysUsers(sysUser);
+        return userList;
     }
 
     @Override
@@ -127,5 +137,10 @@ public class SysUserServiceImpl implements ISysUserService {
             sysUserMapper.deleteByPrimaryKey(sysUser.getUserId());
         }
         return sysUsers;
+    }
+
+    @Override
+    public List<SysUser> queryAllUsers() {
+        return sysUserMapper.queryAllUsers();
     }
 }

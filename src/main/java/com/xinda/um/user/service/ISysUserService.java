@@ -15,7 +15,7 @@ import java.util.List;
 public interface ISysUserService {
 
     /**
-     * 查询User信息.
+     * 根据userId查询User信息.
      *
      * @param userId User对象
      * @return User信息
@@ -23,7 +23,7 @@ public interface ISysUserService {
     SysUser getSysUserById(int userId);
 
     /**
-     * 获取User对象信息.
+     * 分页获取User对象信息.
      *
      * @param sysUser
      * @param page
@@ -65,5 +65,12 @@ public interface ISysUserService {
      * @return
      */
     List<SysUser> deleteSysUsers(List<SysUser> sysUsers) throws SysException;
+
+    /**
+     * 查询所有的User信息.
+     *
+     * @return
+     */
+    List<SysUser> queryAllUsers();
 
 }

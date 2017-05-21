@@ -12,12 +12,12 @@ import javax.servlet.http.HttpSession;
 import java.io.Writer;
 
 /**
- * html文件映射拦截器.
+ * 登录验证拦截器.
  *
  * @Author Coundy.
  * @Date 2017/3/27 23:10
  */
-public class HtmlInterceptor implements HandlerInterceptor {
+public class SessionInterceptor implements HandlerInterceptor {
 
     private final Logger logger = LoggerFactory.getLogger(HandlerInterceptor.class);
 

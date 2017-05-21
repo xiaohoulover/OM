@@ -9,18 +9,18 @@
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
 
     <!-- 引入外部属性配置文件 -->
-    <!--<bean id="propertyConfigurer"
+    <bean id="propertyConfigurer"
           class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        &lt;!&ndash;<property name="location" value="classpath:jdbc.properties" />&ndash;&gt;
+        <!--<property name="location" value="classpath:jdbc.properties" />-->
         <property name="locations">
             <list>
                 <value>classpath*:jdbc.properties</value>
                 <value>classpath*:sysConfig.properties</value>
             </list>
         </property>
-    </bean>-->
+    </bean>
     <!-- 测试引用外部配置文件属性加密处理.需继承PropertyPlaceholderConfigurer类并重写 -->
-    <bean id="propertyConfigurer"
+    <!--<bean id="propertyConfigurer"
           class="com.xinda.system.sys.converter.EncryptPropertyPlaceholderConfigurer">
         <property name="locations">
             <list>
@@ -29,7 +29,7 @@
             </list>
         </property>
         <property name="fileEncoding" value="utf-8" ></property>
-    </bean>
+    </bean>-->
 
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
           destroy-method="close">

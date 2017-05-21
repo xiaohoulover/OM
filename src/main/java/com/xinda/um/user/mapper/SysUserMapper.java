@@ -33,11 +33,18 @@ public interface SysUserMapper {
     List<SysUser> getSysUsers(SysUser sysUser);
 
     /**
-     * 查询用户信息.
+     * 根据查询条件获取某个用户信息.
      *
      * @param sysUser
      * @return
      */
     SysUser querySysUserBySysUser(SysUser sysUser);
+
+    /**
+     * 查询所有User信息.
+     *
+     * @return
+     */
+    List<SysUser> queryAllUsers();
 
 }
