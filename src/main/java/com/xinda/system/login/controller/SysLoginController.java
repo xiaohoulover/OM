@@ -1,8 +1,8 @@
-package com.xinda.system.sys.controller;
+package com.xinda.system.login.controller;
 
-import com.xinda.system.sys.contant.BaseConstants;
-import com.xinda.system.sys.service.ISysLoginService;
-import com.xinda.system.sys.service.IVerificationCodeService;
+import com.xinda.system.sys.controller.BaseController;
+import com.xinda.system.login.service.ISysLoginService;
+import com.xinda.system.login.service.IVerificationCodeService;
 import com.xinda.um.user.dto.SysUser;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -16,7 +16,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -86,10 +85,14 @@ public class SysLoginController extends BaseController {
      */
     @RequestMapping(value = "/verificationCode", method = RequestMethod.GET)
     public void code(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        // 获取验证码
         logger.info("Create verificationCode ...");
-        //生成验证码图片
-        verificationCodeService.generateVerificationCode(request, response);
+        //生成随机的key值放到Cookie中
+        String key = verificationCodeService.generateVerificationKey();
+        Cookie cookie = new Cookie("cookieVeriKey", key);
+        cookie.setPath(StringUtils.defaultIfEmpty(request.getContextPath(), "/"));
+        cookie.setMaxAge(-1);
+        response.addCookie(cookie);
+        verificationCodeService.generateVerification(request, response, key);
     }
 
 }

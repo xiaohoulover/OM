@@ -1,8 +1,8 @@
-package com.xinda.system.sys.service.Impl;
+package com.xinda.system.sequence.service.Impl;
 
-import com.xinda.system.sys.dto.SysSequence;
-import com.xinda.system.sys.mapper.SysSequenceMapper;
-import com.xinda.system.sys.service.ISysSequenceService;
+import com.xinda.system.sequence.dto.SysSequence;
+import com.xinda.system.sequence.mapper.SysSequenceMapper;
+import com.xinda.system.sequence.service.ISysSequenceService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

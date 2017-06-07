@@ -1,5 +1,6 @@
-package com.xinda.system.sys.dto;
+package com.xinda.system.sequence.dto;
 
+import com.xinda.system.sys.dto.BaseDto;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.Id;

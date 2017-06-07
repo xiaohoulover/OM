@@ -1,4 +1,4 @@
-package com.xinda.system.sys.service;
+package com.xinda.system.login.service;
 
 import com.xinda.um.user.dto.SysUser;
 import org.springframework.web.servlet.ModelAndView;
@@ -13,6 +13,24 @@ import javax.servlet.http.HttpServletResponse;
  * @Date 2017/3/27 22:13
  */
 public interface ISysLoginService {
+
+    /**
+     * 登陆前处理.
+     *
+     * @param sysUser  用户登录信息
+     * @param request  请求参数
+     * @param response 应答参数
+     */
+    void beforeLoign(SysUser sysUser, HttpServletRequest request, HttpServletResponse response);
+
+    /**
+     * 登录后处理.
+     *
+     * @param sysUser  用户登录信息
+     * @param request  请求参数
+     * @param response 应答参数
+     */
+    void afterLogin(SysUser sysUser, HttpServletRequest request, HttpServletResponse response);
 
     /**
      * 登陆.

@@ -1,7 +1,7 @@
 package com.xinda.om.order.service;
 
 import com.xinda.om.order.dto.SalesOrder;
-import com.xinda.system.sys.exception.OrderException;
+import com.xinda.om.order.exception.OrderException;
 
 import java.util.List;
 

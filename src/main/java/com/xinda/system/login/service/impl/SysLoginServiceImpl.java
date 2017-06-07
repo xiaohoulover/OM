@@ -1,13 +1,15 @@
-package com.xinda.system.sys.service.Impl;
+package com.xinda.system.login.service.impl;
 
+import com.xinda.system.login.service.ISysLoginService;
+import com.xinda.system.login.service.IVerificationCodeService;
+import com.xinda.system.sys.event.ReLoadCacheEvent;
 import com.xinda.system.sys.exception.BaseException;
-import com.xinda.system.sys.service.ISysLoginService;
-import com.xinda.system.sys.service.IVerificationCodeService;
 import com.xinda.um.user.dto.SysUser;
 import com.xinda.um.user.service.ISysUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.ModelAndView;
@@ -35,14 +37,21 @@ public class SysLoginServiceImpl implements ISysLoginService {
     private ISysUserService sysUserService;
     @Autowired
     private IVerificationCodeService verificationCodeService;
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Override
+    public void beforeLoign(SysUser sysUser, HttpServletRequest request, HttpServletResponse response) {
+
+    }
 
     @Override
     public ModelAndView doLogin(SysUser sysUser, HttpServletRequest request, HttpServletResponse response) {
         ModelAndView view = new ModelAndView();
         view.setViewName("/login");
-        // 记录用户输入的用户名，登录失败刷新页面时，不需要重新输入
 
         try {
+            beforeLoign(sysUser, request, response);
             //验证码校验
             verificationCodeService.valiLoginVerificationCode(request);
             // 用户名及密码校验
@@ -57,12 +66,19 @@ public class SysLoginServiceImpl implements ISysLoginService {
             session.setAttribute("userType", sysUser.getUserType());
             session.setAttribute("userName", sysUser.getUserName());
             view.setViewName("redirect:/");
+            //afterLogin(sysUser, request, response);
         } catch (BaseException e) {
             view.addObject("_UserName", sysUser.getUserName());
             view.addObject("msg", e.getMessage());
             view.addObject("code", e.getCode());
         }
         return view;
+    }
+
+    @Override
+    public void afterLogin(SysUser sysUser, HttpServletRequest request, HttpServletResponse response) {
+        String sqlId = "com.xinda.um.user.mapper.SysUserMapper.getSysUsers";
+        applicationContext.publishEvent(new ReLoadCacheEvent(new Object(), "user", sqlId));
     }
 
     @Override

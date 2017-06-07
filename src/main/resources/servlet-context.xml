@@ -103,7 +103,6 @@
             <mvc:exclude-mapping path="/verificationCode"/>
             <bean class="com.xinda.system.sys.interceptor.SessionInterceptor"/>
         </mvc:interceptor>
-        <bean class="com.xinda.system.sys.interceptor.LoadRedisDataInterceptor"/>
     </mvc:interceptors>
 
 </beans>  

@@ -5,7 +5,7 @@ import com.xinda.fm.file.service.IFileManagerService;
 import com.xinda.system.sys.contant.BaseConstants;
 import com.xinda.system.sys.controller.BaseController;
 import com.xinda.system.sys.dto.ResponseJsonData;
-import com.xinda.system.sys.exception.FileException;
+import com.xinda.fm.file.exception.FileException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

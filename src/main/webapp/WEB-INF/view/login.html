@@ -11,7 +11,7 @@
           // 为了使每次生成图片不一致，即不让浏览器读缓存，所以需要加上时间戳
           var timestamp = (new Date()).valueOf();
           var imgSrc = $("#imgObj");
-          var src = imgSrc.attr("src") + "?timestamp"+timestamp;
+          var src = imgSrc.attr("src") + "?timestamp="+timestamp;
 
           var XMLHttp = null;
           if (window.XMLHttpRequest) {

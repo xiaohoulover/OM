@@ -52,4 +52,26 @@
         <property name="connectionFactory" ref="jedisConnectionFactory"></property>
     </bean>
 
+    <bean id="redisCacheManager" class="com.xinda.cache.service.impl.RedisCacheImpl">
+        <property name="redisTemplate" ref="redisTemplate" />
+    </bean>
+
+    <bean id="loadCacheDataListener" class="com.xinda.system.sys.listener.LoadCacheDataListener"></bean>
+
+
+    <bean id="userFunctionCache" class="com.xinda.cache.service.impl.UserFunctionCache" >
+        <property name="function" value="user" />
+        <property name="sqlId" value="com.xinda.um.user.mapper.SysUserMapper.getSysUsers" />
+    </bean>
+
+    <bean id="cacheManager" class="com.xinda.cache.service.impl.CacheManagerImpl" >
+        <property name="caches">
+            <list>
+                <ref bean="userFunctionCache"/>
+            </list>
+        </property>
+    </bean>
+
+
+
 </beans>

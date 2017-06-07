@@ -9,7 +9,7 @@ import com.xinda.cm.customer.service.ICustomerService;
 import com.xinda.om.order.dto.LineCustomer;
 import com.xinda.om.order.mapper.LineCustomerMapper;
 import com.xinda.system.sys.contant.BaseConstants;
-import com.xinda.system.sys.exception.CustomerException;
+import com.xinda.cm.customer.exception.CustomerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

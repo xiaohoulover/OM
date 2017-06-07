@@ -40,11 +40,4 @@ public interface SysUserMapper {
      */
     SysUser querySysUserBySysUser(SysUser sysUser);
 
-    /**
-     * 查询所有User信息.
-     *
-     * @return
-     */
-    List<SysUser> queryAllUsers();
-
 }

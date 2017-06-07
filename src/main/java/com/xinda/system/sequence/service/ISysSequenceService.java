@@ -1,6 +1,6 @@
-package com.xinda.system.sys.service;
+package com.xinda.system.sequence.service;
 
-import com.xinda.system.sys.dto.SysSequence;
+import com.xinda.system.sequence.dto.SysSequence;
 
 /**
  * 序列号生成接口方法.

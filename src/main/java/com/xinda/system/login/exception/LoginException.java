@@ -1,4 +1,6 @@
-package com.xinda.system.sys.exception;
+package com.xinda.system.login.exception;
+
+import com.xinda.system.sys.exception.BaseException;
 
 /**
  * 系统异常声明.
@@ -6,7 +8,7 @@ package com.xinda.system.sys.exception;
  * @Author Coundy.
  * @Date 2017/3/27 23:09
  */
-public class SysException extends BaseException {
+public class LoginException extends BaseException {
 
     /**
      *
@@ -39,11 +41,11 @@ public class SysException extends BaseException {
      *
      * @param resMsg 消息描述
      */
-    public SysException(String resMsg) {
+    public LoginException(String resMsg) {
         super(DEFAULT_CODE, resMsg);
     }
 
-    public SysException(String code, String resMsg) {
+    public LoginException(String code, String resMsg) {
         super(code, resMsg);
     }
 

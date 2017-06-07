@@ -1,4 +1,6 @@
-package com.xinda.system.sys.exception;
+package com.xinda.om.order.exception;
+
+import com.xinda.system.sys.exception.BaseException;
 
 /**
  * 订单管理异常类.

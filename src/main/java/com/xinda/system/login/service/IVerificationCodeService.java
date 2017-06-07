@@ -1,6 +1,6 @@
-package com.xinda.system.sys.service;
+package com.xinda.system.login.service;
 
-import com.xinda.system.sys.exception.SysException;
+import com.xinda.system.login.exception.LoginException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,6 +15,13 @@ import java.io.IOException;
 public interface IVerificationCodeService {
 
     /**
+     * 生成保存到Cookie中的验证码Key.
+     *
+     * @return
+     */
+    public String generateVerificationKey();
+
+    /**
      * 生成验证码.
      *
      * @return
@@ -27,7 +34,7 @@ public interface IVerificationCodeService {
      * @param request
      * @param response 应答参数
      */
-    public void generateVerificationCode(HttpServletRequest request, HttpServletResponse response)
+    public void generateVerification(HttpServletRequest request, HttpServletResponse response, String verificationKey)
             throws IOException;
 
     /**
@@ -36,6 +43,6 @@ public interface IVerificationCodeService {
      * @param request
      * @return
      */
-    public void valiLoginVerificationCode(HttpServletRequest request) throws SysException;
+    public void valiLoginVerificationCode(HttpServletRequest request) throws LoginException;
 
 }

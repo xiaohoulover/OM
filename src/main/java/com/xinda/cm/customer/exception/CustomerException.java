@@ -1,4 +1,6 @@
-package com.xinda.system.sys.exception;
+package com.xinda.cm.customer.exception;
+
+import com.xinda.system.sys.exception.BaseException;
 
 /**
  * 客户管理异常类.

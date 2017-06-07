@@ -1,6 +1,6 @@
-package com.xinda.system.sys.mapper;
+package com.xinda.system.sequence.mapper;
 
-import com.xinda.system.sys.dto.SysSequence;
+import com.xinda.system.sequence.dto.SysSequence;
 
 /**
  * 序列号Mapper.

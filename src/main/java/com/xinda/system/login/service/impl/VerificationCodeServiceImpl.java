@@ -1,21 +1,26 @@
-package com.xinda.system.sys.service.Impl;
+package com.xinda.system.login.service.impl;
 
+import com.xinda.system.login.exception.LoginException;
+import com.xinda.system.login.service.IVerificationCodeService;
 import com.xinda.system.sys.contant.BaseConstants;
-import com.xinda.system.sys.exception.SysException;
-import com.xinda.system.sys.service.IVerificationCodeService;
+import com.xinda.system.sys.contant.RedisContants;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.WebUtils;
 
 import javax.imageio.ImageIO;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Random;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 验证码实现类.
@@ -24,8 +29,15 @@ import java.util.Random;
  * @Date 2017/3/28 14:32.
  */
 @Service
-@Transactional
 public class VerificationCodeServiceImpl implements IVerificationCodeService {
+
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+
+    @Override
+    public String generateVerificationKey() {
+        return UUID.randomUUID().toString();
+    }
 
     @Override
     public String generateVerificationCode() {
@@ -44,12 +56,12 @@ public class VerificationCodeServiceImpl implements IVerificationCodeService {
     }
 
     @Override
-    public void generateVerificationCode(HttpServletRequest request, HttpServletResponse response)
+    public void generateVerification(HttpServletRequest request, HttpServletResponse response, String verificationKey)
             throws IOException {
         String verificationCode = generateVerificationCode();
         // 将四位数字的验证码保存到Session中。
-        HttpSession session = request.getSession();
-        session.setAttribute("verificationCode", verificationCode);
+        /*HttpSession session = request.getSession();
+        session.setAttribute(BaseConstants.VERIFICATION_CODE, verificationCode);*/
 
         // 定义图像buffer
         BufferedImage buffImg = new BufferedImage(BaseConstants.VERIFICATION_CODE_WIDTH,
@@ -105,21 +117,44 @@ public class VerificationCodeServiceImpl implements IVerificationCodeService {
         try (OutputStream ignored = response.getOutputStream()) {
             ImageIO.write(buffImg, "jpeg", response.getOutputStream());
         }
-
+        //将生成的验证码存储到Redis中
+        String key = RedisContants.SYS_VERIFICATION_KEY + verificationKey;
+        redisTemplate.boundValueOps(key).set(verificationCode, RedisContants.VERIFICATION_CODE_EXPIRED, TimeUnit.SECONDS);
     }
 
     @Override
-    public void valiLoginVerificationCode(HttpServletRequest request) throws SysException {
+    public void valiLoginVerificationCode(HttpServletRequest request) throws LoginException {
         //获取Session中存储的验证码Code
-        HttpSession session = request.getSession();
-        String sessionCode = String.valueOf(session.getAttribute("verificationCode"));
+        /*HttpSession session = request.getSession();
+        String sessionCode = String.valueOf(session.getAttribute(BaseConstants.VERIFICATION_CODE));
         //获取前台参数
-        String verificationCode = request.getParameter("verificationCode");
+        String verificationCode = request.getParameter(BaseConstants.VERIFICATION_CODE);
         //移除Session属性
-        session.removeAttribute("verificationCode");
+        session.removeAttribute(BaseConstants.VERIFICATION_CODE);
         if (session == null || StringUtils.isEmpty(verificationCode)
                 || !verificationCode.equalsIgnoreCase(sessionCode)) {
-            throw new SysException("SYS", SysException.MSG_ERROR_SYS_VERIFICATION_CODE_ERROR);
+            throw new LoginException("SYS", LoginException.MSG_ERROR_SYS_VERIFICATION_CODE_ERROR);
+        }*/
+        //获取Cookie中生成的随机key
+        Cookie cookie = WebUtils.getCookie(request, "cookieVeriKey");
+        //前台输入Code
+        String inputCode = request.getParameter(BaseConstants.VERIFICATION_CODE);
+        //校验验证码
+        if (cookie == null || StringUtils.isBlank(cookie.getValue())
+                || !checkVerificationCode(cookie.getValue(), inputCode)) {
+            throw new LoginException("SYS", LoginException.MSG_ERROR_SYS_VERIFICATION_CODE_ERROR);
         }
+    }
+
+    public boolean checkVerificationCode(String verificationKey, String inputCode) {
+        if (StringUtils.isBlank(inputCode)) {
+            return false;
+        }
+        //从Redis中获取存储的验证码
+        String cacheKey = RedisContants.SYS_VERIFICATION_KEY + verificationKey;
+        String verificationCode = redisTemplate.boundValueOps(cacheKey).get();
+        //移除缓存
+        redisTemplate.delete(cacheKey);
+        return inputCode.equalsIgnoreCase(verificationCode);
     }
 }

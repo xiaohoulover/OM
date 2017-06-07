@@ -1,4 +1,6 @@
-package com.xinda.system.sys.exception;
+package com.xinda.fm.file.exception;
+
+import com.xinda.system.sys.exception.BaseException;
 
 /**
  * 文件管理统一异常.
