@@ -3,9 +3,9 @@ package com.xinda.um.user.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.xinda.cache.service.IRedisCache;
 import com.xinda.sm.security.service.IEncryptionService;
+import com.xinda.system.login.exception.LoginException;
 import com.xinda.system.sys.contant.BaseConstants;
 import com.xinda.system.sys.contant.RedisContants;
-import com.xinda.system.login.exception.LoginException;
 import com.xinda.um.user.dto.SysUser;
 import com.xinda.um.user.mapper.SysUserMapper;
 import com.xinda.um.user.service.ISysUserService;
@@ -17,7 +17,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User实现类.
@@ -47,7 +49,7 @@ public class SysUserServiceImpl implements ISysUserService {
     public List<SysUser> querySysUser(SysUser sysUser, int page, int pageSize) {
         PageHelper.startPage(page, pageSize);
         //2017-05-23_从Redis中获取
-        List<SysUser> userList = redisCacheManagerImpl.getCacheList(RedisContants.OM_USER_KEY);
+        List<SysUser> userList = redisCacheManagerImpl.getCacheList(RedisContants.OM_USER_KEY, 0, -1);
         return userList;
         // return sysUserMapper.getSysUsers(sysUser);
     }
@@ -111,7 +113,7 @@ public class SysUserServiceImpl implements ISysUserService {
                 case BaseConstants.BASE_DTO_ADD:
                     sysUserMapper.insertSelective(sysUser);
                     //2017-05-31 添加SysUser对象
-                    redisCacheManagerImpl.setCacheList(RedisContants.OM_USER_KEY, sysUser);
+                    redisCacheManagerImpl.setCacheList(RedisContants.OM_USER_KEY, sysUser, -1);
                     break;
                 case BaseConstants.BASE_DTO_UPDATE:
                     sysUserMapper.updateByPrimaryKeySelective(sysUser);
@@ -142,4 +144,5 @@ public class SysUserServiceImpl implements ISysUserService {
     public List<SysUser> queryAllUsers() {
         return sysUserMapper.getSysUsers(new SysUser());
     }
+
 }

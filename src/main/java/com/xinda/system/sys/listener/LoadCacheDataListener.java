@@ -70,7 +70,7 @@ public class LoadCacheDataListener implements ApplicationListener<ApplicationEve
             try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
                 sqlSession.select(reLoadCacheEvent.getSqlId(), (resultContext) -> {
                     Object row = resultContext.getResultObject();
-                    redisCacheManagerImpl.setCacheList(RedisContants.OM_USER_KEY, (SysUser) row);
+                    redisCacheManagerImpl.setCacheList(RedisContants.OM_USER_KEY, (SysUser) row, -1);
                 });
             } catch (Throwable e) {
                 logger.error(e.getMessage(), e);

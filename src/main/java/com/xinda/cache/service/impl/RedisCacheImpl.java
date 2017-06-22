@@ -1,14 +1,13 @@
 package com.xinda.cache.service.impl;
 
 import com.xinda.cache.service.IRedisCache;
-import com.xinda.um.user.dto.SysUser;
 import org.springframework.data.redis.core.*;
-import org.springframework.data.redis.serializer.RedisSerializer;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Redis缓存管理实现类.
@@ -29,43 +28,34 @@ public class RedisCacheImpl<T> implements IRedisCache<T> {
         this.redisTemplate = redisTemplate;
     }
 
-    /**
-     * 获取 RedisSerializer.
-     *
-     * @return
-     */
-    public RedisSerializer<String> getRedisSerializer() {
-        return redisTemplate.getStringSerializer();
+    @Override
+    public boolean isContainsKey(String key) {
+        return redisTemplate.hasKey(key);
     }
 
     @Override
-    public <T> ValueOperations<String, T> setCacheObject(String key, T value) {
+    public <T> void removeKey(T t) {
+        redisTemplate.delete(t);
+    }
+
+    @Override
+    public <T> ValueOperations<String, T> setCacheValue(String key, T value, long expireTime) {
         ValueOperations<String, T> valueOperations = redisTemplate.opsForValue();
         valueOperations.set(key, value);
+        if (expireTime > 0) {
+            valueOperations.set(key, value, expireTime, TimeUnit.SECONDS);
+        }
         return valueOperations;
     }
 
-    /**
-     * 根据Key值获取缓存中的Value值.
-     *
-     * @param key 键值
-     * @return 键值对应的Value值
-     */
     @Override
-    public <T> T getCacheObject(String key) {
+    public <T> T getCacheValue(String key) {
         ValueOperations<String, T> valueOperations = redisTemplate.opsForValue();
         return valueOperations.get(key);
     }
 
-    /**
-     * 缓存List集合.
-     *
-     * @param key         键值
-     * @param paramObject 需缓存的Value.
-     * @return
-     */
     @Override
-    public ListOperations<String, T> setCacheList(String key, Object paramObject) {
+    public ListOperations<String, T> setCacheList(String key, Object paramObject, long expireTime) {
         ListOperations<String, T> listOperations = redisTemplate.opsForList();
         if (null != paramObject) {
             if (paramObject instanceof List) {//存储集合
@@ -80,70 +70,71 @@ public class RedisCacheImpl<T> implements IRedisCache<T> {
                 listOperations.rightPush(key, (T) paramObject);
             }
         }
+        if (expireTime > 0) {
+            redisTemplate.expire(key, expireTime, TimeUnit.SECONDS);
+        }
         return listOperations;
     }
 
     @Override
     public <T> void removeCacheList(String key) {
-        ListOperations<String, T> listOperations = redisTemplate.opsForList();
-        listOperations.trim(key, -1, 0);
+        /*ListOperations<String, T> listOperations = redisTemplate.opsForList();
+        listOperations.trim(key, -1, 0);*/
+        removeKey(key);
     }
 
-    /**
-     * 获取缓存中List集合元素.
-     *
-     * @param key 键值
-     * @param <T>
-     * @return 对应List集合的数据
-     */
     @Override
-    public <T> List<T> getCacheList(String key) {
+    public List<T> getCacheList(String key, long start, long end) {
         ListOperations<String, T> listOperations = redisTemplate.opsForList();
-        return listOperations.range(key, 0, -1);
+        return listOperations.range(key, start, end);
     }
 
-    /**
-     * 缓存Set集合.
-     *
-     * @param key      缓存键值
-     * @param paramSet 缓存数据Value值
-     * @param <T>
-     * @return 缓存数据的对象
-     */
+    public long getCacheListSize(String key) {
+        ListOperations<String, T> listOperations = redisTemplate.opsForList();
+        return listOperations.size(key);
+    }
+
     @Override
-    public <T> SetOperations<String, T> setCacheSet(String key, Set<T> paramSet) {
+    public <T> SetOperations<String, T> setCacheSet(String key, T paramSet, long expireTime) {
         SetOperations<String, T> setOperations = redisTemplate.opsForSet();
-        if (null == paramSet || !paramSet.isEmpty()) {
-            Iterator<T> iterator = paramSet.iterator();
-            while (iterator.hasNext()) {
-                setOperations.add(key, iterator.next());
+        if (paramSet instanceof Set) {//集合
+            Set set = (Set) paramSet;
+            if (null != set || !set.isEmpty()) {
+                Iterator<T> iterator = set.iterator();
+                while (iterator.hasNext()) {
+                    setOperations.add(key, iterator.next());
+                }
             }
+        } else {
+            setOperations.add(key, paramSet);
+        }
+        if (expireTime > 0) {
+            redisTemplate.expire(key, expireTime, TimeUnit.SECONDS);
         }
         return setOperations;
     }
 
-    /**
-     * 获取Set集合数据.
-     *
-     * @param key 键值
-     * @param <T>
-     * @return 数据集合
-     */
     @Override
-    public <T> Set<T> getCacheSet(String key) {
+    public Set<T> getCacheSet(String key) {
         SetOperations<String, T> setOperations = redisTemplate.opsForSet();
         return setOperations.members(key);
     }
 
-    /**
-     * 缓存Map数据.
-     *
-     * @param key      存储键值
-     * @param paramMap 存储数据集合
-     * @return 缓存对象
-     */
     @Override
-    public <K, V> HashOperations<String, K, V> getCacheMap(String key, Map<K, V> paramMap) {
+    public <T> long removeOneOfSet(String key, T value) {
+        SetOperations<String, T> setOperations = redisTemplate.opsForSet();
+        return setOperations.remove(key, value);
+    }
+
+    @Override
+    public <K, V> HashOperations<String, K, V> setCacheMap(String key, K k, V v) {
+        HashOperations<String, K, V> hashOperations = redisTemplate.opsForHash();
+        hashOperations.put(key, k, v);
+        return hashOperations;
+    }
+
+    @Override
+    public <K, V> HashOperations<String, K, V> setCacheMap(String key, Map<K, V> paramMap) {
         HashOperations<String, K, V> hashOperations = redisTemplate.opsForHash();
         hashOperations.putAll(key, paramMap);
         //Or
@@ -155,17 +146,16 @@ public class RedisCacheImpl<T> implements IRedisCache<T> {
         return hashOperations;
     }
 
-    /**
-     * 获取缓存Map数据.
-     *
-     * @param key 键值
-     * @param <T>
-     * @return 缓存对象
-     */
     @Override
     public <T> Map<String, T> getCacheMap(String key) {
         HashOperations<String, String, T> hashOperations = redisTemplate.opsForHash();
         return hashOperations.entries(key);
+    }
+
+    @Override
+    public <K> void removeOneOfMap(String key, K k) {
+        HashOperations<String, String, T> hashOperations = redisTemplate.opsForHash();
+        hashOperations.delete(key, k);
     }
 
 }

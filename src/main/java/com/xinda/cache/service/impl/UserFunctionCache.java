@@ -72,7 +72,7 @@ public class UserFunctionCache implements Cache<SysUser> {
         try (SqlSession sqlSession = getSqlSessionFactory().openSession()) {
             sqlSession.select(sqlId, (resultContext) -> {
                 Object row = resultContext.getResultObject();
-                getRedisCacheManagerImpl().setCacheList(RedisContants.DEFAULT_KEY + function, row);
+                getRedisCacheManagerImpl().setCacheList(RedisContants.DEFAULT_KEY + function, row, -1);
             });
         } catch (Throwable e) {
             logger.error(e.getMessage(), e);

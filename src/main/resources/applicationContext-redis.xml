@@ -21,9 +21,42 @@
         <property name="testOnReturn" value="${redis.pool.testOnReturn}"/>
     </bean>
 
+    <!-- Redis Sentinel 监听主服务，在主服务发生故障时能够切换至从服务，将从服务升级为主服务保证故障恢复 -->
+    <!--
+        注意：在配置Redis的sentinel.conf文件时注意使用外部可以访问的ip地址，因为当redis-sentinel服务和redis-server在同一台机器的时候，
+            主服务发生变化时配置文件中将主服务ip变为127.0.0.1，这样外部就无法访问了。
+            如果应用程序，Redis服务在同一台机器则不存在这样的隐患，具体情况则更加实际的网络环境
+    -->
+    <bean id="redisSentinelConfiguration" class="org.springframework.data.redis.connection.RedisSentinelConfiguration" >
+        <property name="master">
+            <bean class="org.springframework.data.redis.connection.RedisNode">
+                <property name="name" value="mymaster" />
+            </bean>
+        </property>
+        <property name="sentinels" >
+            <set>
+                <bean class="org.springframework.data.redis.connection.RedisNode" >
+                    <constructor-arg name="host" value="192.168.247.129" />
+                    <constructor-arg name="port" value="9368" />
+                </bean>
+                <bean class="org.springframework.data.redis.connection.RedisNode" >
+                    <constructor-arg name="host" value="192.168.247.129" />
+                    <constructor-arg name="port" value="9369" />
+                </bean>
+                <bean class="org.springframework.data.redis.connection.RedisNode" >
+                    <constructor-arg name="host" value="192.168.247.129" />
+                    <constructor-arg name="port" value="9370" />
+                </bean>
+            </set>
+        </property>
+    </bean>
+
     <!-- 2.定义Redis数据库连接池 -->
     <bean id="jedisConnectionFactory"
           class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" destroy-method="destroy">
+
+        <!--<constructor-arg name="sentinelConfig" ref="redisSentinelConfiguration" />-->
+
         <property name="hostName" value="${redis.hostName}"/>
         <property name="port" value="${redis.port}"/>
         <property name="timeout" value="${redis.timeout}"/>
@@ -71,7 +104,5 @@
             </list>
         </property>
     </bean>
-
-
 
 </beans>
