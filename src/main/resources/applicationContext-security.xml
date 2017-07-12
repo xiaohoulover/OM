@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+                                 http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd">
+
+    <!--
+        1.Spring Security 对Web安全性的支持大量的依赖于Servlet过滤器。通过这些过滤器拦截进入请求，判断是否已经登录认证且具访问对应请求的权限。
+        2.要实现访问控制，需定义四个拦截器：调度器、认证管理器、权限资源关联器、访问决策器
+        3.调用执行过程：
+            用户请求
+                ->AuthenticationProcessingFilter拦截调用AuthenticationManager的实现
+                ->调用ProviderManager来获取用户验证信息(验证通过，权限信息封装一个User放到spring的全局缓存SecurityContextHolder中)
+                ->访问url时，通过AbstractSecurityInterceptor拦截器拦截
+                ->调用FilterInvocationSecurityMetadataSource的方法来获取被拦截url所需的全部权限
+                ->用授权管理器AccessDecisionManager(从SecurityContextHolder获取用户的权限信息)
+    -->
+
+    <!-- 过滤掉不需要过滤器拦截的请求 -->
+    <http pattern="/lib/**" security="none"/>
+    <http pattern="/resources/**" security="none"/>
+    <http pattern="/login" security="none"/>
+    <http pattern="/login.html" security="none"/>
+    <http pattern="/verificationCode" security="none"/>
+
+    <http auto-config="true" create-session="always" use-expressions="true"
+          disable-url-rewriting="true">
+        <!--
+            form-login 是Spring Security命名空间配置登录相关信息的标签:
+            1.login-page  自定义登录页url，默认是/login
+            2.login-processing-url  登录请求拦截的url，也就是form表单中的action名称
+            3.default-target-url 默认登录成功后跳转的url
+            4.always-use-default-target 是否总是默认跳转到登录成功后页面
+            5.authentication-failure-url    登录失败后跳转的url
+            6.username-parameter和password-parameter   用户名及密码请求字段，默认为：userName和password
+            7.authentication-success-handler-ref    指向一个AuthenticationSuccessHandler用于处理认证成功的请求。
+              当登陆成功会调用实现AuthenticationSuccessHandler接口的onAuthenticationSuccess方法.
+        -->
+        <form-login login-page="/login.html" login-processing-url="/login" default-target-url="/view/home.html"
+                    username-parameter="userName" password-parameter="password"
+                    authentication-success-handler-ref="authenticationSuccess"
+                    authentication-failure-handler-ref="exceptionMappingAuthenticationFailureHandler"
+        />
+        <!-- "记住我"功能，采用持久化策略(将用户的登录信息存放cookie -->
+        <remember-me key="bcp" use-secure-cookie="true"/>
+
+        <!-- 退出 -->
+        <logout invalidate-session="true" logout-url="/logout" success-handler-ref="logoutSuccessHandler"/>
+
+        <!-- 会话管理，设置最多登录异常，error-if-maximum-exceeded = true为第二次登录就会使前一个登录失效 -->
+        <!--防止多个用户同时登录同一个帐号-->
+        <session-management invalid-session-url="/login.html?expired=true">
+            <concurrency-control max-sessions="1" error-if-maximum-exceeded="true"
+                                 expired-url="/login.html?expired=true"/>
+        </session-management>
+
+        <!--FILTER_SECURITY_INTERCEPTOR是FilterSecurityInterface类的别名
+            这里表示在执行FilterSecurityInterface之前调用我们自定义的Filter-->
+        <custom-filter ref="customFilterSecurityInterceptor" before="FILTER_SECURITY_INTERCEPTOR"/>
+
+    </http>
+
+    <!-- 登录成功后处理Handler -->
+    <beans:bean id="authenticationSuccess"
+                class="com.xinda.sm.security.auth.CustomSavedRequestAwareAuthenticationSuccessHandler">
+        <beans:property name="defaultTargetUrl" value="/view/menu.html"/>
+    </beans:bean>
+
+    <!-- 退出登录后处理Handler -->
+    <beans:bean id="logoutSuccessHandler" class="com.xinda.sm.security.auth.CustomLogoutSuccessHandler">
+        <beans:property name="defaultTargetUrl" value="/logout"/>
+    </beans:bean>
+
+    <beans:bean id="exceptionMappingAuthenticationFailureHandler"
+                class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
+        <beans:property name="exceptionMappings">
+            <beans:props>
+                <beans:prop key="org.springframework.security.authentication.DisabledException">
+                    /login.html?role=false
+                </beans:prop>
+                <beans:prop key="org.springframework.security.authentication.BadCredentialsException">
+                    /login.html
+                </beans:prop>
+                <beans:prop key="org.springframework.security.authentication.LockedException">
+                    /login.html?locked=true
+                </beans:prop>
+            </beans:props>
+        </beans:property>
+    </beans:bean>
+
+    <!--调度器-->
+    <beans:bean id="customFilterSecurityInterceptor" class="com.xinda.sm.security.auth.CustomFilterSecurityInterceptor">
+        <beans:property name="authenticationManager" ref="authenticationManager"/>
+        <beans:property name="filterInvocationSecurityMetadataSource" ref="customInvocationSecurityMetadataSource"/>
+        <beans:property name="accessDecisionManager" ref="customAccessDecisionManager"/>
+    </beans:bean>
+
+    <!-- 认证管理器，实现用户认证的入口，主要实现UserDetailsService接口即可。用户登录处理，验证配置。-->
+    <!--登陆验证也是AuthenticationProcessingFilter拦截器调用authenticationManager来处理的，我们这个拦截器只是为了拿到验证用户信息而已-->
+    <authentication-manager alias="authenticationManager">
+        <!--这里可以定义多个provider-->
+        <authentication-provider user-service-ref="customUserDetailsService">
+            <!--用户密码加密方式-->
+            <!--<password-encoder hash="md5" base64="true">
+                <salt-source user-property="username"/>
+            </password-encoder>-->
+        </authentication-provider>
+    </authentication-manager>
+
+    <!--在这个类中，可以从数据库中读入用户的密码，角色信息，是否锁定，账号是否过期等 -->
+    <beans:bean id="customUserDetailsService" class="com.xinda.sm.security.auth.CustomUserDetailsService"/>
+
+    <!--权限资源管理器，将所有的资源与权限对应关系建立，即定义对应用户权限可访问哪些资源-->
+    <beans:bean id="customInvocationSecurityMetadataSource"
+                class="com.xinda.sm.security.auth.CustomInvocationSecurityMetadataSource"/>
+
+    <!--决策访问器，决定某个用户具有哪些角色，是否有足够的权限去访问某个资源-->
+    <beans:bean id="customAccessDecisionManager" class="com.xinda.sm.security.auth.CustomAccessDecisionManager"/>
+
+</beans:beans>
