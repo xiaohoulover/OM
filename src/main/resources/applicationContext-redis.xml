@@ -1,0 +1,108 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.2.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
+
+    <context:property-placeholder location="classpath:redis.properties" ignore-unresolvable="true" />
+
+    <!-- 1.Redis连接池的配置 -->
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxTotal" value="${redis.pool.maxActive}"/>
+        <property name="maxIdle" value="${redis.pool.maxIdle}"/>
+        <property name="minIdle" value="${redis.pool.minIdle}"/>
+        <property name="maxWaitMillis" value="${redis.pool.maxWait}"/>
+        <property name="testOnBorrow" value="${redis.pool.testOnBorrow}"/>
+        <property name="testOnReturn" value="${redis.pool.testOnReturn}"/>
+    </bean>
+
+    <!-- Redis Sentinel 监听主服务，在主服务发生故障时能够切换至从服务，将从服务升级为主服务保证故障恢复 -->
+    <!--
+        注意：在配置Redis的sentinel.conf文件时注意使用外部可以访问的ip地址，因为当redis-sentinel服务和redis-server在同一台机器的时候，
+            主服务发生变化时配置文件中将主服务ip变为127.0.0.1，这样外部就无法访问了。
+            如果应用程序，Redis服务在同一台机器则不存在这样的隐患，具体情况则更加实际的网络环境
+    -->
+    <bean id="redisSentinelConfiguration" class="org.springframework.data.redis.connection.RedisSentinelConfiguration" >
+        <property name="master">
+            <bean class="org.springframework.data.redis.connection.RedisNode">
+                <property name="name" value="mymaster" />
+            </bean>
+        </property>
+        <property name="sentinels" >
+            <set>
+                <bean class="org.springframework.data.redis.connection.RedisNode" >
+                    <constructor-arg name="host" value="192.168.247.129" />
+                    <constructor-arg name="port" value="9368" />
+                </bean>
+                <bean class="org.springframework.data.redis.connection.RedisNode" >
+                    <constructor-arg name="host" value="192.168.247.129" />
+                    <constructor-arg name="port" value="9369" />
+                </bean>
+                <bean class="org.springframework.data.redis.connection.RedisNode" >
+                    <constructor-arg name="host" value="192.168.247.129" />
+                    <constructor-arg name="port" value="9370" />
+                </bean>
+            </set>
+        </property>
+    </bean>
+
+    <!-- 2.定义Redis数据库连接池 -->
+    <bean id="jedisConnectionFactory"
+          class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" destroy-method="destroy">
+
+        <!--<constructor-arg name="sentinelConfig" ref="redisSentinelConfiguration" />-->
+
+        <property name="hostName" value="${redis.hostName}"/>
+        <property name="port" value="${redis.port}"/>
+        <property name="timeout" value="${redis.timeout}"/>
+        <!--<property name="database" value="0"/>-->
+        <property name="password" value="${redis.password}"/>
+        <property name="usePool" value="true"/>
+        <property name="poolConfig" ref="jedisPoolConfig"/>
+    </bean>
+
+    <!-- 定义序列化 -->
+    <bean id="stringRedisSerializer" class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+    <bean id="jdkSerializationRedisSerializer"
+          class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer"/>
+
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+        <property name="connectionFactory" ref="jedisConnectionFactory"/>
+        <!-- 序列化方式 建议key/hashKey采用StringRedisSerializer。 -->
+        <property name="keySerializer" ref="stringRedisSerializer"></property>
+        <property name="hashKeySerializer" ref="stringRedisSerializer"></property>
+        <property name="valueSerializer" ref="jdkSerializationRedisSerializer"></property>
+        <property name="hashValueSerializer" ref="jdkSerializationRedisSerializer"></property>
+    </bean>
+
+    <!-- 对string操作的封装 -->
+    <bean id="stringRedisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate">
+        <property name="connectionFactory" ref="jedisConnectionFactory"></property>
+    </bean>
+
+    <bean id="redisCacheManager" class="com.xinda.cache.service.impl.RedisCacheImpl">
+        <property name="redisTemplate" ref="redisTemplate" />
+    </bean>
+
+    <bean id="loadCacheDataListener" class="com.xinda.system.sys.listener.LoadCacheDataListener"></bean>
+
+
+    <bean id="userFunctionCache" class="com.xinda.cache.service.impl.UserFunctionCache" >
+        <property name="function" value="user" />
+        <property name="sqlId" value="com.xinda.um.user.mapper.SysUserMapper.getSysUsers" />
+    </bean>
+
+    <bean id="cacheManager" class="com.xinda.cache.service.impl.CacheManagerImpl" >
+        <property name="caches">
+            <list>
+                <ref bean="userFunctionCache"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>

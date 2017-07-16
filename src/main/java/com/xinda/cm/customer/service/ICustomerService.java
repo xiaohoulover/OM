@@ -3,7 +3,7 @@ package com.xinda.cm.customer.service;
 import com.xinda.cm.customer.dto.Customer;
 import com.xinda.cm.customer.dto.CustomerType;
 import com.xinda.om.order.dto.LineCustomer;
-import com.xinda.system.sys.exception.CustomerException;
+import com.xinda.cm.customer.exception.CustomerException;
 
 import java.util.List;
 

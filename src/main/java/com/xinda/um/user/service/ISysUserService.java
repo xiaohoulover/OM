@@ -1,7 +1,7 @@
 package com.xinda.um.user.service;
 
 import com.xinda.system.sys.exception.BaseException;
-import com.xinda.system.sys.exception.SysException;
+import com.xinda.system.login.exception.LoginException;
 import com.xinda.um.user.dto.SysUser;
 
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.List;
 public interface ISysUserService {
 
     /**
-     * 查询User信息.
+     * 根据userId查询User信息.
      *
      * @param userId User对象
      * @return User信息
@@ -23,7 +23,7 @@ public interface ISysUserService {
     SysUser getSysUserById(int userId);
 
     /**
-     * 获取User对象信息.
+     * 分页获取User对象信息.
      *
      * @param sysUser
      * @param page
@@ -39,16 +39,16 @@ public interface ISysUserService {
      * @return
      * @throws BaseException SysUser
      */
-    SysUser validateLoginInfo(SysUser sysUser) throws SysException;
+    SysUser validateLoginInfo(SysUser sysUser) throws LoginException;
 
     /**
      * 保存用户信息.
      *
      * @param sysUser
      * @return
-     * @throws SysException
+     * @throws LoginException
      */
-    SysUser createSysUser(SysUser sysUser) throws SysException;
+    SysUser createSysUser(SysUser sysUser) throws LoginException;
 
     /**
      * 批量保存用户信息.
@@ -56,7 +56,7 @@ public interface ISysUserService {
      * @param sysUsers
      * @return
      */
-    List<SysUser> batchSaveOrUpdateSysUsers(List<SysUser> sysUsers) throws SysException;
+    List<SysUser> batchSaveOrUpdateSysUsers(List<SysUser> sysUsers) throws LoginException;
 
     /**
      * 删除用户.
@@ -64,6 +64,13 @@ public interface ISysUserService {
      * @param sysUsers
      * @return
      */
-    List<SysUser> deleteSysUsers(List<SysUser> sysUsers) throws SysException;
+    List<SysUser> deleteSysUsers(List<SysUser> sysUsers) throws LoginException;
+
+    /**
+     * 查询所有的User信息.
+     *
+     * @return
+     */
+    List<SysUser> queryAllUsers();
 
 }

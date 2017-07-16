@@ -4,7 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.xinda.fm.file.dto.FileManagerDto;
 import com.xinda.fm.file.mapper.FileManagerMapper;
 import com.xinda.fm.file.service.IFileManagerService;
-import com.xinda.system.sys.exception.FileException;
+import com.xinda.fm.file.exception.FileException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

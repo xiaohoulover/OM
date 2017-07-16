@@ -12,7 +12,16 @@ import java.security.Key;
 import java.security.SecureRandom;
 
 /**
- * 加密处理实现类.
+ * DES对称加解密处理实现类.
+ * 对称加密算法：加解密的密钥只有一个.
+ * DES加密算法：
+ * 对于加密:<p>
+ * 因为DES是块加密，数据长度必须是8的倍数，然而实际上加密前的明文getBytes()后基本不会恰好是8的倍数，所以一般需要进行填充.<p>
+ * 这个只需要设置参数 PKCS5Padding ，JDK就帮你填充了，若不填充，且数据长度不是8倍数，则会抛异常；<p>
+ * 对于解密:<p>
+ * 一般来说加密的数据长度本身就是8的倍数，所以只需要NoPadding就可以了，若加密的数据长度不是8，就需要用PKCS5Padding，<p>
+ * 否则解密出来后的明文尾巴的会比原明文的尾巴多出好几位填充数据。<p>
+ * Base64编码：Base64被定义为：Base64内容传送编码被设计用来把任意序列的8位字节描述为一种不易被人直接识别的形式。
  *
  * @author coudy
  *         <p>
@@ -33,10 +42,13 @@ public class EncryptionServiceImpl implements IEncryptionService {
     }
 
     //指定DES加密解密的密钥
+    private static Key key = null;
     private static String KEY_STR = "myKey";
 
-    private static Key generateKey() {
-        Key key = null;
+    /**
+     * 创建密钥.
+     */
+    static {
         try {
             KeyGenerator generator = KeyGenerator.getInstance("DES");
             generator.init(new SecureRandom(KEY_STR.getBytes()));
@@ -45,7 +57,6 @@ public class EncryptionServiceImpl implements IEncryptionService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return key;
     }
 
     /**
@@ -60,8 +71,8 @@ public class EncryptionServiceImpl implements IEncryptionService {
         try {
             //可添加编码格式(utf8)
             byte[] b = encryptStr.getBytes();
-            Cipher cipher = Cipher.getInstance("DES");
-            cipher.init(Cipher.ENCRYPT_MODE, generateKey());
+            Cipher cipher = Cipher.getInstance("DES/ECB/NoPadding");
+            cipher.init(Cipher.ENCRYPT_MODE, key);
             encryptBytes = cipher.doFinal(b);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -80,8 +91,8 @@ public class EncryptionServiceImpl implements IEncryptionService {
         byte[] decryptStrBytes = null;
         try {
             byte[] decryptBytes = base64Decoder.decodeBuffer(decryptStr);
-            Cipher cipher = Cipher.getInstance("DES/ECB/NoPadding");//DES
-            cipher.init(Cipher.DECRYPT_MODE, generateKey());
+            Cipher cipher = Cipher.getInstance("DES/ECB/PKCS5Padding");//DES
+            cipher.init(Cipher.DECRYPT_MODE, key);
             decryptStrBytes = cipher.doFinal(decryptBytes);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -90,12 +101,12 @@ public class EncryptionServiceImpl implements IEncryptionService {
         return new String(decryptStrBytes);
     }
 
-    public static void main (String[] args) {
-        String str[] = {"root","xd_mysql"};
+    public static void main(String[] args) {
+        String str[] = {"sysadmin", "sysadmin"};
         for (String s : str) {
             System.out.println(getEncryptString(s));
         }
-      //  System.out.println(getDecryptString("WnplV/ietfQ="));
+        //  System.out.println(getDecryptString("WnplV/ietfQ="));
     }
 
 }
