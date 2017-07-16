@@ -32,6 +32,17 @@ public class ReLoadCacheEvent extends ApplicationEvent {
 
     private RedisTemplate redisTemplate;
 
+    public ReLoadCacheEvent(String msg) {
+        super(msg);
+        this.msg = msg;
+    }
+
+    public ReLoadCacheEvent(Object source, String name, String sqlId) {
+        super(source);
+        this.name = name;
+        this.sqlId = sqlId;
+    }
+
     public String getName() {
         return name;
     }
@@ -62,17 +73,6 @@ public class ReLoadCacheEvent extends ApplicationEvent {
 
     public void setRedisTemplate(RedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
-    }
-
-    public ReLoadCacheEvent(String msg) {
-        super(msg);
-        this.msg = msg;
-    }
-
-    public ReLoadCacheEvent(Object source, String name, String sqlId) {
-        super(source);
-        this.name = name;
-        this.sqlId = sqlId;
     }
 
     /**

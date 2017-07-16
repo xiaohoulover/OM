@@ -10,12 +10,11 @@ import com.xinda.system.sys.exception.BaseException;
  */
 public class CustomerException extends BaseException {
 
+    public static final String MSG_ERROR_CM_CUSTOMER_INFO_HAD_DELETED = "客户信息已删除";
     /**
      * 客户管理模块消息Code.
      */
     private static final String DEFAULT_CODE = "CM";
-
-    public static final String MSG_ERROR_CM_CUSTOMER_INFO_HAD_DELETED = "客户信息已删除";
 
     /**
      * 构造方法.用户代码中声明抛出异常信息.

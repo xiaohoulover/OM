@@ -1,7 +1,7 @@
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
 		http://www.springframework.org/schema/context
@@ -9,7 +9,7 @@
 		http://www.springframework.org/schema/tx
 		http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
 
-    <context:property-placeholder location="classpath:redis.properties" ignore-unresolvable="true" />
+    <context:property-placeholder location="classpath:redis.properties" ignore-unresolvable="true"/>
 
     <!-- 1.Redis连接池的配置 -->
     <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
@@ -27,25 +27,25 @@
             主服务发生变化时配置文件中将主服务ip变为127.0.0.1，这样外部就无法访问了。
             如果应用程序，Redis服务在同一台机器则不存在这样的隐患，具体情况则更加实际的网络环境
     -->
-    <bean id="redisSentinelConfiguration" class="org.springframework.data.redis.connection.RedisSentinelConfiguration" >
+    <bean id="redisSentinelConfiguration" class="org.springframework.data.redis.connection.RedisSentinelConfiguration">
         <property name="master">
             <bean class="org.springframework.data.redis.connection.RedisNode">
-                <property name="name" value="mymaster" />
+                <property name="name" value="mymaster"/>
             </bean>
         </property>
-        <property name="sentinels" >
+        <property name="sentinels">
             <set>
-                <bean class="org.springframework.data.redis.connection.RedisNode" >
-                    <constructor-arg name="host" value="192.168.247.129" />
-                    <constructor-arg name="port" value="9368" />
+                <bean class="org.springframework.data.redis.connection.RedisNode">
+                    <constructor-arg name="host" value="192.168.247.129"/>
+                    <constructor-arg name="port" value="9368"/>
                 </bean>
-                <bean class="org.springframework.data.redis.connection.RedisNode" >
-                    <constructor-arg name="host" value="192.168.247.129" />
-                    <constructor-arg name="port" value="9369" />
+                <bean class="org.springframework.data.redis.connection.RedisNode">
+                    <constructor-arg name="host" value="192.168.247.129"/>
+                    <constructor-arg name="port" value="9369"/>
                 </bean>
-                <bean class="org.springframework.data.redis.connection.RedisNode" >
-                    <constructor-arg name="host" value="192.168.247.129" />
-                    <constructor-arg name="port" value="9370" />
+                <bean class="org.springframework.data.redis.connection.RedisNode">
+                    <constructor-arg name="host" value="192.168.247.129"/>
+                    <constructor-arg name="port" value="9370"/>
                 </bean>
             </set>
         </property>
@@ -86,18 +86,18 @@
     </bean>
 
     <bean id="redisCacheManager" class="com.xinda.cache.service.impl.RedisCacheImpl">
-        <property name="redisTemplate" ref="redisTemplate" />
+        <property name="redisTemplate" ref="redisTemplate"/>
     </bean>
 
     <bean id="loadCacheDataListener" class="com.xinda.system.sys.listener.LoadCacheDataListener"></bean>
 
 
-    <bean id="userFunctionCache" class="com.xinda.cache.service.impl.UserFunctionCache" >
-        <property name="function" value="user" />
-        <property name="sqlId" value="com.xinda.um.user.mapper.SysUserMapper.getSysUsers" />
+    <bean id="userFunctionCache" class="com.xinda.cache.service.impl.UserFunctionCache">
+        <property name="function" value="user"/>
+        <property name="sqlId" value="com.xinda.um.user.mapper.SysUserMapper.getSysUsers"/>
     </bean>
 
-    <bean id="cacheManager" class="com.xinda.cache.service.impl.CacheManagerImpl" >
+    <bean id="cacheManager" class="com.xinda.cache.service.impl.CacheManagerImpl">
         <property name="caches">
             <list>
                 <ref bean="userFunctionCache"/>

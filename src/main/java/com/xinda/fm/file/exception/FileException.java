@@ -10,18 +10,15 @@ import com.xinda.system.sys.exception.BaseException;
  */
 public class FileException extends BaseException {
 
+    public static final String UPLOAD_FILE_ERROR = "上传文件失败!";
     /**
      *
      */
     private static final long serialVersionUID = 1L;
-
     /**
      * 系统模块消息Code.
      */
     private static final String DEFAULT_CODE = "FILE";
-
-
-    public static final String UPLOAD_FILE_ERROR = "上传文件失败!";
 
     /**
      * 构造方法.用户代码中声明抛出异常信息.

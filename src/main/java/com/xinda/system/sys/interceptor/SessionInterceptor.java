@@ -19,9 +19,8 @@ import java.io.Writer;
  */
 public class SessionInterceptor implements HandlerInterceptor {
 
-    private final Logger logger = LoggerFactory.getLogger(HandlerInterceptor.class);
-
     private static final String DEFAULT_VIEW = "/login.html";
+    private final Logger logger = LoggerFactory.getLogger(HandlerInterceptor.class);
 
     @Override
     public void afterCompletion(HttpServletRequest arg0, HttpServletResponse arg1, Object arg2, Exception arg3)

@@ -60,6 +60,19 @@ public class SalesOrderServiceImpl implements ISalesOrderService {
     @Autowired
     private FileManagerMapper fileManagerMapper;
 
+    public static void main(String[] args) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        cal.setFirstDayOfWeek(Calendar.MONDAY);
+        cal.add(Calendar.DAY_OF_MONTH, -8);
+        for (int i = 1; i <= 15; i++) {
+            cal.add(Calendar.DAY_OF_MONTH, 1);
+            System.out.println(sdf.format(cal.getTime()));
+            System.out.println(cal.get(Calendar.DAY_OF_WEEK) == 1 ? 7 : cal.get(Calendar.DAY_OF_WEEK) - 1);
+        }
+    }
+
     /**
      * 生成订单编号.
      *
@@ -293,19 +306,6 @@ public class SalesOrderServiceImpl implements ISalesOrderService {
     @Override
     public List<SalesOrder> queryOrdersByParms(SalesOrder order) throws OrderException {
         return salesOrderMapper.queryOrderByParams(order);
-    }
-
-    public static void main(String[] args) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        cal.setFirstDayOfWeek(Calendar.MONDAY);
-        cal.add(Calendar.DAY_OF_MONTH, -8);
-        for (int i = 1; i <= 15; i++) {
-            cal.add(Calendar.DAY_OF_MONTH, 1);
-            System.out.println(sdf.format(cal.getTime()));
-            System.out.println(cal.get(Calendar.DAY_OF_WEEK) == 1 ? 7 : cal.get(Calendar.DAY_OF_WEEK) - 1);
-        }
     }
 
 }

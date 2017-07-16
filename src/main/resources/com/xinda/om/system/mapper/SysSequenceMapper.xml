@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.xinda.system.sequence.mapper.SysSequenceMapper">
-  <resultMap id="BaseResultMap" type="com.xinda.system.sequence.dto.SysSequence">
+    <resultMap id="BaseResultMap" type="com.xinda.system.sequence.dto.SysSequence">
     <id column="sequence_Id" jdbcType="DECIMAL" property="sequenceId" />
     <result column="SEQ_TYPE" jdbcType="VARCHAR" property="seqType" />
     <result column="INIT_SEQ_VALUE" jdbcType="DECIMAL" property="initSeqValue" />
@@ -30,7 +30,7 @@
     delete from sys_sequence
     where sequence_Id = #{sequenceId,jdbcType=DECIMAL}
   </delete>
-  <insert id="insert" parameterType="com.xinda.system.sequence.dto.SysSequence">
+    <insert id="insert" parameterType="com.xinda.system.sequence.dto.SysSequence">
     <selectKey resultType="int" keyProperty="sequenceId" >
       SELECT LAST_INSERT_ID()
     </selectKey>
@@ -43,7 +43,7 @@
       #{pk1Value,jdbcType=DECIMAL}, #{pk2Value,jdbcType=DECIMAL}, #{pk3Value,jdbcType=DECIMAL}, 
       CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1)
   </insert>
-  <insert id="insertSelective" parameterType="com.xinda.system.sequence.dto.SysSequence">
+    <insert id="insertSelective" parameterType="com.xinda.system.sequence.dto.SysSequence">
     <selectKey resultType="int" keyProperty="sequenceId" >
       SELECT LAST_INSERT_ID()
     </selectKey>
@@ -119,7 +119,7 @@
         1,
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.xinda.system.sequence.dto.SysSequence">
+    <update id="updateByPrimaryKeySelective" parameterType="com.xinda.system.sequence.dto.SysSequence">
     update sys_sequence
     <set>
       <if test="seqType != null">
@@ -157,7 +157,7 @@
     </set>
     where sequence_Id = #{sequenceId,jdbcType=DECIMAL}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.xinda.system.sequence.dto.SysSequence">
+    <update id="updateByPrimaryKey" parameterType="com.xinda.system.sequence.dto.SysSequence">
     update sys_sequence
     set seq_Type = #{seqType,jdbcType=VARCHAR},
       INIT_SEQ_VALUE = #{initSeqValue,jdbcType=DECIMAL},
@@ -173,8 +173,9 @@
       OBJECT_VERSION_NUM = OBJECT_VERSION_NUM + 1
     where sequence_Id = #{sequenceId,jdbcType=DECIMAL}
   </update>
-  
-  <select id="selectOfLockForUpdate" parameterType="com.xinda.system.sequence.dto.SysSequence" resultMap="BaseResultMap" >
+
+    <select id="selectOfLockForUpdate" parameterType="com.xinda.system.sequence.dto.SysSequence"
+            resultMap="BaseResultMap">
   	select <include refid="Base_Column_List" />
   	from sys_sequence
   	<trim prefix="WHERE" prefixOverrides="AND|OR" >
