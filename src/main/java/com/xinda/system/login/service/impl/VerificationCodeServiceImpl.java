@@ -1,6 +1,6 @@
 package com.xinda.system.login.service.impl;
 
-import com.xinda.system.login.exception.LoginException;
+import com.xinda.system.login.exception.SysException;
 import com.xinda.system.login.service.IVerificationCodeService;
 import com.xinda.system.sys.contant.BaseConstants;
 import com.xinda.system.sys.contant.RedisContants;
@@ -14,6 +14,7 @@ import javax.imageio.ImageIO;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -123,7 +124,7 @@ public class VerificationCodeServiceImpl implements IVerificationCodeService {
     }
 
     @Override
-    public void valiLoginVerificationCode(HttpServletRequest request) throws LoginException {
+    public void valiLoginVerificationCode(HttpServletRequest request) throws SysException {
         //获取Session中存储的验证码Code
         /*HttpSession session = request.getSession();
         String sessionCode = String.valueOf(session.getAttribute(BaseConstants.VERIFICATION_CODE));
@@ -142,7 +143,7 @@ public class VerificationCodeServiceImpl implements IVerificationCodeService {
         //校验验证码
         if (cookie == null || StringUtils.isBlank(cookie.getValue())
                 || !checkVerificationCode(cookie.getValue(), inputCode)) {
-            throw new LoginException("SYS", LoginException.MSG_ERROR_SYS_VERIFICATION_CODE_ERROR);
+            throw new SysException("SYS", SysException.MSG_ERROR_SYS_VERIFICATION_CODE_ERROR);
         }
     }
 
@@ -156,5 +157,21 @@ public class VerificationCodeServiceImpl implements IVerificationCodeService {
         //移除缓存
         redisTemplate.delete(cacheKey);
         return inputCode.equalsIgnoreCase(verificationCode);
+    }
+
+    @Override
+    public boolean beforeLoginVerificationCode(HttpServletRequest request) {
+        //获取Session中存储的验证码Code
+        HttpSession session = request.getSession();
+        String sessionCode = String.valueOf(session.getAttribute("verificationCode"));
+        //获取前台参数
+        String verificationCode = request.getParameter("verificationCode");
+        //移除Session属性
+        session.removeAttribute("verificationCode");
+        if (session == null || StringUtils.isEmpty(verificationCode)
+                || !verificationCode.equalsIgnoreCase(sessionCode)) {
+            return false;
+        }
+        return true;
     }
 }

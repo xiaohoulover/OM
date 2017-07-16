@@ -1,7 +1,7 @@
 package com.xinda.um.user.service;
 
+import com.xinda.system.login.exception.SysException;
 import com.xinda.system.sys.exception.BaseException;
-import com.xinda.system.login.exception.LoginException;
 import com.xinda.um.user.dto.SysUser;
 
 import java.util.List;
@@ -13,6 +13,15 @@ import java.util.List;
  * @Date 2017/3/27 22:13
  */
 public interface ISysUserService {
+
+
+    /**
+     * 根据userName查询用户信息.
+     *
+     * @param userName 用户名
+     * @return
+     */
+    SysUser selectUserByUserName(String userName);
 
     /**
      * 根据userId查询User信息.
@@ -39,16 +48,16 @@ public interface ISysUserService {
      * @return
      * @throws BaseException SysUser
      */
-    SysUser validateLoginInfo(SysUser sysUser) throws LoginException;
+    SysUser validateLoginInfo(SysUser sysUser) throws SysException;
 
     /**
      * 保存用户信息.
      *
      * @param sysUser
      * @return
-     * @throws LoginException
+     * @throws SysException
      */
-    SysUser createSysUser(SysUser sysUser) throws LoginException;
+    SysUser createSysUser(SysUser sysUser) throws SysException;
 
     /**
      * 批量保存用户信息.
@@ -56,7 +65,7 @@ public interface ISysUserService {
      * @param sysUsers
      * @return
      */
-    List<SysUser> batchSaveOrUpdateSysUsers(List<SysUser> sysUsers) throws LoginException;
+    List<SysUser> batchSaveOrUpdateSysUsers(List<SysUser> sysUsers) throws SysException;
 
     /**
      * 删除用户.
@@ -64,7 +73,7 @@ public interface ISysUserService {
      * @param sysUsers
      * @return
      */
-    List<SysUser> deleteSysUsers(List<SysUser> sysUsers) throws LoginException;
+    List<SysUser> deleteSysUsers(List<SysUser> sysUsers) throws SysException;
 
     /**
      * 查询所有的User信息.

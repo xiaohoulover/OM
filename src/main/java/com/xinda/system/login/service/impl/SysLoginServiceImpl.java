@@ -1,5 +1,6 @@
 package com.xinda.system.login.service.impl;
 
+import com.xinda.system.login.exception.SysException;
 import com.xinda.system.login.service.ISysLoginService;
 import com.xinda.system.login.service.IVerificationCodeService;
 import com.xinda.system.sys.event.ReLoadCacheEvent;
@@ -46,31 +47,50 @@ public class SysLoginServiceImpl implements ISysLoginService {
     }
 
     @Override
-    public ModelAndView doLogin(SysUser sysUser, HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView doLogin_MVC(SysUser sysUser, HttpServletRequest request, HttpServletResponse response) throws SysException {
         ModelAndView view = new ModelAndView();
         view.setViewName("/login");
+        // 记录用户输入的用户名，登录失败刷新页面时，不需要重新输入
 
-        try {
-            beforeLoign(sysUser, request, response);
-            //验证码校验
-            verificationCodeService.valiLoginVerificationCode(request);
-            // 用户名及密码校验
-            sysUser = sysUserService.validateLoginInfo(sysUser);
-            // 日志
-            logger.info("User:[{}] Login ...[{}]",
-                    sysUser.getUserName(),
-                    new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-            //保存session
-            HttpSession session = request.getSession(true);
-            session.setAttribute("userId", sysUser.getUserId());
-            session.setAttribute("userType", sysUser.getUserType());
-            session.setAttribute("userName", sysUser.getUserName());
-            view.setViewName("redirect:/");
-            //afterLogin(sysUser, request, response);
-        } catch (BaseException e) {
+        //try {
+        beforeLoign(sysUser, request, response);
+        //验证码校验
+        //verificationCodeService.valiLoginVerificationCode(request);
+        // 用户名及密码校验
+        sysUser = sysUserService.validateLoginInfo(sysUser);
+        // 日志
+        logger.info("User:[{}] Login ...[{}]",
+                sysUser.getUserName(),
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        //保存session
+        HttpSession session = request.getSession(true);
+        session.setAttribute("userId", sysUser.getUserId());
+        session.setAttribute("userType", sysUser.getUserType());
+        session.setAttribute("userName", sysUser.getUserName());
+        view.setViewName("redirect:/");
+        //afterLogin(sysUser, request, response);
+        /*} catch (BaseException e) {
             view.addObject("_UserName", sysUser.getUserName());
             view.addObject("msg", e.getMessage());
             view.addObject("code", e.getCode());
+        }*/
+        return view;
+    }
+
+    @Override
+    public ModelAndView doLogin(SysUser sysUser, HttpServletRequest request, HttpServletResponse response) {
+        ModelAndView view = new ModelAndView("/login");
+
+
+        String code = SysException.MSG_ERROR_SYS_USERNAME_PASSWORD_ERROR;
+        Throwable exception = (Exception) request.getAttribute("exception");
+
+        if (exception instanceof BaseException) {
+            code = ((BaseException) exception).getCode();
+        }
+        Boolean isError = (Boolean) request.getAttribute("error");
+        if (isError && null != isError) {
+            view.addObject("msg", code);
         }
         return view;
     }

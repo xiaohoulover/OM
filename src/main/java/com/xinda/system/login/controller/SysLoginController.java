@@ -1,8 +1,8 @@
 package com.xinda.system.login.controller;
 
-import com.xinda.system.sys.controller.BaseController;
 import com.xinda.system.login.service.ISysLoginService;
 import com.xinda.system.login.service.IVerificationCodeService;
+import com.xinda.system.sys.controller.BaseController;
 import com.xinda.um.user.dto.SysUser;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -44,7 +44,7 @@ public class SysLoginController extends BaseController {
      * @param response HttpServletResponse 应答参数
      * @return view
      */
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @RequestMapping(value = {"/login"}, method = RequestMethod.POST)
     public ModelAndView login(final SysUser sysUser, final HttpServletRequest request,
                               final HttpServletResponse response) {
         return sysLoginService.doLogin(sysUser, request, response);
@@ -57,7 +57,7 @@ public class SysLoginController extends BaseController {
      * @param response HttpServletResponse 应答参数
      * @return view
      */
-    @RequestMapping(value = {"/login.html", "/login"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/login.html"})
     public ModelAndView loginView(final HttpServletRequest request, final HttpServletResponse response) {
         return new ModelAndView("/login");
     }

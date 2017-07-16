@@ -1,8 +1,8 @@
 package com.xinda.um.user.controller;
 
+import com.xinda.system.login.exception.SysException;
 import com.xinda.system.sys.controller.BaseController;
 import com.xinda.system.sys.dto.ResponseJsonData;
-import com.xinda.system.login.exception.LoginException;
 import com.xinda.um.user.dto.SysUser;
 import com.xinda.um.user.service.ISysUserService;
 import org.apache.log4j.Logger;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -45,13 +46,13 @@ public class SysUserController extends BaseController {
      * @param response
      * @param sysUser
      * @return
-     * @throws LoginException
+     * @throws SysException
      */
     @RequestMapping("/user/saveSysUser")
     @ResponseBody
     public ResponseJsonData createSysUser(HttpServletRequest request,
                                           HttpServletResponse response,
-                                          @RequestBody SysUser sysUser) throws LoginException {
+                                          @RequestBody SysUser sysUser) throws SysException {
         return new ResponseJsonData(sysUserService.createSysUser(sysUser));
     }
 
@@ -67,7 +68,7 @@ public class SysUserController extends BaseController {
     @ResponseBody
     public ResponseJsonData batchSaveOrUpdateSysUsers(HttpServletRequest request,
                                                       HttpServletResponse response,
-                                                      @RequestBody List<SysUser> sysUsers) throws LoginException {
+                                                      @RequestBody List<SysUser> sysUsers) throws SysException {
         return new ResponseJsonData(sysUserService.batchSaveOrUpdateSysUsers(sysUsers));
     }
 
@@ -86,7 +87,7 @@ public class SysUserController extends BaseController {
     @ResponseBody
     public ResponseJsonData querySysUserByParam(HttpServletRequest request,
                                                 HttpServletResponse response,
-                                                SysUser sysUser, int page, int pagesize) throws LoginException {
+                                                SysUser sysUser, int page, int pagesize) throws SysException {
         return new ResponseJsonData(sysUserService.querySysUser(sysUser, page, pagesize));
     }
 
@@ -102,7 +103,7 @@ public class SysUserController extends BaseController {
     @RequestMapping("/user/deleteSysUsers")
     @ResponseBody
     public ResponseJsonData deleteSysUsers(HttpServletRequest request, HttpServletResponse response,
-                                           @RequestBody List<SysUser> sysUsers) throws LoginException {
+                                           @RequestBody List<SysUser> sysUsers) throws SysException {
         return new ResponseJsonData(sysUserService.deleteSysUsers(sysUsers));
     }
 

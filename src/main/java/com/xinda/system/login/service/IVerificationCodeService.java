@@ -1,6 +1,6 @@
 package com.xinda.system.login.service;
 
-import com.xinda.system.login.exception.LoginException;
+import com.xinda.system.login.exception.SysException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,6 +43,14 @@ public interface IVerificationCodeService {
      * @param request
      * @return
      */
-    public void valiLoginVerificationCode(HttpServletRequest request) throws LoginException;
+    public void valiLoginVerificationCode(HttpServletRequest request) throws SysException;
+
+    /**
+     * 登录之前校验.(Spring Security Filter 在登陆之前拦截处理)
+     *
+     * @param request
+     * @return
+     */
+    public boolean beforeLoginVerificationCode(HttpServletRequest request);
 
 }
