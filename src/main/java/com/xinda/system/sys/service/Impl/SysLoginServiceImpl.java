@@ -1,6 +1,7 @@
 package com.xinda.system.sys.service.Impl;
 
 import com.xinda.system.sys.exception.BaseException;
+import com.xinda.system.sys.exception.SysException;
 import com.xinda.system.sys.service.ISysLoginService;
 import com.xinda.system.sys.service.IVerificationCodeService;
 import com.xinda.um.user.dto.SysUser;
@@ -37,14 +38,14 @@ public class SysLoginServiceImpl implements ISysLoginService {
     private IVerificationCodeService verificationCodeService;
 
     @Override
-    public ModelAndView doLogin(SysUser sysUser, HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView doLogin_MVC(SysUser sysUser, HttpServletRequest request, HttpServletResponse response) {
         ModelAndView view = new ModelAndView();
         view.setViewName("/login");
         // 记录用户输入的用户名，登录失败刷新页面时，不需要重新输入
 
         try {
             //验证码校验
-            verificationCodeService.valiLoginVerificationCode(request);
+            //verificationCodeService.valiLoginVerificationCode(request);
             // 用户名及密码校验
             sysUser = sysUserService.validateLoginInfo(sysUser);
             // 日志
@@ -61,6 +62,24 @@ public class SysLoginServiceImpl implements ISysLoginService {
             view.addObject("_UserName", sysUser.getUserName());
             view.addObject("msg", e.getMessage());
             view.addObject("code", e.getCode());
+        }
+        return view;
+    }
+
+    @Override
+    public ModelAndView doLogin(SysUser sysUser, HttpServletRequest request, HttpServletResponse response) {
+        ModelAndView view = new ModelAndView("/login");
+
+
+        String code = SysException.MSG_ERROR_SYS_USERNAME_PASSWORD_ERROR;
+        Throwable exception = (Exception) request.getAttribute("exception");
+
+        if (exception instanceof BaseException) {
+            code = ((BaseException) exception).getCode();
+        }
+        Boolean isError = (Boolean) request.getAttribute("error");
+        if (isError && null != isError) {
+            view.addObject("msg", code);
         }
         return view;
     }

@@ -1,5 +1,7 @@
 package com.xinda.sm.security.auth;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
@@ -14,10 +16,14 @@ import java.io.IOException;
  * @author Coundy.
  * @date 2017/7/4 12:07.
  */
-public class CustomSavedRequestAwareAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
+public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
+
+    private Logger logger = LoggerFactory.getLogger(CustomAuthenticationSuccessHandler.class);
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
+            throws ServletException, IOException {
+        logger.info("---------------------Start CustomAuthenticationSuccessHandler-------------------------");
         super.onAuthenticationSuccess(request, response, authentication);
     }
 }

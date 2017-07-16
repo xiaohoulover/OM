@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans:beans xmlns="http://www.springframework.org/schema/security"
-             xmlns:beans="http://www.springframework.org/schema/beans"
+<beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns="http://www.springframework.org/schema/security"
              xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
                                  http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd">
 
@@ -20,12 +20,11 @@
     <!-- 过滤掉不需要过滤器拦截的请求 -->
     <http pattern="/lib/**" security="none"/>
     <http pattern="/resources/**" security="none"/>
-    <http pattern="/login" security="none"/>
+    <!--<http pattern="/login" security="none"/>-->
     <http pattern="/login.html" security="none"/>
     <http pattern="/verificationCode" security="none"/>
 
-    <http auto-config="true" create-session="always" use-expressions="true"
-          disable-url-rewriting="true">
+    <http use-expressions="true" entry-point-ref="authenticationProcessingFilterEntryPoint">
         <!--
             form-login 是Spring Security命名空间配置登录相关信息的标签:
             1.login-page  自定义登录页url，默认是/login
@@ -37,11 +36,11 @@
             7.authentication-success-handler-ref    指向一个AuthenticationSuccessHandler用于处理认证成功的请求。
               当登陆成功会调用实现AuthenticationSuccessHandler接口的onAuthenticationSuccess方法.
         -->
-        <form-login login-page="/login.html" login-processing-url="/login" default-target-url="/view/home.html"
+        <!--<form-login login-page="/login.html" login-processing-url="/login" default-target-url="/view/home.html"
                     username-parameter="userName" password-parameter="password"
                     authentication-success-handler-ref="authenticationSuccess"
                     authentication-failure-handler-ref="exceptionMappingAuthenticationFailureHandler"
-        />
+        />-->
         <!-- "记住我"功能，采用持久化策略(将用户的登录信息存放cookie -->
         <remember-me key="bcp" use-secure-cookie="true"/>
 
@@ -50,28 +49,46 @@
 
         <!-- 会话管理，设置最多登录异常，error-if-maximum-exceeded = true为第二次登录就会使前一个登录失效 -->
         <!--防止多个用户同时登录同一个帐号-->
-        <session-management invalid-session-url="/login.html?expired=true">
+        <session-management>
             <concurrency-control max-sessions="1" error-if-maximum-exceeded="true"
                                  expired-url="/login.html?expired=true"/>
         </session-management>
 
+        <!--Spring Security4默认是将'X-Frame-Options' 设置为 'DENY'-->
+        <!--Refused to display 'http://localhost:8080/xxx' in a frame because it set 'X-Frame-Options' to 'DENY'.-->
+        <headers>
+            <frame-options policy="SAMEORIGIN"/>
+        </headers>
+
+        <!--验证码校验-->
+        <custom-filter ref="captchaVerifierFilter" before="FORM_LOGIN_FILTER"/>
+
+        <custom-filter ref="customAuthenticationFilter" position="FORM_LOGIN_FILTER"/>
         <!--FILTER_SECURITY_INTERCEPTOR是FilterSecurityInterface类的别名
             这里表示在执行FilterSecurityInterface之前调用我们自定义的Filter-->
         <custom-filter ref="customFilterSecurityInterceptor" before="FILTER_SECURITY_INTERCEPTOR"/>
 
+        <csrf request-matcher-ref="csrfSecurityRequestMatcher"/>
     </http>
+
+    <!--验证码校验-->
+    <beans:bean id="captchaVerifierFilter" class="com.xinda.sm.security.auth.CaptchaVerifierFilter"/>
 
     <!-- 登录成功后处理Handler -->
     <beans:bean id="authenticationSuccess"
-                class="com.xinda.sm.security.auth.CustomSavedRequestAwareAuthenticationSuccessHandler">
-        <beans:property name="defaultTargetUrl" value="/view/menu.html"/>
+                class="com.xinda.sm.security.auth.CustomAuthenticationSuccessHandler">
+        <beans:property name="defaultTargetUrl" value="/"/>
     </beans:bean>
 
-    <!-- 退出登录后处理Handler -->
+    <!-- 退出成功后处理Handler -->
     <beans:bean id="logoutSuccessHandler" class="com.xinda.sm.security.auth.CustomLogoutSuccessHandler">
-        <beans:property name="defaultTargetUrl" value="/logout"/>
+        <beans:property name="defaultTargetUrl" value="/login.html?status=true"/>
     </beans:bean>
 
+    <!--登录失败处理方式1-->
+    <beans:bean id="loginFailureHandler" class="com.xinda.sm.security.auth.LoginFailureHandler" />
+
+    <!--登录失败处理方式2-->
     <beans:bean id="exceptionMappingAuthenticationFailureHandler"
                 class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
         <beans:property name="exceptionMappings">
@@ -80,13 +97,22 @@
                     /login.html?role=false
                 </beans:prop>
                 <beans:prop key="org.springframework.security.authentication.BadCredentialsException">
-                    /login.html
+                    /login.html?role=false
                 </beans:prop>
                 <beans:prop key="org.springframework.security.authentication.LockedException">
                     /login.html?locked=true
                 </beans:prop>
             </beans:props>
         </beans:property>
+    </beans:bean>
+
+    <!--登录入口-->
+    <beans:bean id="customAuthenticationFilter"
+                class="com.xinda.sm.security.auth.CustomUsernamePasswordAuthenticationFilter">
+        <beans:property name="authenticationManager" ref="authenticationManager"/>
+        <beans:property name="filterProcessesUrl" value="/login"/>
+        <beans:property name="authenticationSuccessHandler" ref="authenticationSuccess"/>
+        <beans:property name="authenticationFailureHandler" ref="loginFailureHandler"/>
     </beans:bean>
 
     <!--调度器-->
@@ -113,9 +139,34 @@
 
     <!--权限资源管理器，将所有的资源与权限对应关系建立，即定义对应用户权限可访问哪些资源-->
     <beans:bean id="customInvocationSecurityMetadataSource"
-                class="com.xinda.sm.security.auth.CustomInvocationSecurityMetadataSource"/>
+                class="com.xinda.sm.security.auth.CustomSecurityMetadataSource"/>
 
     <!--决策访问器，决定某个用户具有哪些角色，是否有足够的权限去访问某个资源-->
     <beans:bean id="customAccessDecisionManager" class="com.xinda.sm.security.auth.CustomAccessDecisionManager"/>
+
+    <!-- 未登录的切入点 -->
+    <beans:bean id="authenticationProcessingFilterEntryPoint"
+                class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+        <beans:constructor-arg name="loginFormUrl" value="/login.html"/>
+    </beans:bean>
+
+    <!--HttpSessionCsrfTokenRepository是把token放到session中来存取-->
+    <beans:bean id="csrfFilter" class="org.springframework.security.web.csrf.CsrfFilter">
+        <beans:constructor-arg>
+            <beans:bean class="org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository"/>
+        </beans:constructor-arg>
+    </beans:bean>
+
+    <beans:bean id="csrfSecurityRequestMatcher" class="com.xinda.sm.security.auth.CsrfSecurityRequestMatcher">
+        <beans:property name="excludeUrls">
+            <beans:list>
+                <beans:value>/login</beans:value>
+            </beans:list>
+        </beans:property>
+    </beans:bean>
+
+    <!-- 如果用的是spring mvc 的form标签，则配置此项时自动将crsf的token放入到一个hidden的input中，而不需要开发人员显式的写入form -->
+    <beans:bean id="requestDataValueProcessor"
+                class="org.springframework.security.web.servlet.support.csrf.CsrfRequestDataValueProcessor"/>
 
 </beans:beans>

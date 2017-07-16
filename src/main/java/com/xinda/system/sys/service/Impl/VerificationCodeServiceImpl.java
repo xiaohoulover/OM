@@ -122,4 +122,20 @@ public class VerificationCodeServiceImpl implements IVerificationCodeService {
             throw new SysException("SYS", SysException.MSG_ERROR_SYS_VERIFICATION_CODE_ERROR);
         }
     }
+
+    @Override
+    public boolean beforeLoginVerificationCode(HttpServletRequest request) {
+        //获取Session中存储的验证码Code
+        HttpSession session = request.getSession();
+        String sessionCode = String.valueOf(session.getAttribute("verificationCode"));
+        //获取前台参数
+        String verificationCode = request.getParameter("verificationCode");
+        //移除Session属性
+        session.removeAttribute("verificationCode");
+        if (session == null || StringUtils.isEmpty(verificationCode)
+                || !verificationCode.equalsIgnoreCase(sessionCode)) {
+            return false;
+        }
+        return true;
+    }
 }

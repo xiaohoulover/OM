@@ -30,7 +30,7 @@ public class CustomAccessDecisionManager implements AccessDecisionManager {
      *
      * @param authentication   spring的全局缓存SecurityContextHolder中拿到的，里面是用户的权限信息
      * @param o                封装有url的对象
-     * @param configAttributes CustomInvocationSecurityMetadataSource.getAttributes中获取的 所需权限
+     * @param configAttributes CustomSecurityMetadataSource.getAttributes中获取的url 所需权限
      * @throws AccessDeniedException
      * @throws InsufficientAuthenticationException
      */
@@ -46,6 +46,7 @@ public class CustomAccessDecisionManager implements AccessDecisionManager {
             ConfigAttribute ca = ite.next();
             String needRole = ((SecurityConfig) ca).getAttribute();
             for (GrantedAuthority ga : authentication.getAuthorities()) {
+                //ga 为用户所被赋予的权限，needRole为访问相应的资源应具有的权限
                 if (needRole.equals(ga.getAuthority())) {
                     logger.info("---------------------End CustomAccessDecisionManager------------------------------");
                     return;
@@ -53,7 +54,7 @@ public class CustomAccessDecisionManager implements AccessDecisionManager {
             }
         }
         //注意：执行这里，后台是会抛异常的，但是界面会跳转到所配的access-denied-page页面
-        //throw new AccessDeniedException("no right");
+        throw new AccessDeniedException("No Permission Access!");
     }
 
     @Override

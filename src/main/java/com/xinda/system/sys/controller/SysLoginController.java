@@ -1,10 +1,8 @@
 package com.xinda.system.sys.controller;
 
-import com.xinda.system.sys.contant.BaseConstants;
 import com.xinda.system.sys.service.ISysLoginService;
 import com.xinda.system.sys.service.IVerificationCodeService;
 import com.xinda.um.user.dto.SysUser;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -45,7 +41,7 @@ public class SysLoginController extends BaseController {
      * @param response HttpServletResponse 应答参数
      * @return view
      */
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @RequestMapping(value = {"/login"}, method = RequestMethod.POST)
     public ModelAndView login(final SysUser sysUser, final HttpServletRequest request,
                               final HttpServletResponse response) {
         return sysLoginService.doLogin(sysUser, request, response);
@@ -58,7 +54,7 @@ public class SysLoginController extends BaseController {
      * @param response HttpServletResponse 应答参数
      * @return view
      */
-    @RequestMapping(value = {"/login.html", "/login"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/login.html"})
     public ModelAndView loginView(final HttpServletRequest request, final HttpServletResponse response) {
         return new ModelAndView("/login");
     }

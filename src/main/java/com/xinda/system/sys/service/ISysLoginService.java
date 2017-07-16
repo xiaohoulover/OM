@@ -15,9 +15,19 @@ import javax.servlet.http.HttpServletResponse;
 public interface ISysLoginService {
 
     /**
-     * 登陆.
+     * 登陆(SpringMVC).
      *
      * @param sysUser  登陆账号对象
+     * @param request  HttpServletRequest
+     * @param response HttpServletResponse
+     * @return view
+     */
+    ModelAndView doLogin_MVC(SysUser sysUser, HttpServletRequest request, HttpServletResponse response);
+
+    /**
+     * 跳转到登陆界面(Spring Security).
+     *
+     * @param sysUser  登陆用户
      * @param request  HttpServletRequest
      * @param response HttpServletResponse
      * @return view

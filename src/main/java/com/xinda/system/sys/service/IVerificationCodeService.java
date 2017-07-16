@@ -38,4 +38,12 @@ public interface IVerificationCodeService {
      */
     public void valiLoginVerificationCode(HttpServletRequest request) throws SysException;
 
+    /**
+     * 登录之前校验.(Spring Security Filter 在登陆之前拦截处理)
+     *
+     * @param request
+     * @return
+     */
+    public boolean beforeLoginVerificationCode(HttpServletRequest request);
+
 }

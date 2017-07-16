@@ -14,8 +14,17 @@ import java.util.List;
  */
 public interface ISysUserService {
 
+
     /**
-     * 查询User信息.
+     * 根据userName查询用户信息.
+     *
+     * @param userName 用户名
+     * @return
+     */
+    SysUser selectUserByUserName(String userName);
+
+    /**
+     * 根据userId查询User信息.
      *
      * @param userId User对象
      * @return User信息

@@ -35,6 +35,11 @@ public class SysUserServiceImpl implements ISysUserService {
     private IEncryptionService encryptionService;
 
     @Override
+    public SysUser selectUserByUserName(String userName) {
+        return sysUserMapper.selectByUserName(userName);
+    }
+
+    @Override
     public SysUser getSysUserById(int userId) {
         return sysUserMapper.selectByPrimaryKey(userId);
     }

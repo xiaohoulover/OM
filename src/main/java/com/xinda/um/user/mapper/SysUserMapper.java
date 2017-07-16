@@ -40,4 +40,12 @@ public interface SysUserMapper {
      */
     SysUser querySysUserBySysUser(SysUser sysUser);
 
+    /**
+     * 根据userName查询User信息.
+     *
+     * @param userName 用户名
+     * @return
+     */
+    SysUser selectByUserName(String userName);
+
 }
