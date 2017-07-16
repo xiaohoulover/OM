@@ -86,7 +86,7 @@
     </beans:bean>
 
     <!--登录失败处理方式1-->
-    <beans:bean id="loginFailureHandler" class="com.xinda.sm.security.auth.LoginFailureHandler" />
+    <beans:bean id="loginFailureHandler" class="com.xinda.sm.security.auth.LoginFailureHandler"/>
 
     <!--登录失败处理方式2-->
     <beans:bean id="exceptionMappingAuthenticationFailureHandler"

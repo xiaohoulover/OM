@@ -1,21 +1,21 @@
 <#include "head.html" />
 <style>
-	/*#header {
-	    background-color:#778899;
+    /*#header {
+        background-color:#778899;
         height: 55px;
-	    color:white;
-	    text-align:center;
-	    padding:5px;
-	}
-	#footer {
-	    background-color:#778899;
-	    color:white;
-	    clear:both;
-	    text-align:center;
+        color:white;
+        text-align:center;
+        padding:5px;
+    }
+    #footer {
+        background-color:#778899;
+        color:white;
+        clear:both;
+        text-align:center;
         height:40px;
         line-height:32px;
-	    !*padding:5px;*!
-	}
+        !*padding:5px;*!
+    }
 
     .l-topmenu-welcome {
         position: absolute;
@@ -25,17 +25,19 @@
         top: 10px;
     }*/
     #header {
-        background-color:#778899;
+        background-color: #778899;
         margin: 0;
         padding: 0;
         position: relative;
     }
+
     .title {
         font-size: 25px;
         line-height: 60px;
         height: 60px;
-        text-align:center;
+        text-align: center;
     }
+
     .user {
         font-size: 20px;
         color: #FFC340;
@@ -45,6 +47,7 @@
         right: 100px;
         top: 20px;
     }
+
     .logout {
         position: absolute;
         height: 24px;
@@ -54,12 +57,12 @@
     }
 
     #footer {
-        background-color:#778899;
-        color:white;
-        clear:both;
-        text-align:center;
-        height:40px;
-        line-height:32px;
+        background-color: #778899;
+        color: white;
+        clear: both;
+        text-align: center;
+        height: 40px;
+        line-height: 32px;
         /*padding:5px;*/
     }
 </style>
@@ -67,26 +70,26 @@
 <body style="padding:0px;background:#EAEEF5; overflow: hidden;">
 
 <div id="header">
-    <div class="title">广州欣达运输-订单管理系统</div>
+    <div class="title">订单管理系统</div>
     <div class="user">
         <!--<img src="${base.contextPath}/resources/images/user.jpg" height="30px" width="30px" style="background: #000000"/>-->
         <div>${Session.userName}</div>
     </div>
     <div class="logout">
-        <form id="logoutForm" action = "${base.contextPath}/logout" method="post" >
+        <form id="logoutForm" action="${base.contextPath}/logout" method="post">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <img src="${base.contextPath}/resources/images/logout4.png" onclick="logout()">
         </form>
     </div>
 </div>
 <div id="layout1" style="width:99.2%; margin:0 auto; margin-top:4px; ">
-    <div position="left"  title="主要菜单" id="accordion1">
+    <div position="left" title="主要菜单" id="accordion1">
         <div title="功能列表" class="l-scroll">
-            <ul id="tree1" style="margin-top:3px;" />
+            <ul id="tree1" style="margin-top:3px;"/>
         </div>
     </div>
     <div position="center" id="framecenter">
-        <div tabid="home" title="我的主页" style="height:300px" >
+        <div tabid="home" title="我的主页" style="height:300px">
             <iframe frameborder="0" name="home" id="home" src="home.html"></iframe>
         </div>
     </div>
@@ -98,96 +101,123 @@
 
 <script type="text/javascript">
 
-	var tab = null;
-	var accordion = null;
-	var tree = null;
-	var tabItems = [];
+    var tab = null;
+    var accordion = null;
+    var tree = null;
+    var tabItems = [];
 
-	/*初始化左边菜单栏功能模块*/
-	var indexdata = [{
-			 text : '订单管理',
-			 isexpand : true,
-			 children : [{
-				 url : '${base.contextPath}/order/om_order_query.html',
-				 text : '订单查询',
-				 code : 'ORDER_QUERY'
-			 },{
-				 url : '${base.contextPath}/order/om_order_create.html',
-				 text : '新建订单',
-				 code : 'ORDER_CREATE'
-			 }]
-		 },{
-			 text : '客户管理',
-			 isexpand : false,
-			 children : [{
-				 url : '${base.contextPath}/customer/cm_customer_query.html',
-				 text : '客户查询',
-				 code : 'CUSTOMER_QUERY'
-			 }
-         <#if Session.userType == '0'>
-			 ,{
-				 url : '${base.contextPath}/customer/cm_customer_create.html',
-				 text : '新建客户',
-				 code : 'CUSTOMER_CREATE'
-			 }
-         </#if>
-			 ]
-		 },{
-            text : '车辆管理',
-            isexpand : false,
-            children : [{
-                url : '${base.contextPath}/car/cm_car_query.html',
-                text : '车辆查询',
-                code : 'CAR_QUERY'
-            }
-         <#if Session.userType == '0'>
-            ,{
-                url : '${base.contextPath}/car/cm_car_create.html',
-                text : '新建车辆',
-                code : 'CAR_CREATE'
-            }
-         </#if>
-            ]
-        },{
-			 text : '文件管理',
-			 isexpand : false,
-			 children : [{
-				 url : '${base.contextPath}/file/fm_file_query.html',
-				 text : '文件下载',
-				 code : 'FILE_QUERY'
-			 },{
-				 url : '${base.contextPath}/report/rpt_export_data.html',
-				 text : '报表下载',
-				 code : 'EXCEL_DOWNLOAD'
-			 }]
-		 },{
-            text : '用户管理',
-            isexpand : false,
-            children : [
-            <#if Session.userType == '0'>
-            {
-                url : '${base.contextPath}/user/sys_user_query.html',
-                text : '创建及查询',
-                code : 'USER_QUERY'
-            },
-            </#if>
-            {
-                url : '${base.contextPath}/user/sys_user_create.html',
-                text : '更改密码',
-                code : 'USER_CREATE'
-            }]
+    /*初始化左边菜单栏功能模块*/
+    var indexdata = [{
+        text: '订单管理',
+        isexpand: true,
+        children: [{
+            url: '${base.contextPath}/order/om_order_query.html',
+            text: '订单查询',
+            code: 'ORDER_QUERY'
+        }, {
+            url: '${base.contextPath}/order/om_order_create.html',
+            text: '新建订单',
+            code: 'ORDER_CREATE'
+        }]
+    }, {
+        text: '客户管理',
+        isexpand: false,
+        children: [{
+            url: '${base.contextPath}/customer/cm_customer_query.html',
+            text: '客户查询',
+            code: 'CUSTOMER_QUERY'
         }
-	];
-
-    $(function ()
+        <
+    #
+    if Session.userType == '0' >
+        , {
+        url: '${base.contextPath}/customer/cm_customer_create.html',
+        text: '新建客户',
+        code: 'CUSTOMER_CREATE'
+    }
+    < /#
+    if>
+    ]
+    },
     {
+        text : '车辆管理',
+            isexpand
+    :
+        false,
+            children
+    :
+        [{
+            url: '${base.contextPath}/car/cm_car_query.html',
+            text: '车辆查询',
+            code: 'CAR_QUERY'
+        }
+        <#if Session.userType == '0' >
+        , {
+        url: '${base.contextPath}/car/cm_car_create.html',
+        text: '新建车辆',
+        code: 'CAR_CREATE'
+    }
+    < /#
+        if>
+    ]
+    }
+    ,
+    {
+        text : '文件管理',
+            isexpand
+    :
+        false,
+            children
+    :
+        [{
+            url: '${base.contextPath}/file/fm_file_query.html',
+            text: '文件下载',
+            code: 'FILE_QUERY'
+        }, {
+            url: '${base.contextPath}/report/rpt_export_data.html',
+            text: '报表下载',
+            code: 'EXCEL_DOWNLOAD'
+        }]
+    }
+    ,
+    {
+        text : '用户管理',
+            isexpand
+    :
+        false,
+            children
+    :
+        [
+        <#if Session.userType == '0' >
+    {
+        url: '${base.contextPath}/user/sys_user_query.html',
+        text: '创建及查询',
+        code: 'USER_QUERY'
+    },
+        <
+    /#if>
+        {
+            url : '${base.contextPath}/user/sys_user_create.html',
+                text
+        :
+            '更改密码',
+                code
+        :
+            'USER_CREATE'
+        }
+    ]
+    }
+    ]
+    ;
+
+    $(function () {
         //布局
         $("#layout1").ligerLayout({
-        	leftWidth: 140,
-        	height: '100%',
-        	heightDiff:-34,
-        	space:4,
-        	onHeightChanged: f_heightChanged
+            leftWidth: 140,
+            height: '100%',
+            heightDiff: -34,
+            space: 4,
+            onHeightChanged: f_heightChanged
         });
 
         var height = $(".l-layout-center").height();
@@ -195,26 +225,21 @@
         //Tab
         $("#framecenter").ligerTab({
             height: height,
-            showSwitchInTab : true,
+            showSwitchInTab: true,
             showSwitch: true,
-            onAfterAddTabItem: function (tabdata)
-            {
+            onAfterAddTabItem: function (tabdata) {
                 tabItems.push(tabdata);
             },
-            onAfterRemoveTabItem: function (tabid)
-            {
-                for (var i = 0; i < tabItems.length; i++)
-                {
+            onAfterRemoveTabItem: function (tabid) {
+                for (var i = 0; i < tabItems.length; i++) {
                     var o = tabItems[i];
-                    if (o.tabid == tabid)
-                    {
+                    if (o.tabid == tabid) {
                         tabItems.splice(i, 1);
                         break;
                     }
                 }
             },
-            onReload: function (tabdata)
-            {
+            onReload: function (tabdata) {
                 var tabid = tabdata.tabid;
                 addFrameSkinLink(tabid);
             }
@@ -225,35 +250,30 @@
             height: height - 24, speed: null
         });
 
-        $(".l-link").hover(function ()
-        {
-            $(this).addClass("l-link-over");
-        },
-        function ()
-        {
-            $(this).removeClass("l-link-over");
-        });
+        $(".l-link").hover(function () {
+                $(this).addClass("l-link-over");
+            },
+            function () {
+                $(this).removeClass("l-link-over");
+            });
         //树
         $("#tree1").ligerTree({
-            data : indexdata,
+            data: indexdata,
             checkbox: false,
             slide: false,
             nodeWidth: 100,
             attribute: ['nodename', 'url'],
-            render : function(a){
+            render: function (a) {
                 if (!a.isnew) return a.text;
                 return '<a href="' + a.url + '" target="_blank">' + a.text + '</a>';
             },
-            onSelect: function (node)
-            {
+            onSelect: function (node) {
                 if (!node.data.url) return;
-                if (node.data.isnew)
-                {
+                if (node.data.isnew) {
                     return;
                 }
                 var tabid = $(node.target).attr("tabid");
-                if (!tabid)
-                {
+                if (!tabid) {
                     //tabid = new Date().getTime();
                     tabid = node.data.code
                     $(node.target).attr("tabid", tabid)
@@ -267,37 +287,33 @@
         tree = liger.get("tree1");
         $("#pageloading").hide();
     });
-    function f_heightChanged(options)
-    {
+    function f_heightChanged(options) {
         if (tab)
             tab.addHeight(options.diff);
         if (accordion && options.middleHeight - 24 > 0)
             accordion.setHeight(options.middleHeight - 24);
     }
     /*打开一个Tab页*/
-    function f_addTab(tabid, text, url, showClose)
-    {
-    	setTimeout(function(){
-	        tab.addTabItem({
-	            tabid: tabid,
-	            text: text,
-	            url: url,
-	            showClose: showClose != false,
-	            callback: function ()
-	            {
-	                addFrameSkinLink(tabid);
-	            }
-	        });
-    	}, 100)
+    function f_addTab(tabid, text, url, showClose) {
+        setTimeout(function () {
+            tab.addTabItem({
+                tabid: tabid,
+                text: text,
+                url: url,
+                showClose: showClose != false,
+                callback: function () {
+                    addFrameSkinLink(tabid);
+                }
+            });
+        }, 100)
     }
     /*移除Tab页*/
     function f_removeTab(tabid) {
-    	setTimeout(function() {
-    		tab.removeTabItem(tabid);
-    	},100);
+        setTimeout(function () {
+            tab.removeTabItem(tabid);
+        }, 100);
     }
-    function addFrameSkinLink(tabid)
-    {
+    function addFrameSkinLink(tabid) {
         var prevHref = getLinkPrevHref(tabid) || "";
         var skin = getQueryString("skin");
         if (!skin) return;
@@ -310,22 +326,18 @@
         "silvery": "lib/ligerUI/skins/Silvery/css/style.css",
         "gray2014": "lib/ligerUI/skins/gray2014/css/all.css"
     };
-    function getQueryString(name)
-    {
+    function getQueryString(name) {
         var now_url = document.location.search.slice(1), q_array = now_url.split('&');
-        for (var i = 0; i < q_array.length; i++)
-        {
+        for (var i = 0; i < q_array.length; i++) {
             var v_array = q_array[i].split('=');
-            if (v_array[0] == name)
-            {
+            if (v_array[0] == name) {
                 return v_array[1];
             }
         }
         return false;
     }
-    function attachLinkToFrame(iframeId, filename)
-    {
-        if(!window.frames[iframeId]) return;
+    function attachLinkToFrame(iframeId, filename) {
+        if (!window.frames[iframeId]) return;
         var head = window.frames[iframeId].document.getElementsByTagName('head').item(0);
         var fileref = window.frames[iframeId].document.createElement("link");
         if (!fileref) return;
@@ -334,17 +346,14 @@
         fileref.setAttribute("href", filename);
         head.appendChild(fileref);
     }
-    function getLinkPrevHref(iframeId)
-    {
+    function getLinkPrevHref(iframeId) {
         if (!window.frames[iframeId]) return;
         var head = window.frames[iframeId].document.getElementsByTagName('head').item(0);
         var links = $("link:first", head);
-        for (var i = 0; links[i]; i++)
-        {
+        for (var i = 0; links[i]; i++) {
             var href = $(links[i]).attr("href");
-            if (href && href.toLowerCase().indexOf("ligerui") > 0)
-            {
-                return href.substring(0, href.toLowerCase().indexOf("lib") );
+            if (href && href.toLowerCase().indexOf("ligerui") > 0) {
+                return href.substring(0, href.toLowerCase().indexOf("lib"));
             }
         }
     }
@@ -355,10 +364,10 @@
             jQuery('#logoutForm').submit();
         }
         /*$.ligerDialog.confirm("确认退出？", function (yes) {
-            if (yes) {
-                jQuery('#logoutForm').submit();
-            }
-        });*/
+         if (yes) {
+         jQuery('#logoutForm').submit();
+         }
+         });*/
     }
 
 </script>

@@ -153,7 +153,8 @@
   </select>
 
   <select id="selectByUserName" parameterType="java.lang.String" resultMap="BaseResultMap">
-    SELECT <include refid="Base_Column_List" />
+    SELECT
+    <include refid="Base_Column_List"/>
     FROM sys_user
     WHERE USER_NAME = #{userName,jdbcType=VARCHAR}
   </select>
