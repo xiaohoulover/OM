@@ -2,6 +2,7 @@ package com.xinda.um.user.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.xinda.cache.service.IRedisCache;
+import com.xinda.sm.security.auth.PasswordEncryptManager;
 import com.xinda.sm.security.service.IEncryptionService;
 import com.xinda.system.login.exception.SysException;
 import com.xinda.system.sys.contant.BaseConstants;
@@ -31,8 +32,17 @@ public class SysUserServiceImpl implements ISysUserService {
 
     private final Logger logger = LoggerFactory.getLogger(SysUserServiceImpl.class);
 
+    /**
+     * DES对称加密.
+     */
     @Autowired
     private SysUserMapper sysUserMapper;
+    /**
+     * Spring Security—采用MD5加密.
+     */
+    @Autowired
+    private PasswordEncryptManager passwordEncryptManager;
+
     @Autowired
     private IEncryptionService encryptionService;
     @Autowired
@@ -83,7 +93,8 @@ public class SysUserServiceImpl implements ISysUserService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public SysUser createSysUser(SysUser sysUser) throws SysException {
         //加密存储
-        sysUser.setPassword(encryptionService.encode(sysUser.getPassword()));
+        //sysUser.setPassword(encryptionService.encode(sysUser.getPassword()));
+        sysUser.setPassword(passwordEncryptManager.encode(sysUser.getPassword()));
         if (null == sysUser.getUserId()) {//insert
             //校验用户名是否同名
             SysUser user = new SysUser(null, sysUser.getUserName(), null, null, null, null);
@@ -95,7 +106,8 @@ public class SysUserServiceImpl implements ISysUserService {
         } else {//update
             //校验旧密码是否输入正确
             SysUser user = sysUserMapper.selectByPrimaryKey(sysUser.getUserId());
-            if (!user.getPassword().equals(encryptionService.encode(sysUser.getOldPassword()))) {
+            //if (!user.getPassword().equals(encryptionService.encode(sysUser.getOldPassword()))) {
+            if (!user.getPassword().equals(passwordEncryptManager.encode(sysUser.getOldPassword()))) {
                 logger.error("原密码输入错误!");
                 throw new SysException(SysException.MSG_ERROR_SYS_USER_OLD_PASSWORD_NOT_EQUALS);
             }

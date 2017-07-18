@@ -14,7 +14,6 @@ import javax.imageio.ImageIO;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -161,15 +160,12 @@ public class VerificationCodeServiceImpl implements IVerificationCodeService {
 
     @Override
     public boolean beforeLoginVerificationCode(HttpServletRequest request) {
-        //获取Session中存储的验证码Code
-        HttpSession session = request.getSession();
-        String sessionCode = String.valueOf(session.getAttribute("verificationCode"));
-        //获取前台参数
-        String verificationCode = request.getParameter("verificationCode");
-        //移除Session属性
-        session.removeAttribute("verificationCode");
-        if (session == null || StringUtils.isEmpty(verificationCode)
-                || !verificationCode.equalsIgnoreCase(sessionCode)) {
+        //获取Cookie中生成的随机key
+        Cookie cookie = WebUtils.getCookie(request, "cookieVeriKey");
+        //前台输入Code
+        String inputCode = request.getParameter(BaseConstants.VERIFICATION_CODE);
+        if (cookie == null || StringUtils.isBlank(inputCode)
+                || !checkVerificationCode(cookie.getValue(), inputCode)) {
             return false;
         }
         return true;

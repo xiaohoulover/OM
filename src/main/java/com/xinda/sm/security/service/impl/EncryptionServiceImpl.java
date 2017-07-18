@@ -98,12 +98,6 @@ public class EncryptionServiceImpl implements IEncryptionService {
         //  System.out.println(getDecryptString("WnplV/ietfQ="));
     }
 
-    /**
-     * MD5非对称加密处理.(明文加密后无法解密为原明文)
-     *
-     * @param password 原始明文字符串
-     * @return
-     */
     @Override
     public String encode(String password) {
         return DigestUtils.md5DigestAsHex(password.toUpperCase().getBytes()).toUpperCase();

@@ -126,89 +126,56 @@
             url: '${base.contextPath}/customer/cm_customer_query.html',
             text: '客户查询',
             code: 'CUSTOMER_QUERY'
-        }
-        <
-    #
-    if Session.userType == '0' >
-        , {
-        url: '${base.contextPath}/customer/cm_customer_create.html',
-        text: '新建客户',
-        code: 'CUSTOMER_CREATE'
-    }
-    < /#
-    if>
-    ]
-    },
-    {
-        text : '车辆管理',
-            isexpand
-    :
-        false,
-            children
-    :
-        [{
-            url: '${base.contextPath}/car/cm_car_query.html',
-            text: '车辆查询',
-            code: 'CAR_QUERY'
-        }
-        <#if Session.userType == '0' >
-        , {
-        url: '${base.contextPath}/car/cm_car_create.html',
-        text: '新建车辆',
-        code: 'CAR_CREATE'
-    }
-    < /#
-        if>
-    ]
-    }
-    ,
-    {
-        text : '文件管理',
-            isexpand
-    :
-        false,
-            children
-    :
-        [{
-            url: '${base.contextPath}/file/fm_file_query.html',
-            text: '文件下载',
-            code: 'FILE_QUERY'
         }, {
-            url: '${base.contextPath}/report/rpt_export_data.html',
-            text: '报表下载',
-            code: 'EXCEL_DOWNLOAD'
-        }]
-    }
-    ,
-    {
-        text : '用户管理',
-            isexpand
-    :
-        false,
-            children
-    :
-        [
-        <#if Session.userType == '0' >
-    {
-        url: '${base.contextPath}/user/sys_user_query.html',
-        text: '创建及查询',
-        code: 'USER_QUERY'
-    },
-        <
-    /#if>
-        {
-            url : '${base.contextPath}/user/sys_user_create.html',
-                text
-        :
-            '更改密码',
-                code
-        :
-            'USER_CREATE'
+            url: '${base.contextPath}/customer/cm_customer_create.html',
+            text: '新建客户',
+            code: 'CUSTOMER_CREATE'
         }
-    ]
-    }
-    ]
-    ;
+        ]
+    },
+        {
+            text: '车辆管理',
+            isexpand: false,
+            children: [{
+                url: '${base.contextPath}/car/cm_car_query.html',
+                text: '车辆查询',
+                code: 'CAR_QUERY'
+            }, {
+                url: '${base.contextPath}/car/cm_car_create.html',
+                text: '新建车辆',
+                code: 'CAR_CREATE'
+            }
+            ]
+        },
+        {
+            text: '文件管理',
+            isexpand: false,
+            children: [{
+                url: '${base.contextPath}/file/fm_file_query.html',
+                text: '文件下载',
+                code: 'FILE_QUERY'
+            }, {
+                url: '${base.contextPath}/report/rpt_export_data.html',
+                text: '报表下载',
+                code: 'EXCEL_DOWNLOAD'
+            }]
+        },
+        {
+            text: '用户管理',
+            isexpand: false,
+            children: [
+                {
+                    url: '${base.contextPath}/user/sys_user_query.html',
+                    text: '创建及查询',
+                    code: 'USER_QUERY'
+                }, {
+                    url: '${base.contextPath}/user/sys_user_create.html',
+                    text: '更改密码',
+                    code: 'USER_CREATE'
+                }
+            ]
+        }
+    ];
 
     $(function () {
         //布局

@@ -1,6 +1,7 @@
 package com.xinda.system.login.service;
 
 import com.xinda.system.login.exception.SysException;
+import com.xinda.system.login.exception.SysException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

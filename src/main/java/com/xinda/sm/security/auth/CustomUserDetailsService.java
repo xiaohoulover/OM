@@ -48,6 +48,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("User not found : " + userName);
         }
 
+        //TODO 查询用户权限信息
         Collection<GrantedAuthority> auths = new ArrayList<GrantedAuthority>();
 
         SimpleGrantedAuthority auth1 = new SimpleGrantedAuthority("ROLE_ADMIN");
@@ -57,7 +58,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         auths.add(auth2);
 
         //TODO user.getPassword()
-        User userDetails = new User(userName, "admin123", true, true, true, true, auths);
+        User userDetails = new User(userName, user.getPassword(), true, true, true, true, auths);
 
         logger.info("------------------------End CustomUserDetailsService----------------------------------");
         return userDetails;
