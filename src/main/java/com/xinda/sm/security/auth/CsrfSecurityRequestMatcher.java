@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 /**
  * Csrf只有对GET|HEAD|TRACE|OPTIONS这4类请求方法会被放行.
  * 自定义过滤判断，除指定请求url进行token验证，其他不进行验证.
+ * false-不拦截，true-拦截.
  *
  * @author Coundy.
  * @date 2017/7/15 11:22.
@@ -21,7 +22,7 @@ public class CsrfSecurityRequestMatcher implements RequestMatcher {
     private PathMatcher matcher = new AntPathMatcher();
 
     /**
-     * 需要排除的url列表
+     * 除了这些url列表需要校验_csrf之外，其它都不要.
      */
     private List<String> excludeUrls;
 
@@ -35,20 +36,18 @@ public class CsrfSecurityRequestMatcher implements RequestMatcher {
 
     @Override
     public boolean matches(HttpServletRequest httpServletRequest) {
-        boolean isFilter = true;
+        boolean isFilter = false;
         boolean isPostMethod = !allowedMethods.matcher(httpServletRequest.getMethod()).matches();
         if (isPostMethod) {
             if (excludeUrls != null && excludeUrls.size() > 0) {
                 String servletPath = httpServletRequest.getServletPath();
                 for (String url : excludeUrls) {
                     if (matcher.match(url, servletPath)) {
-                        isFilter = false;
+                        isFilter = true;
                         break;
                     }
                 }
             }
-        } else {
-            isFilter = false;
         }
         return isFilter;
     }

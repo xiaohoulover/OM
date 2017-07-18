@@ -1,6 +1,7 @@
 package com.xinda.sm.security.auth;
 
 import com.github.pagehelper.StringUtil;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
@@ -11,13 +12,23 @@ import org.springframework.security.crypto.password.StandardPasswordEncoder;
  * @author Coundy.
  * @date 2017/7/17 8:13.
  */
-public class PasswordEncryptManager implements PasswordEncoder {
+public class PasswordEncryptManager implements PasswordEncoder, InitializingBean {
 
-    private PasswordEncoder passwordEncoder = new StandardPasswordEncoder("my-secret-key");//密钥值
+    private String secretKey;//密钥值
+
+    private PasswordEncoder passwordEncoder;
 
     public static void main(String[] args) {
-        PasswordEncoder passwordEncoder = new StandardPasswordEncoder("my-secret-key");//密钥值
+        PasswordEncoder passwordEncoder = new StandardPasswordEncoder("my-secret-key");
         System.out.println(passwordEncoder.encode("admin123"));
+    }
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
     }
 
     @Override
@@ -31,5 +42,15 @@ public class PasswordEncryptManager implements PasswordEncoder {
             return false;
         }
         return passwordEncoder.matches(charSequence, encodedPassword);
+    }
+
+    /**
+     * 实现了Initialization接口，在初始化完该bean后会执行以下方法.
+     *
+     * @throws Exception
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        this.passwordEncoder = new StandardPasswordEncoder(secretKey);//设置密钥值
     }
 }

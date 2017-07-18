@@ -41,7 +41,7 @@ public interface ISysLoginService {
      * @param response HttpServletResponse
      * @return view
      */
-    ModelAndView doLogin_MVC(SysUser sysUser, HttpServletRequest request, HttpServletResponse response) throws SysException;
+    ModelAndView doLogin(SysUser sysUser, HttpServletRequest request, HttpServletResponse response) throws SysException;
 
     /**
      * 跳转到登陆界面(Spring Security).
@@ -51,7 +51,7 @@ public interface ISysLoginService {
      * @param response HttpServletResponse
      * @return view
      */
-    ModelAndView doLogin(SysUser sysUser, HttpServletRequest request, HttpServletResponse response);
+    ModelAndView doLoginCaptchaFailed(SysUser sysUser, HttpServletRequest request, HttpServletResponse response);
 
     /**
      * 登出.

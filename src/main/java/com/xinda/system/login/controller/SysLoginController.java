@@ -1,5 +1,6 @@
 package com.xinda.system.login.controller;
 
+import com.xinda.system.login.exception.SysException;
 import com.xinda.system.login.service.ISysLoginService;
 import com.xinda.system.login.service.IVerificationCodeService;
 import com.xinda.system.sys.controller.BaseController;
@@ -46,8 +47,22 @@ public class SysLoginController extends BaseController {
      */
     @RequestMapping(value = {"/login"}, method = RequestMethod.POST)
     public ModelAndView login(final SysUser sysUser, final HttpServletRequest request,
-                              final HttpServletResponse response) {
+                              final HttpServletResponse response) throws SysException {
         return sysLoginService.doLogin(sysUser, request, response);
+    }
+
+    /**
+     * 登录验证码失败.
+     *
+     * @param sysUser  登录用户对象
+     * @param request  HttpServletRequest 请求参数
+     * @param response HttpServletResponse 应答参数
+     * @return
+     */
+    @RequestMapping(value = "loginFailed", method = RequestMethod.POST)
+    public ModelAndView loginCaptchaFailed(final SysUser sysUser, final HttpServletRequest request,
+                                           final HttpServletResponse response) {
+        return sysLoginService.doLoginCaptchaFailed(sysUser, request, response);
     }
 
     /**
@@ -57,7 +72,7 @@ public class SysLoginController extends BaseController {
      * @param response HttpServletResponse 应答参数
      * @return view
      */
-    @RequestMapping(value = {"/login.html"})
+    @RequestMapping(value = "/login.html")
     public ModelAndView loginView(final HttpServletRequest request, final HttpServletResponse response) {
         return new ModelAndView("/login");
     }

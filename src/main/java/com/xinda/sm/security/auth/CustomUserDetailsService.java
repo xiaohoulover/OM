@@ -57,7 +57,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         auths.add(auth1);
         auths.add(auth2);
 
-        //TODO user.getPassword()
         User userDetails = new User(userName, user.getPassword(), true, true, true, true, auths);
 
         logger.info("------------------------End CustomUserDetailsService----------------------------------");

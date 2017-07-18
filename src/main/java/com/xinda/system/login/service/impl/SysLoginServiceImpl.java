@@ -47,7 +47,7 @@ public class SysLoginServiceImpl implements ISysLoginService {
     }
 
     @Override
-    public ModelAndView doLogin_MVC(SysUser sysUser, HttpServletRequest request, HttpServletResponse response) throws SysException {
+    public ModelAndView doLogin(SysUser sysUser, HttpServletRequest request, HttpServletResponse response) throws SysException {
         ModelAndView view = new ModelAndView();
         view.setViewName("/login");
         // 记录用户输入的用户名，登录失败刷新页面时，不需要重新输入
@@ -78,10 +78,8 @@ public class SysLoginServiceImpl implements ISysLoginService {
     }
 
     @Override
-    public ModelAndView doLogin(SysUser sysUser, HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView doLoginCaptchaFailed(SysUser sysUser, HttpServletRequest request, HttpServletResponse response) {
         ModelAndView view = new ModelAndView("/login");
-
-
         String code = SysException.MSG_ERROR_SYS_USERNAME_PASSWORD_ERROR;
         Throwable exception = (Exception) request.getAttribute("exception");
 

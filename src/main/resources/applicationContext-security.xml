@@ -21,7 +21,8 @@
     <http pattern="/lib/**" security="none"/>
     <http pattern="/resources/**" security="none"/>
     <!--<http pattern="/login" security="none"/>-->
-    <http pattern="/login.html" security="none"/>
+    <!--加入不拦截登录页面，则页面获取_csrf参数时为null-->
+    <!--<http pattern="/login.html" security="none"/>-->
     <http pattern="/verificationCode" security="none"/>
 
     <http use-expressions="true" entry-point-ref="authenticationProcessingFilterEntryPoint">
@@ -133,7 +134,9 @@
             </password-encoder>
         </authentication-provider>
     </authentication-manager>
-    <beans:bean id="encryptManager" class="com.xinda.sm.security.auth.PasswordEncryptManager"/>
+    <beans:bean id="encryptManager" class="com.xinda.sm.security.auth.PasswordEncryptManager">
+        <beans:property name="secretKey" value="my-secret-key"/>
+    </beans:bean>
 
     <!--在这个类中，可以从数据库中读入用户的密码，角色信息，是否锁定，账号是否过期等 -->
     <beans:bean id="customUserDetailsService" class="com.xinda.sm.security.auth.CustomUserDetailsService"/>

@@ -111,4 +111,12 @@ public class BaseConstants {
      */
     public static final String[] weekDays = {"日", "一", "二", "三", "四", "五", "六"};
 
+    //User
+    /**
+     * Session存储name值.
+     */
+    public static final String SYS_USER_FIELD_ID = "userId";
+    public static final String SYS_USER_FIELD_NAME = "userName";
+    public static final String SYS_USER_FIELD_TYPE = "userType";
+
 }

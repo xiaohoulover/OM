@@ -27,7 +27,7 @@ public class CaptchaVerifierFilter extends OncePerRequestFilter {
 
     private RequestMatcher urlRequestMatcher = new AntPathRequestMatcher("/login");
 
-    private String loginUrl = "/login";
+    private String loginUrl = "/loginFailed";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
