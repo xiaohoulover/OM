@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 /**
@@ -77,6 +79,14 @@ public class SysUserServiceImpl implements ISysUserService {
     public SysUser createSysUser(SysUser sysUser) throws SysException {
         //加密存储
         sysUser.setPassword(encryptionService.encode(sysUser.getPassword()));
+        //MD5 加盐加密
+        try {
+            sysUser.setPassword(encryptionService.encodeSalt(sysUser.getPassword(), "sysadmin", true));
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         if (null == sysUser.getUserId()) {//insert
             //校验用户名是否同名
             SysUser user = new SysUser(null, sysUser.getUserName(), null, null, null, null);

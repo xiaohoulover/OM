@@ -93,6 +93,9 @@
                 class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
         <beans:property name="exceptionMappings">
             <beans:props>
+                <beans:prop key="org.springframework.security.access.AccessDeniedException">
+                    /login.html?role=false
+                </beans:prop>
                 <beans:prop key="org.springframework.security.authentication.DisabledException">
                     /login.html?role=false
                 </beans:prop>
@@ -128,9 +131,9 @@
         <!--这里可以定义多个provider-->
         <authentication-provider user-service-ref="customUserDetailsService">
             <!--用户密码加密方式-->
-            <!--<password-encoder hash="md5" base64="true">
+            <password-encoder hash="md5" base64="true">
                 <salt-source user-property="username"/>
-            </password-encoder>-->
+            </password-encoder>
         </authentication-provider>
     </authentication-manager>
 

@@ -1,9 +1,7 @@
 package com.xinda.sm.security.auth;
 
-import com.xinda.system.sys.service.IVerificationCodeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -22,9 +20,6 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
 
     private Logger logger = LoggerFactory.getLogger(CustomUsernamePasswordAuthenticationFilter.class);
 
-    @Autowired
-    private IVerificationCodeService verificationCodeService;
-
     public CustomUsernamePasswordAuthenticationFilter() {
         super();
     }
@@ -33,7 +28,7 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
         logger.info("--------------------Start CustomUsernamePasswordAuthenticationFilter-------------------------------");
-
+        //将表单用户名密码交给UsernamePasswordAuthentication对象验证是否正确
         UsernamePasswordAuthenticationToken authToken =
                 new UsernamePasswordAuthenticationToken(request.getParameter("userName"), request.getParameter("password"));
 

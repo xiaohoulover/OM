@@ -70,9 +70,10 @@ public class SysLoginServiceImpl implements ISysLoginService {
     public ModelAndView doLogin(SysUser sysUser, HttpServletRequest request, HttpServletResponse response) {
         ModelAndView view = new ModelAndView("/login");
 
-
         String code = SysException.MSG_ERROR_SYS_USERNAME_PASSWORD_ERROR;
         Throwable exception = (Exception) request.getAttribute("exception");
+
+        logger.info(""+exception);
 
         if (exception instanceof BaseException) {
             code = ((BaseException) exception).getCode();

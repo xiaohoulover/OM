@@ -1,6 +1,9 @@
 package com.xinda.sm.security.service.impl;
 
 import com.xinda.sm.security.service.IEncryptionService;
+import org.springframework.security.crypto.codec.Base64;
+import org.springframework.security.crypto.codec.Hex;
+import org.springframework.security.crypto.codec.Utf8;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 import sun.misc.BASE64Decoder;
@@ -8,7 +11,10 @@ import sun.misc.BASE64Encoder;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
+import java.io.UnsupportedEncodingException;
 import java.security.Key;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 /**
@@ -21,19 +27,25 @@ import java.security.SecureRandom;
 @Service
 public class EncryptionServiceImpl implements IEncryptionService {
 
-    /**
-     * MD5非对称加密处理.(明文加密后无法解密为原明文)
-     *
-     * @param password 原始明文字符串
-     * @return
-     */
+    //指定DES加密解密的密钥
+    private static String KEY_STR = "myKey";
+
     @Override
     public String encode(String password) {
         return DigestUtils.md5DigestAsHex(password.toUpperCase().getBytes()).toUpperCase();
     }
 
-    //指定DES加密解密的密钥
-    private static String KEY_STR = "myKey";
+    @Override
+    public String encodeSalt(String password, String salt, boolean isBase64) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+        String saltedPass = password + "{" + salt + "}";
+        byte[] digest = messageDigest.digest(Utf8.encode(saltedPass));
+        if (isBase64) {
+            return Utf8.decode(Base64.encode(digest));
+        } else {
+            return new String(Hex.encode(digest));
+        }
+    }
 
     private static Key generateKey() {
         Key key = null;
@@ -90,12 +102,16 @@ public class EncryptionServiceImpl implements IEncryptionService {
         return new String(decryptStrBytes);
     }
 
-    public static void main (String[] args) {
-        String str[] = {"root","xd_mysql"};
+    public static void main(String[] args) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+        /*String str[] = {"root", "xd_mysql"};
         for (String s : str) {
             System.out.println(getEncryptString(s));
-        }
-      //  System.out.println(getDecryptString("WnplV/ietfQ="));
+        }*/
+        EncryptionServiceImpl encryptionService = new EncryptionServiceImpl();
+        String pw = encryptionService.encodeSalt("admin123", "sysadmin", true);
+        System.out.println(pw);
+
+        //  System.out.println(getDecryptString("WnplV/ietfQ="));
     }
 
 }

@@ -45,19 +45,18 @@ public class CustomUserDetailsService implements UserDetailsService {
         //根据userName查询对应用户信息
         SysUser user = sysUserServiceImpl.selectUserByUserName(userName);
         if (null == user) {
-            throw new UsernameNotFoundException("User not found : " + userName);
+            throw new UsernameNotFoundException("User not found : {}" + userName);
         }
-
+        //登陆用户所具有权限
         Collection<GrantedAuthority> auths = new ArrayList<GrantedAuthority>();
-
         SimpleGrantedAuthority auth1 = new SimpleGrantedAuthority("ROLE_ADMIN");
         SimpleGrantedAuthority auth2 = new SimpleGrantedAuthority("ROLE_USER");
-
         auths.add(auth1);
         auths.add(auth2);
 
         //TODO user.getPassword()
-        User userDetails = new User(userName, "admin123", true, true, true, true, auths);
+//        User userDetails = new User(userName, "admin123", true, true, true, true, auths);
+        User userDetails = new User(user.getUserName(), user.getPassword(), true, true, true, true, auths);
 
         logger.info("------------------------End CustomUserDetailsService----------------------------------");
         return userDetails;
