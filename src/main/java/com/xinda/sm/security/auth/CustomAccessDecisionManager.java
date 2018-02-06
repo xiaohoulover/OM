@@ -41,6 +41,7 @@ public class CustomAccessDecisionManager implements AccessDecisionManager {
         if (configAttributes == null) {
             return;
         }
+        //所请求的资源拥有的权限(一个资源对多个权限)
         Iterator<ConfigAttribute> ite = configAttributes.iterator();
         while (ite.hasNext()) {
             ConfigAttribute ca = ite.next();
